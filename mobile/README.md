@@ -5,19 +5,27 @@ Expo + React Native 기반 네이티브 모바일 클라이언트입니다.
 ## 화면
 
 - 온보딩
-- GPT 기반 AI 프로필 생성
+- Alan AI 기반 프로필 생성
 - 홈: 프로필 기반 추천 정책 및 가까운 신청 일정
-- 검색: 기존 `혜택` 탭을 제거하고 GPT 자연어 검색 탭으로 대체
+- 검색: 기존 `혜택` 탭을 제거하고 Alan 자연어 검색 탭으로 대체
 - 캘린더: PostgreSQL 정책의 실제 신청 시작/마감일 표시
 - 기기 캘린더 연동: 일정의 `기기 캘린더에 추가` 버튼
-- 마이: 프로필, FastAPI 서버 주소, DB/GPT 연결 상태
+- 마이: 프로필, FastAPI 서버 주소, DB/Alan 연결 상태
 
 ## 실행
 
 ```bash
 npm install
-npx expo install --fix
-npx expo start
+npm start
+```
+
+`npm start`는 PC의 사설 IPv4 주소를 자동으로 선택해 Expo Go에 전달합니다.
+휴대폰과 PC를 같은 Wi-Fi에 연결한 뒤 표시되는 QR 코드를 스캔합니다.
+
+에뮬레이터나 PC 내부에서만 실행하려면 다음 명령을 사용합니다.
+
+```bash
+npm run start:local
 ```
 
 실제 스마트폰에서는 `.env`를 만들고 PC의 IPv4 주소를 설정합니다.

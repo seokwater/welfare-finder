@@ -22,6 +22,7 @@ ALAN_API_BASE_URL = os.getenv(
 ).rstrip("/")
 ALAN_CLIENT_ID = os.getenv("ALAN_CLIENT_ID", "").strip()
 ALAN_TIMEOUT_SECONDS = float(os.getenv("ALAN_TIMEOUT_SECONDS", "60"))
+ALAN_PROFILE_TIMEOUT_SECONDS = float(os.getenv("ALAN_PROFILE_TIMEOUT_SECONDS", "8"))
 
 PROFILE_FIELDS = ["location", "age", "housing", "employment", "income"]
 PROFILE_QUESTIONS = {
@@ -72,13 +73,14 @@ def _extract_text_from_payload(payload: Any) -> str:
     return json.dumps(payload, ensure_ascii=False)
 
 
-def ask_alan(prompt: str) -> str:
+def ask_alan(prompt: str, *, timeout_seconds: Optional[float] = None) -> str:
     if not alan_enabled():
         raise RuntimeError("ALAN_CLIENT_ID가 설정되지 않았습니다.")
 
     url = f"{ALAN_API_BASE_URL}/question"
     params = {"content": prompt, "client_id": ALAN_CLIENT_ID}
-    with httpx.Client(timeout=ALAN_TIMEOUT_SECONDS, follow_redirects=True) as client:
+    timeout = timeout_seconds if timeout_seconds is not None else ALAN_TIMEOUT_SECONDS
+    with httpx.Client(timeout=timeout, follow_redirects=True) as client:
         response = client.get(url, params=params)
         response.raise_for_status()
 
@@ -108,13 +110,18 @@ def _json(text: str) -> dict[str, Any]:
     return value
 
 
-def _alan_json(instructions: str, payload: dict[str, Any]) -> dict[str, Any]:
+def _alan_json(
+    instructions: str,
+    payload: dict[str, Any],
+    *,
+    timeout_seconds: Optional[float] = None,
+) -> dict[str, Any]:
     prompt = (
         f"{instructions}\n\n"
         "아래 INPUT을 처리하세요. 설명이나 마크다운 없이 요청한 JSON만 출력하세요.\n"
         f"INPUT={json.dumps(payload, ensure_ascii=False, separators=(',', ':'))}"
     )
-    return _json(ask_alan(prompt))
+    return _json(ask_alan(prompt, timeout_seconds=timeout_seconds))
 
 
 def _norm_profile(profile: Any) -> dict[str, str]:
@@ -177,6 +184,7 @@ def analyze_profile_turn(message: str, current_profile: Any) -> dict[str, Any]:
             "반드시 다음 JSON 스키마만 출력한다: "
             '{"profile":{"location":"","age":"","housing":"","employment":"","income":""},"reply":"짧은 한국어 응답"}',
             {"message": message, "current_profile": base},
+            timeout_seconds=ALAN_PROFILE_TIMEOUT_SECONDS,
         )
         profile = _norm_profile(data.get("profile", {}))
         for key in PROFILE_FIELDS:

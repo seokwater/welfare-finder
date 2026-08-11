@@ -1,0 +1,39 @@
+services:
+  - type: web
+    name: welfare-finder-alan-api
+    runtime: python
+    plan: starter
+    region: singapore
+    buildCommand: pip install -r requirements.txt
+    preDeployCommand: python prepare_database.py
+    startCommand: uvicorn app:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    autoDeployTrigger: commit
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: APP_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: welfare-finder-postgres
+          property: connectionString
+      - key: ALAN_API_BASE_URL
+        sync: false
+      - key: ALAN_CLIENT_ID
+        sync: false
+      - key: ALAN_TIMEOUT_SECONDS
+        value: "60"
+      - key: CORS_ORIGINS
+        value: "*"
+
+
+databases:
+  - name: welfare-finder-postgres
+    plan: basic-256mb
+    region: singapore
+    diskSizeGB: 1
+    postgresMajorVersion: "16"
+    databaseName: welfare_finder
+    user: welfare_app
+    ipAllowList: []

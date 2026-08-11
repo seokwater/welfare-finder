@@ -46,7 +46,7 @@ export const api = {
   profileTurn: (base, message, currentProfile) => request(base, '/api/alan/profile', {
     method: 'POST',
     body: JSON.stringify({ message, current_profile: currentProfile || {} }),
-    timeoutMs: 30000,
+    timeoutMs: 45000,
   }),
   alanSearch: (base, { query, profileContext, history = [], topK = 6, openOnly = true }) => request(base, '/api/alan/search', {
     method: 'POST',

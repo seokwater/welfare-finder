@@ -4,6 +4,7 @@ const KEYS = {
   onboarded: 'wf:onboarded',
   profile: 'wf:profile',
   apiBase: 'wf:apiBase',
+  searchSession: 'wf:searchSession',
 }
 
 export async function loadAppState() {
@@ -41,6 +42,34 @@ export async function saveApiBase(apiBase) {
   return normalized
 }
 
+export async function loadSearchSession() {
+  const raw = await AsyncStorage.getItem(KEYS.searchSession)
+  if (!raw) return null
+
+  try {
+    const session = JSON.parse(raw)
+    const messages = Array.isArray(session?.messages)
+      ? session.messages.filter((message) => (
+          ['user', 'assistant'].includes(message?.role)
+          && typeof message?.content === 'string'
+        ))
+      : []
+
+    if (!messages.length) return null
+    return {
+      messages,
+      result: session?.result && typeof session.result === 'object' ? session.result : null,
+    }
+  } catch {
+    await AsyncStorage.removeItem(KEYS.searchSession)
+    return null
+  }
+}
+
+export async function saveSearchSession({ messages, result }) {
+  await AsyncStorage.setItem(KEYS.searchSession, JSON.stringify({ messages, result }))
+}
+
 export async function resetAppState() {
-  await AsyncStorage.multiRemove([KEYS.onboarded, KEYS.profile])
+  await AsyncStorage.multiRemove([KEYS.onboarded, KEYS.profile, KEYS.searchSession])
 }

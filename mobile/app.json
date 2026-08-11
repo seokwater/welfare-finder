@@ -15,11 +15,20 @@
       ]
     ],
     "android": {
-      "package": "com.estai.welfarefinder"
+      "package": "com.estai.welfarefinder",
+      "permissions": [
+        "android.permission.READ_CALENDAR",
+        "android.permission.WRITE_CALENDAR"
+      ]
     },
     "ios": {
       "bundleIdentifier": "com.estai.welfarefinder",
       "supportsTablet": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "1b471747-4bb5-46af-9c1a-214de28d8fcf"
+      }
     }
   }
 }

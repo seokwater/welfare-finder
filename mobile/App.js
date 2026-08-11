@@ -8,8 +8,8 @@ import CalendarScreen from './src/screens/CalendarScreen'
 import HomeScreen from './src/screens/HomeScreen'
 import MyScreen from './src/screens/MyScreen'
 import OnboardingScreen from './src/screens/OnboardingScreen'
-import SearchScreen from './src/screens/SearchScreen'
-import { loadAppState, resetAppState, saveApiBase, saveOnboarded, saveProfile } from './src/storage'
+import SearchScreen, { INITIAL_SEARCH_SESSION } from './src/screens/SearchScreen'
+import { loadAppState, loadSearchSession, resetAppState, saveApiBase, saveOnboarded, saveProfile, saveSearchSession } from './src/storage'
 import { colors } from './src/theme'
 
 export default function App() {
@@ -20,16 +20,24 @@ export default function App() {
   const [profileFlow, setProfileFlow] = useState(false)
   const [activeTab, setActiveTab] = useState('home')
   const [selectedPolicy, setSelectedPolicy] = useState(null)
+  const [searchSession, setSearchSession] = useState(INITIAL_SEARCH_SESSION)
 
   useEffect(() => {
-    loadAppState()
-      .then((state) => {
+    Promise.all([loadAppState(), loadSearchSession()])
+      .then(([state, savedSearchSession]) => {
         setOnboarded(state.onboarded)
         setProfile(state.profile)
         if (state.apiBase) setApiBase(state.apiBase)
+        if (savedSearchSession) setSearchSession(savedSearchSession)
       })
+      .catch(() => {})
       .finally(() => setBooting(false))
   }, [])
+
+  useEffect(() => {
+    if (booting || !onboarded) return
+    saveSearchSession(searchSession).catch(() => {})
+  }, [booting, onboarded, searchSession])
 
   if (booting) {
     return (
@@ -93,7 +101,13 @@ export default function App() {
           />
         )}
         {activeTab === 'calendar' && <CalendarScreen {...common} />}
-        {activeTab === 'search' && <SearchScreen {...common} />}
+        {activeTab === 'search' && (
+          <SearchScreen
+            {...common}
+            searchSession={searchSession}
+            onSearchSessionChange={setSearchSession}
+          />
+        )}
         {activeTab === 'my' && (
           <MyScreen
             {...common}
@@ -105,6 +119,7 @@ export default function App() {
             onReset={async () => {
               await resetAppState()
               setProfile(null)
+              setSearchSession(INITIAL_SEARCH_SESSION)
               setOnboarded(false)
               setProfileFlow(false)
               setActiveTab('home')

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { api } from '../api'
 import ChatBubble from '../components/ChatBubble'
@@ -13,15 +13,32 @@ const SUGGESTIONS = [
   '교육·자격증 지원을 찾고 있어',
 ]
 
-export default function SearchScreen({ apiBase, profile, onOpenPolicy }) {
-  const [query, setQuery] = useState('')
-  const [messages, setMessages] = useState([
+export const INITIAL_SEARCH_SESSION = {
+  messages: [
     { role: 'assistant', content: '궁금한 혜택을 자연스럽게 물어보세요. 저장된 프로필과 실제 정책 DB를 함께 확인할게요.' },
-  ])
-  const [result, setResult] = useState(null)
+  ],
+  result: null,
+}
+
+export default function SearchScreen({ apiBase, profile, onOpenPolicy, searchSession, onSearchSessionChange }) {
+  const [query, setQuery] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const scrollRef = useRef(null)
+  const messages = searchSession?.messages?.length ? searchSession.messages : INITIAL_SEARCH_SESSION.messages
+  const result = searchSession?.result || null
+
+  useEffect(() => {
+    const timeout = setTimeout(() => scrollRef.current?.scrollToEnd({ animated: false }), 80)
+    return () => clearTimeout(timeout)
+  }, [])
+
+  const updateSession = (update) => {
+    onSearchSessionChange((current) => {
+      const base = current?.messages?.length ? current : INITIAL_SEARCH_SESSION
+      return typeof update === 'function' ? update(base) : { ...base, ...update }
+    })
+  }
 
   const submit = async (raw) => {
     const text = String(raw ?? query).trim()
@@ -29,7 +46,7 @@ export default function SearchScreen({ apiBase, profile, onOpenPolicy }) {
     setQuery('')
     setError('')
     const nextHistory = [...messages, { role: 'user', content: text }]
-    setMessages(nextHistory)
+    updateSession({ messages: nextHistory })
     setLoading(true)
     try {
       const data = await api.alanSearch(apiBase, {
@@ -39,20 +56,28 @@ export default function SearchScreen({ apiBase, profile, onOpenPolicy }) {
         topK: 8,
         openOnly: true,
       })
-      setResult(data)
-      setMessages((prev) => [...prev, { role: 'assistant', content: data.answer || '관련 정책을 찾았어요.' }])
+      updateSession((current) => ({
+        ...current,
+        result: data,
+        messages: [...current.messages, { role: 'assistant', content: data.answer || '관련 정책을 찾았어요.' }],
+      }))
       setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 80)
     } catch (e) {
       setError(e.message)
-      setMessages((prev) => [...prev, { role: 'assistant', content: '검색 중 문제가 발생했어요. 서버 설정과 네트워크를 확인해주세요.' }])
+      updateSession((current) => ({
+        ...current,
+        messages: [...current.messages, { role: 'assistant', content: '검색 중 문제가 발생했어요. 서버 설정과 네트워크를 확인해주세요.' }],
+      }))
     } finally {
       setLoading(false)
     }
   }
 
   const clear = () => {
-    setMessages([{ role: 'assistant', content: '새로 검색해볼게요. 어떤 혜택을 찾고 있나요?' }])
-    setResult(null)
+    onSearchSessionChange({
+      messages: [{ role: 'assistant', content: '새로 검색해볼게요. 어떤 혜택을 찾고 있나요?' }],
+      result: null,
+    })
     setQuery('')
     setError('')
   }
