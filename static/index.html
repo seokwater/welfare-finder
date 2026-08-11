@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>복지 Finder</title>
+  <style>
+    :root {
+      --green:#16ad66;
+      --green-dark:#0f8e53;
+      --green-soft:#eaf9f1;
+      --ink:#17201c;
+      --muted:#6d756f;
+      --line:#e8ece9;
+      --card:#ffffff;
+      --warn:#f39a3f;
+      --bg:#f7faf8;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Apple SD Gothic Neo","Noto Sans KR",sans-serif;background:var(--bg);color:var(--ink)}
+    .shell{max-width:1040px;margin:0 auto;padding:28px 20px 72px}
+    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+    .brand{display:flex;align-items:center;gap:12px;font-weight:800;font-size:24px}
+    .logo{width:38px;height:38px;border-radius:14px;background:linear-gradient(135deg,#7bd441,var(--green));display:grid;place-items:center;color:white;font-size:23px;box-shadow:0 8px 24px rgba(22,173,102,.2)}
+    .hero{background:linear-gradient(135deg,#13a65f,#24ba70);color:#fff;border-radius:28px;padding:28px;box-shadow:0 18px 42px rgba(22,173,102,.18);margin-bottom:18px}
+    .hero h1{font-size:30px;line-height:1.25;margin:0 0 8px}.hero p{margin:0;opacity:.92}
+    .panel{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:18px;box-shadow:0 8px 30px rgba(31,50,39,.06);margin-bottom:16px}
+    .searchrow{display:grid;grid-template-columns:1fr auto;gap:10px}
+    input,select{width:100%;border:1px solid #dfe6e2;border-radius:14px;padding:13px 14px;background:#fff;font-size:15px;outline:none}
+    input:focus,select:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(22,173,102,.1)}
+    button{font-family:inherit;cursor:pointer}
+    .primary{border:0;border-radius:14px;background:var(--green);color:white;font-weight:800;padding:0 20px;font-size:15px}
+    .primary:hover{background:var(--green-dark)}
+    .hint{font-size:13px;color:var(--muted);margin:10px 2px 0;line-height:1.5}
+    .quick-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:14px}
+    .quick-head h2{font-size:20px;margin:0 0 5px}.quick-head p{font-size:13px;color:var(--muted);margin:0}
+    .clear-btn{border:1px solid var(--line);background:#fff;color:#59625d;padding:9px 12px;border-radius:12px;font-weight:700;white-space:nowrap}
+    .clear-btn:hover{border-color:#bfcac3;background:#fafcfb}
+    .selected-summary{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:var(--green-soft);border:1px solid #d9f2e4;border-radius:16px;padding:11px 12px;margin-bottom:16px;min-height:46px}
+    .summary-label{font-size:12px;font-weight:800;color:#37805a;margin-right:2px}.summary-empty{font-size:13px;color:#61806f}
+    .summary-chip{display:inline-flex;align-items:center;gap:5px;background:white;border:1px solid #cdebdc;color:#176b43;border-radius:999px;padding:6px 9px;font-size:12px;font-weight:750}
+    .filter-group{padding:14px 0;border-top:1px solid #eff2f0}.filter-group:first-of-type{border-top:0;padding-top:2px}
+    .filter-title{display:flex;align-items:baseline;gap:8px;margin-bottom:10px}.filter-title strong{font-size:14px}.filter-title span{font-size:12px;color:var(--muted)}
+    .chips{display:flex;gap:8px;flex-wrap:wrap}
+    .chips.scroll{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin}
+    .chip{border:1px solid #dfe6e2;background:#fff;color:#49534d;border-radius:999px;padding:8px 12px;font-size:13px;font-weight:700;transition:.15s ease;white-space:nowrap}
+    .chip:hover{border-color:#8dd8b1;background:#f8fffb;color:#137a49}
+    .chip.active,.chip[aria-pressed="true"]{border-color:var(--green);background:var(--green);color:white;box-shadow:0 4px 12px rgba(22,173,102,.18)}
+    .advanced{margin-top:12px;border-top:1px solid var(--line);padding-top:14px}
+    details summary{cursor:pointer;font-weight:750;color:#334039;user-select:none}
+    .profile-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+    .checks{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-top:14px;font-size:14px;color:var(--muted)}
+    .checks label{display:flex;gap:7px;align-items:center;cursor:pointer}.checks input{width:auto}
+    .meta{display:flex;justify-content:space-between;align-items:center;margin:22px 2px 10px}.meta h2{font-size:20px;margin:0}.meta span{color:var(--muted);font-size:14px}
+    .parsed{display:none;background:#f0f8ff;border-radius:14px;padding:10px 12px;margin:10px 0 0;font-size:13px;color:#3c5c72}
+    .results{display:grid;gap:12px}
+    .card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:0 6px 22px rgba(31,50,39,.05)}
+    .card-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+    .title{font-size:18px;font-weight:800;line-height:1.35;margin:0 0 8px}.cat{font-size:12px;color:var(--muted);margin-bottom:8px}
+    .badge{display:inline-flex;align-items:center;border-radius:999px;padding:5px 9px;font-size:12px;font-weight:700;margin:0 4px 4px 0;background:#f1f4f2;color:#4f5953}
+    .badge.good{background:#e7f8ef;color:#0c8c50}.badge.warn{background:#fff4e8;color:#c46d13}.badge.bad{background:#fdeeee;color:#bd4343}.badge.open{background:#edf9f2;color:#168853}
+    .desc{font-size:14px;line-height:1.62;color:#49534d;margin:10px 0;white-space:pre-line;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+    .reason{margin-top:12px;border-top:1px solid var(--line);padding-top:11px;font-size:13px}.reason-row{display:flex;gap:8px;margin:7px 0;align-items:flex-start}.dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex:0 0 auto}.dot.pass{background:var(--green)}.dot.fail{background:#d9534f}.dot.unknown{background:var(--warn)}
+    .actions{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-top:12px}.score{font-size:12px;color:var(--muted)}.link{display:inline-block;background:var(--green);color:#fff;text-decoration:none;border-radius:12px;padding:10px 13px;font-size:13px;font-weight:700;white-space:nowrap}
+    .empty,.loading{text-align:center;color:var(--muted);padding:36px 10px}
+    .footnote{font-size:12px;color:#8a918d;margin-top:20px;line-height:1.55}
+    @media(max-width:720px){
+      .shell{padding:18px 12px 50px}.hero{padding:22px;border-radius:22px}.hero h1{font-size:24px}.searchrow{grid-template-columns:1fr}.searchrow .primary{height:48px}
+      .profile-grid{grid-template-columns:1fr 1fr}.card-top{display:block}.status-wrap{margin-top:8px}.actions{align-items:flex-start;flex-direction:column}.quick-head{align-items:center}
+    }
+    @media(max-width:460px){.profile-grid{grid-template-columns:1fr}.chip{padding:8px 11px}.quick-head h2{font-size:18px}}
+  </style>
+</head>
+<body>
+<div class="shell">
+  <header>
+    <div class="brand"><div class="logo">Q</div><span>복지 Finder</span></div>
+    <span style="font-size:13px;color:#79817c">CSV 검색 데모</span>
+  </header>
+
+  <section class="hero">
+    <h1>내 혜택,<br>클릭해서 바로 찾아보세요.</h1>
+    <p>조건을 직접 선택하거나 자연어로 상황을 입력하면 맞는 청년정책을 추천합니다.</p>
+  </section>
+
+  <section class="panel">
+    <div class="searchrow">
+      <input id="q" placeholder="예: 월세 지원 받고 싶어 / 자격증 교육 찾고 있어" />
+      <button id="searchBtn" class="primary">내 혜택 찾아보기</button>
+    </div>
+    <div class="hint">검색어를 쓰지 않아도 아래 조건만 클릭하면 바로 검색할 수 있습니다.</div>
+    <div id="parsed" class="parsed"></div>
+  </section>
+
+  <section class="panel">
+    <div class="quick-head">
+      <div><h2>조건 직접 선택</h2><p>버튼을 누르면 선택되고, 같은 버튼을 다시 누르면 해제됩니다.</p></div>
+      <button id="clearAll" class="clear-btn" type="button">전체 초기화</button>
+    </div>
+
+    <div id="selectedSummary" class="selected-summary"><span class="summary-label">선택 조건</span><span class="summary-empty">아직 선택한 조건이 없어요.</span></div>
+
+    <div class="filter-group">
+      <div class="filter-title"><strong>찾는 혜택</strong><span>여러 개 선택 가능</span></div>
+      <div id="intentChips" class="chips">
+        <button class="chip multi" type="button" data-value="주거">🏠 주거·월세</button>
+        <button class="chip multi" type="button" data-value="취업">💼 취업·일자리</button>
+        <button class="chip multi" type="button" data-value="창업">🚀 창업</button>
+        <button class="chip multi" type="button" data-value="교육">📚 교육·자격증</button>
+        <button class="chip multi" type="button" data-value="금융">💰 금융·저축</button>
+        <button class="chip multi" type="button" data-value="문화">🎨 문화·여가</button>
+        <button class="chip multi" type="button" data-value="건강">🩺 건강·심리</button>
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <div class="filter-title"><strong>나이</strong><span>만 나이 기준</span></div>
+      <div id="ageChips" class="chips scroll"></div>
+    </div>
+
+    <div class="filter-group">
+      <div class="filter-title"><strong>거주지역</strong><span>광역시·도 기준</span></div>
+      <div id="regionChips" class="chips"></div>
+    </div>
+
+    <div class="filter-group">
+      <div class="filter-title"><strong>취업상태</strong></div>
+      <div id="employmentChips" class="chips"></div>
+    </div>
+
+    <div class="filter-group">
+      <div class="filter-title"><strong>학력</strong></div>
+      <div id="educationChips" class="chips"></div>
+    </div>
+
+    <div class="filter-group">
+      <div class="filter-title"><strong>결혼상태</strong></div>
+      <div id="maritalChips" class="chips"></div>
+    </div>
+
+    <div class="filter-group">
+      <div class="filter-title"><strong>연소득</strong><span>만원 기준 · 선택 사항</span></div>
+      <div id="incomeChips" class="chips"></div>
+    </div>
+
+    <details class="advanced">
+      <summary>세부 조건 직접 입력</summary>
+      <div class="profile-grid">
+        <input id="age" type="number" min="1" max="99" placeholder="나이 직접 입력" />
+        <input id="region" placeholder="시·군·구 직접 입력 (예: 전주시)" />
+        <select id="employment">
+          <option value="">취업상태 선택 안함</option><option>미취업자</option><option>재직자</option><option>(예비)창업자</option><option>자영업자</option><option>프리랜서</option><option>일용근로자</option><option>단기근로자</option><option>영농종사자</option>
+        </select>
+        <select id="marital">
+          <option value="">결혼상태 선택 안함</option><option>미혼</option><option>기혼</option>
+        </select>
+        <select id="education">
+          <option value="">학력 선택 안함</option><option>고교 재학</option><option>고교 졸업</option><option>대학 재학</option><option>대졸 예정</option><option>대학 졸업</option><option>석·박사</option>
+        </select>
+        <input id="income" type="number" min="0" placeholder="연소득 직접 입력 (만원)" />
+      </div>
+    </details>
+
+    <div class="checks">
+      <label><input id="openOnly" type="checkbox" checked> 마감 정책 제외</label>
+      <label><input id="eligibleOnly" type="checkbox"> 명백한 조건 불일치 제외</label>
+    </div>
+  </section>
+
+  <div class="meta"><h2>추천 혜택</h2><span id="count">검색 전</span></div>
+  <div id="results" class="results"><div class="empty">위 조건을 클릭하거나 검색어를 입력해 보세요.</div></div>
+  <div class="footnote">자동 자격분석은 CSV에 구조화되거나 비교적 명확하게 적힌 조건만 참고합니다. 가구원 수, 재산, 세부 거주기간, 중복수혜 제한 등은 반드시 원문 공고에서 최종 확인하세요.</div>
+</div>
+<script>
+const $ = id => document.getElementById(id);
+const state = { intents:new Set(), age:null, region:null, employment:null, education:null, marital_status:null, annual_income_manwon:null };
+const regionOptions = ['서울','부산','대구','인천','광주','대전','울산','세종','경기','강원','충북','충남','전북','전남','경북','경남','제주'];
+const employmentOptions = ['미취업자','재직자','(예비)창업자','자영업자','프리랜서','일용근로자','단기근로자','영농종사자'];
+const educationOptions = ['고교 재학','고교 졸업','대학 재학','대졸 예정','대학 졸업','석·박사'];
+const maritalOptions = ['미혼','기혼'];
+const incomeOptions = [1200,1800,2400,3000,3600,4800,6000];
+let debounceTimer = null;
+let requestSeq = 0;
+
+function esc(s){ return String(s ?? '').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
+function statusLabel(s){return s==='likely'?'조건 충족 가능성 높음':s==='mismatch'?'조건 불일치':'추가 확인 필요'}
+function statusClass(s){return s==='likely'?'good':s==='mismatch'?'bad':'warn'}
+function criterionHtml(c){return `<div class="reason-row"><span class="dot ${c.status}"></span><div><b>${esc(c.criterion)}</b> · ${esc(c.reason)}<br><span style="color:#8a918d">${esc(c.policy_rule)}</span></div></div>`}
+function renderCard(r){
+  const p=r.policy, e=r.eligibility, a=r.application;
+  const url=p.detail_url;
+  const keywords=(p['정책키워드']||'').split(',').filter(Boolean).slice(0,3).map(x=>`<span class="badge">${esc(x.trim())}</span>`).join('');
+  return `<article class="card">
+    <div class="card-top"><div><div class="cat">${esc(p['정책대분류'])} · ${esc(p['정책중분류'])}</div><h3 class="title">${esc(p['정책명'])}</h3>${keywords}</div>
+    <div class="status-wrap"><span class="badge ${statusClass(e.status)}">${statusLabel(e.status)}</span><span class="badge open">${esc(a.label)}</span></div></div>
+    <div class="desc">${esc(p['지원내용'] || p['정책설명'])}</div>
+    <details class="reason"><summary>자격 분석 보기</summary>${e.criteria.length?e.criteria.map(criterionHtml).join(''):'<div style="margin-top:8px;color:#777">프로필 조건을 선택하면 조건별 분석을 보여줍니다.</div>'}</details>
+    <div class="actions"><span class="score">검색점수 ${Math.round(r.score*100)} · ${esc(p['정책거주지역요약'])}</span>${url?`<a class="link" href="${esc(url)}" target="_blank" rel="noopener">정책 상세 보기 ↗</a>`:''}</div>
+  </article>`
+}
+
+function createSingleChips(containerId, options, key, labeler=v=>v){
+  const el=$(containerId);
+  el.innerHTML=options.map(v=>`<button type="button" class="chip" data-value="${esc(v)}" aria-pressed="false">${esc(labeler(v))}</button>`).join('');
+  el.addEventListener('click', e=>{
+    const btn=e.target.closest('.chip'); if(!btn) return;
+    const raw=btn.dataset.value;
+    const value=key==='age'||key==='annual_income_manwon' ? Number(raw) : raw;
+    state[key]=state[key]===value ? null : value;
+    syncAll(); queueSearch();
+  });
+}
+
+function initChips(){
+  const ages=[]; for(let i=18;i<=39;i++) ages.push(i);
+  createSingleChips('ageChips',ages,'age',v=>`${v}세`);
+  createSingleChips('regionChips',regionOptions,'region');
+  createSingleChips('employmentChips',employmentOptions,'employment');
+  createSingleChips('educationChips',educationOptions,'education');
+  createSingleChips('maritalChips',maritalOptions,'marital_status');
+  createSingleChips('incomeChips',incomeOptions,'annual_income_manwon',v=>`${Number(v).toLocaleString()}만원`);
+  $('intentChips').addEventListener('click',e=>{
+    const btn=e.target.closest('.chip'); if(!btn) return;
+    const v=btn.dataset.value;
+    state.intents.has(v)?state.intents.delete(v):state.intents.add(v);
+    syncAll(); queueSearch();
+  });
+}
+
+function setPressed(containerId, selected){
+  document.querySelectorAll(`#${containerId} .chip`).forEach(btn=>{
+    const raw=btn.dataset.value;
+    const normalized=(typeof selected==='number')?Number(raw):raw;
+    btn.setAttribute('aria-pressed', String(selected!==null && selected===normalized));
+  });
+}
+
+function syncAll(){
+  document.querySelectorAll('#intentChips .chip').forEach(btn=>btn.setAttribute('aria-pressed',String(state.intents.has(btn.dataset.value))));
+  setPressed('ageChips',state.age); setPressed('regionChips',state.region); setPressed('employmentChips',state.employment);
+  setPressed('educationChips',state.education); setPressed('maritalChips',state.marital_status); setPressed('incomeChips',state.annual_income_manwon);
+  $('age').value=state.age??''; $('region').value=state.region??''; $('employment').value=state.employment??'';
+  $('education').value=state.education??''; $('marital').value=state.marital_status??''; $('income').value=state.annual_income_manwon??'';
+  renderSummary();
+}
+
+function renderSummary(){
+  const parts=[];
+  [...state.intents].forEach(v=>parts.push(`혜택 · ${v}`));
+  if(state.age!==null) parts.push(`만 ${state.age}세`);
+  if(state.region) parts.push(`${state.region} 거주`);
+  if(state.employment) parts.push(state.employment);
+  if(state.education) parts.push(state.education);
+  if(state.marital_status) parts.push(state.marital_status);
+  if(state.annual_income_manwon!==null) parts.push(`연소득 ${Number(state.annual_income_manwon).toLocaleString()}만원`);
+  $('selectedSummary').innerHTML=`<span class="summary-label">선택 조건</span>${parts.length?parts.map(x=>`<span class="summary-chip">${esc(x)}</span>`).join(''):'<span class="summary-empty">아직 선택한 조건이 없어요.</span>'}`;
+}
+
+function bindManualInputs(){
+  const mappings=[['age','age',v=>v===''?null:Number(v)],['region','region',v=>v.trim()||null],['employment','employment',v=>v||null],['education','education',v=>v||null],['marital','marital_status',v=>v||null],['income','annual_income_manwon',v=>v===''?null:Number(v)]];
+  mappings.forEach(([id,key,convert])=>{
+    $(id).addEventListener('change',()=>{state[key]=convert($(id).value);syncAll();queueSearch();});
+  });
+}
+
+function hasConditions(){
+  return $('q').value.trim() || state.intents.size || state.age!==null || state.region || state.employment || state.education || state.marital_status || state.annual_income_manwon!==null;
+}
+function queueSearch(){
+  clearTimeout(debounceTimer);
+  if(!hasConditions()) { $('count').textContent='검색 전'; $('results').innerHTML='<div class="empty">위 조건을 클릭하거나 검색어를 입력해 보세요.</div>'; return; }
+  debounceTimer=setTimeout(search,320);
+}
+
+async function search(){
+  if(!hasConditions()) return;
+  const seq=++requestSeq;
+  const intentText=[...state.intents].join(' ');
+  const typedQuery=$('q').value.trim();
+  const query=[typedQuery,intentText].filter(Boolean).join(' ').trim();
+  const profile={
+    age:state.age,
+    region:state.region,
+    employment:state.employment,
+    marital_status:state.marital_status,
+    education:state.education,
+    annual_income_manwon:state.annual_income_manwon,
+    median_income_percent:null
+  };
+  $('results').innerHTML='<div class="loading">선택한 조건으로 정책을 찾고 있어요…</div>'; $('count').textContent='검색 중';
+  try{
+    const res=await fetch('/api/search',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query,profile,top_k:12,open_only:$('openOnly').checked,eligible_only:$('eligibleOnly').checked})});
+    if(!res.ok) throw new Error(await res.text());
+    const data=await res.json(); if(seq!==requestSeq) return;
+    const parsed=Object.entries(data.parsed_profile).filter(([,v])=>v!==null && v!=='');
+    if(parsed.length && typedQuery){$('parsed').style.display='block';$('parsed').innerHTML='검색 문장에서 이해한 조건: '+parsed.map(([k,v])=>`<b>${esc(k)}</b> ${esc(v)}`).join(' · ')}else{$('parsed').style.display='none'}
+    $('count').textContent=`${data.count}개 표시`;
+    $('results').innerHTML=data.results.length?data.results.map(renderCard).join(''):'<div class="empty">조건에 맞는 결과가 없습니다. 조건을 하나씩 해제해 보세요.</div>';
+  }catch(err){if(seq!==requestSeq)return;$('count').textContent='오류';$('results').innerHTML=`<div class="empty">검색 중 오류가 발생했습니다.<br>${esc(err.message)}</div>`}
+}
+
+$('searchBtn').addEventListener('click',search);
+$('q').addEventListener('keydown',e=>{if(e.key==='Enter')search()});
+$('q').addEventListener('input',()=>{if($('q').value.trim()==='' && !hasConditions()) queueSearch();});
+$('openOnly').addEventListener('change',queueSearch); $('eligibleOnly').addEventListener('change',queueSearch);
+$('clearAll').addEventListener('click',()=>{
+  state.intents.clear(); state.age=null; state.region=null; state.employment=null; state.education=null; state.marital_status=null; state.annual_income_manwon=null;
+  $('q').value=''; syncAll(); $('parsed').style.display='none'; queueSearch();
+});
+
+initChips(); bindManualInputs(); syncAll();
+</script>
+</body>
+</html>

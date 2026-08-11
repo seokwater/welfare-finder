@@ -1,0 +1,1040 @@
+[debug] [2026-08-11T05:13:24.660Z] ----------------------------------------------------------------------
+[debug] [2026-08-11T05:13:24.665Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\PC2411\AppData\Local\npm-cache\_npx\ba4f1959e38407b5\node_modules\firebase-tools\lib\bin\firebase.js projects:create welfare-finder-20260811 --display-name 복지 Finder
+[debug] [2026-08-11T05:13:24.665Z] CLI Version:   15.26.0
+[debug] [2026-08-11T05:13:24.666Z] Platform:      win32
+[debug] [2026-08-11T05:13:24.666Z] Node Version:  v24.16.0
+[debug] [2026-08-11T05:13:24.667Z] Detected Agent: codex_cli
+[debug] [2026-08-11T05:13:24.667Z] Time:          Tue Aug 11 2026 14:13:24 GMT+0900 (한국 표준시)
+[debug] [2026-08-11T05:13:24.668Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-08-11T05:13:24.691Z] >>> [apiv2][query] GET https://firebase-public.firebaseio.com/cli.json [none]
+[debug] [2026-08-11T05:13:24.761Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-08-11T05:13:24.761Z] > authorizing via signed-in user (cloudpro35@iceu.kr)
+[debug] [2026-08-11T05:13:24.767Z] Checked if tokens are valid: false, expires at: 1783521942612
+[debug] [2026-08-11T05:13:24.767Z] Checked if tokens are valid: false, expires at: 1783521942612
+[debug] [2026-08-11T05:13:24.768Z] > refreshing access token with scopes: []
+[debug] [2026-08-11T05:13:24.772Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-08-11T05:13:24.772Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-08-11T05:13:25.004Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 400
+[debug] [2026-08-11T05:13:25.004Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[debug] [2026-08-11T05:13:25.009Z] FirebaseError: Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+    at invalidCredentialError (C:\Users\PC2411\AppData\Local\npm-cache\_npx\ba4f1959e38407b5\node_modules\firebase-tools\lib\auth.js:178:12)
+    at refreshTokens (C:\Users\PC2411\AppData\Local\npm-cache\_npx\ba4f1959e38407b5\node_modules\firebase-tools\lib\auth.js:607:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async getAccessToken (C:\Users\PC2411\AppData\Local\npm-cache\_npx\ba4f1959e38407b5\node_modules\firebase-tools\lib\apiv2.js:53:18)
+    at async Client.addAuthHeader (C:\Users\PC2411\AppData\Local\npm-cache\_npx\ba4f1959e38407b5\node_modules\firebase-tools\lib\apiv2.js:209:21)
+    at async Client.request (C:\Users\PC2411\AppData\Local\npm-cache\_npx\ba4f1959e38407b5\node_modules\firebase-tools\lib\apiv2.js:156:34)
+    at async createCloudProject (C:\Users\PC2411\AppData\Local\npm-cache\_npx\ba4f1959e38407b5\node_modules\firebase-tools\lib\management\projects.js:231:26)
+    at async createFirebaseProjectAndLog (C:\Users\PC2411\AppData\Local\npm-cache\_npx\ba4f1959e38407b5\node_modules\firebase-tools\lib\management\projects.js:102:9)
+    at async C:\Users\PC2411\AppData\Local\npm-cache\_npx\ba4f1959e38407b5\node_modules\firebase-tools\lib\command.js:280:28
+[error] 
+[error] Error: Failed to create project. See firebase-debug.log for more info.
+[debug] [2026-08-11T05:13:25.179Z] <<< [apiv2][status] GET https://firebase-public.firebaseio.com/cli.json 200
+[debug] [2026-08-11T05:13:25.179Z] <<< [apiv2][body] GET https://firebase-public.firebaseio.com/cli.json {"cloudBuildErrorAfter":1594252800000,"cloudBuildWarnAfter":1590019200000,"defaultNode10After":1594252800000,"minVersion":"3.0.5","node8DeploysDisabledAfter":1613390400000,"node8RuntimeDisabledAfter":1615809600000,"node8WarnAfter":1600128000000}
+[debug] [2026-08-11T05:13:40.128Z] ----------------------------------------------------------------------
+[debug] [2026-08-11T05:13:40.135Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\PC2411\AppData\Local\npm-cache\_npx\ba4f1959e38407b5\node_modules\firebase-tools\lib\bin\firebase.js login --reauth
+[debug] [2026-08-11T05:13:40.135Z] CLI Version:   15.26.0
+[debug] [2026-08-11T05:13:40.136Z] Platform:      win32
+[debug] [2026-08-11T05:13:40.136Z] Node Version:  v24.16.0
+[debug] [2026-08-11T05:13:40.137Z] Detected Agent: codex_cli
+[debug] [2026-08-11T05:13:40.137Z] Time:          Tue Aug 11 2026 14:13:40 GMT+0900 (한국 표준시)
+[debug] [2026-08-11T05:13:40.137Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-08-11T05:13:40.212Z] >>> [apiv2][query] POST https://auth.firebase.tools/attest [none]
+[debug] [2026-08-11T05:13:40.212Z] >>> [apiv2][body] POST https://auth.firebase.tools/attest {"session_id":"10501c79-b771-4403-9cf7-3af51213d050"}
+[debug] [2026-08-11T05:13:41.022Z] <<< [apiv2][status] POST https://auth.firebase.tools/attest 200
+[debug] [2026-08-11T05:14:57.576Z] ----------------------------------------------------------------------
+[debug] [2026-08-11T05:14:57.581Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\PC2411\AppData\Local\npm-cache\_npx\ba4f1959e38407b5\node_modules\firebase-tools\lib\bin\firebase.js logout cloudpro35@iceu.kr
+[debug] [2026-08-11T05:14:57.582Z] CLI Version:   15.26.0
+[debug] [2026-08-11T05:14:57.582Z] Platform:      win32
+[debug] [2026-08-11T05:14:57.582Z] Node Version:  v24.16.0
+[debug] [2026-08-11T05:14:57.583Z] Detected Agent: codex_cli
+[debug] [2026-08-11T05:14:57.583Z] Time:          Tue Aug 11 2026 14:14:57 GMT+0900 (한국 표준시)
+[debug] [2026-08-11T05:14:57.584Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-08-11T05:14:57.730Z] >>> [apiv2][query] GET https://accounts.google.com/o/oauth2/revoke token=1%2F%2F0eDk-4DAZDqrsCgYIARAAGA4SNwF-L9Ir_RBpW0wAkLnkOqGsl6MsYSHG6Hs0XP-i9E0mtcw_0NzOixm5p_0j8ovOyezPgcrH0FM
+[debug] [2026-08-11T05:14:57.973Z] <<< [apiv2][status] GET https://accounts.google.com/o/oauth2/revoke 200
+[debug] [2026-08-11T05:15:14.124Z] ----------------------------------------------------------------------
+[debug] [2026-08-11T05:15:14.134Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\PC2411\AppData\Local\npm-cache\_npx\ba4f1959e38407b5\node_modules\firebase-tools\lib\bin\firebase.js login
+[debug] [2026-08-11T05:15:14.135Z] CLI Version:   15.26.0
+[debug] [2026-08-11T05:15:14.135Z] Platform:      win32
+[debug] [2026-08-11T05:15:14.135Z] Node Version:  v24.16.0
+[debug] [2026-08-11T05:15:14.136Z] Detected Agent: codex_cli
+[debug] [2026-08-11T05:15:14.136Z] Time:          Tue Aug 11 2026 14:15:14 GMT+0900 (한국 표준시)
+[debug] [2026-08-11T05:15:14.136Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-08-11T05:15:14.175Z] >>> [apiv2][query] POST https://auth.firebase.tools/attest [none]
+[debug] [2026-08-11T05:15:14.176Z] >>> [apiv2][body] POST https://auth.firebase.tools/attest {"session_id":"a94ff884-4b24-4c70-b7a6-1a7959cef434"}
+[debug] [2026-08-11T05:15:14.680Z] <<< [apiv2][status] POST https://auth.firebase.tools/attest 200
+[debug] [2026-08-11T05:17:49.529Z] ----------------------------------------------------------------------
+[debug] [2026-08-11T05:17:49.547Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\PC2411\AppData\Local\npm-cache\_npx\ba4f1959e38407b5\node_modules\firebase-tools\lib\bin\firebase.js login 4/0AXEQxICng51TShBzZholNpmGoptGzsaGE1dP7WvnYfwoN5AZX5Ww5RyvCdk82z4LZSG0GA
+[debug] [2026-08-11T05:17:49.548Z] CLI Version:   15.26.0
+[debug] [2026-08-11T05:17:49.549Z] Platform:      win32
+[debug] [2026-08-11T05:17:49.549Z] Node Version:  v24.16.0
+[debug] [2026-08-11T05:17:49.550Z] Detected Agent: codex_cli
+[debug] [2026-08-11T05:17:49.551Z] Time:          Tue Aug 11 2026 14:17:49 GMT+0900 (한국 표준시)
+[debug] [2026-08-11T05:17:49.551Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-08-11T05:17:49.630Z] >>> [apiv2][query] POST https://accounts.google.com/o/oauth2/token [none]
+[debug] [2026-08-11T05:17:49.630Z] >>> [apiv2][body] POST https://accounts.google.com/o/oauth2/token [omitted]
+[debug] [2026-08-11T05:17:49.870Z] <<< [apiv2][status] POST https://accounts.google.com/o/oauth2/token 400
+[debug] [2026-08-11T05:17:49.871Z] <<< [apiv2][body] POST https://accounts.google.com/o/oauth2/token [omitted]
+[debug] [2026-08-11T05:17:49.874Z] Token Fetch Error: FirebaseError: Request to https://accounts.google.com/o/oauth2/token had HTTP Error: 400, invalid_grant
+    at responseToError (C:\Users\PC2411\AppData\Local\npm-cache\_npx\ba4f1959e38407b5\node_modules\firebase-tools\lib\responseToError.js:53:12)
+    at RetryOperation._fn (C:\Users\PC2411\AppData\Local\npm-cache\_npx\ba4f1959e38407b5\node_modules\firebase-tools\lib\apiv2.js:415:77)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[error] 
+[error] Error: Login failed: Unable to authenticate using the provided code. Please try again.
+[debug] [2026-08-11T05:18:07.985Z] ----------------------------------------------------------------------
+[debug] [2026-08-11T05:18:07.993Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\PC2411\AppData\Local\npm-cache\_npx\ba4f1959e38407b5\node_modules\firebase-tools\lib\bin\firebase.js login --no-localhost
+[debug] [2026-08-11T05:18:07.994Z] CLI Version:   15.26.0
+[debug] [2026-08-11T05:18:07.994Z] Platform:      win32
+[debug] [2026-08-11T05:18:07.995Z] Node Version:  v24.16.0
+[debug] [2026-08-11T05:18:07.995Z] Detected Agent: codex_cli
+[debug] [2026-08-11T05:18:07.996Z] Time:          Tue Aug 11 2026 14:18:07 GMT+0900 (한국 표준시)
+[debug] [2026-08-11T05:18:07.996Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-08-11T05:18:08.049Z] >>> [apiv2][query] POST https://auth.firebase.tools/attest [none]
+[debug] [2026-08-11T05:18:08.050Z] >>> [apiv2][body] POST https://auth.firebase.tools/attest {"session_id":"14c74ea1-d05d-4ebc-8b8e-08f45a0543d8"}
+[debug] [2026-08-11T05:18:08.707Z] <<< [apiv2][status] POST https://auth.firebase.tools/attest 200
+[debug] [2026-08-11T05:19:19.433Z] ----------------------------------------------------------------------
+[debug] [2026-08-11T05:19:19.441Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\PC2411\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js login --no-localhost
+[debug] [2026-08-11T05:19:19.442Z] CLI Version:   15.22.4
+[debug] [2026-08-11T05:19:19.442Z] Platform:      win32
+[debug] [2026-08-11T05:19:19.443Z] Node Version:  v24.16.0
+[debug] [2026-08-11T05:19:19.443Z] Detected Agent: unknown
+[debug] [2026-08-11T05:19:19.444Z] Time:          Tue Aug 11 2026 14:19:19 GMT+0900 (한국 표준시)
+[debug] [2026-08-11T05:19:19.444Z] ----------------------------------------------------------------------
+[debug] 
+[info] i  The Firebase CLI’s MCP server feature can optionally make use of Gemini in Firebase. Learn more about Gemini in Firebase and how it uses your data: https://firebase.google.com/docs/gemini-in-firebase#how-gemini-in-firebase-uses-your-data 
+[info] 
+[info] i  Firebase optionally collects CLI and Emulator Suite usage and error reporting information to help improve our products. Data is collected in accordance with Google's privacy policy (https://policies.google.com/privacy) and is not used to identify you. 
+[info] 
+[info] i  To change your preferences at any time, run `firebase logout` and `firebase login` again. 
+[debug] [2026-08-11T05:19:35.458Z] >>> [apiv2][query] POST https://auth.firebase.tools/attest [none]
+[debug] [2026-08-11T05:19:35.459Z] >>> [apiv2][body] POST https://auth.firebase.tools/attest {"session_id":"77eb8260-ec3e-4623-a216-443a7b8c5457"}
+[debug] [2026-08-11T05:19:36.090Z] <<< [apiv2][status] POST https://auth.firebase.tools/attest 200
+[debug] [2026-08-11T05:19:36.090Z] <<< [apiv2][body] POST https://auth.firebase.tools/attest {"token":"WH6_C8VtGhMaHlKnD6W0Dh8DfdVaimKIT1xwaHUHMzs"}
+[info] 
+[info] To sign in to the Firebase CLI:
+[info] 
+[info] 1. Take note of your session ID:
+[info] 
+[info]    77EB8
+[info] 
+[info] 2. Visit the URL below on any device and follow the instructions to get your code:
+[info] 
+[info]    https://auth.firebase.tools/login?code_challenge=rn67h20-VNOjbQjgJ3nsla9ai-5BR8dF19NWhHaBEr4&session=77eb8260-ec3e-4623-a216-443a7b8c5457&attest=WH6_C8VtGhMaHlKnD6W0Dh8DfdVaimKIT1xwaHUHMzs
+[info] 
+[info] 3. Paste or enter the authorization code below once you have it:
+[info] 
+[debug] [2026-08-11T05:20:53.312Z] ----------------------------------------------------------------------
+[debug] [2026-08-11T05:20:53.323Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\PC2411\AppData\Local\npm-cache\_npx\ba4f1959e38407b5\node_modules\firebase-tools\lib\bin\firebase.js login 4/0AXEQxIBnYIUat3swj1KXmTVHm69UqtRhBu8FcZ_3H2OX4-_1lU-WTx8CVG_wxMI3rLQPGQ
+[debug] [2026-08-11T05:20:53.325Z] CLI Version:   15.26.0
+[debug] [2026-08-11T05:20:53.326Z] Platform:      win32
+[debug] [2026-08-11T05:20:53.327Z] Node Version:  v24.16.0
+[debug] [2026-08-11T05:20:53.328Z] Detected Agent: codex_cli
+[debug] [2026-08-11T05:20:53.329Z] Time:          Tue Aug 11 2026 14:20:53 GMT+0900 (한국 표준시)
+[debug] [2026-08-11T05:20:53.331Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-08-11T05:20:53.437Z] >>> [apiv2][query] POST https://accounts.google.com/o/oauth2/token [none]
+[debug] [2026-08-11T05:20:53.438Z] >>> [apiv2][body] POST https://accounts.google.com/o/oauth2/token [omitted]
+[debug] [2026-08-11T05:20:53.810Z] <<< [apiv2][status] POST https://accounts.google.com/o/oauth2/token 200
+[debug] [2026-08-11T05:20:53.811Z] <<< [apiv2][body] POST https://accounts.google.com/o/oauth2/token [omitted]
+[info] +  Success! Logged in as rhfkekd0903@gmail.com 
+[debug] [2026-08-11T05:21:18.287Z] ----------------------------------------------------------------------
+[debug] [2026-08-11T05:21:18.301Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\PC2411\AppData\Local\npm-cache\_npx\ba4f1959e38407b5\node_modules\firebase-tools\lib\bin\firebase.js projects:create welfare-finder-20260811 --display-name 복지 Finder
+[debug] [2026-08-11T05:21:18.303Z] CLI Version:   15.26.0
+[debug] [2026-08-11T05:21:18.304Z] Platform:      win32
+[debug] [2026-08-11T05:21:18.305Z] Node Version:  v24.16.0
+[debug] [2026-08-11T05:21:18.306Z] Detected Agent: codex_cli
+[debug] [2026-08-11T05:21:18.308Z] Time:          Tue Aug 11 2026 14:21:18 GMT+0900 (한국 표준시)
+[debug] [2026-08-11T05:21:18.310Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-08-11T05:21:18.342Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-08-11T05:21:18.343Z] > authorizing via signed-in user (rhfkekd0903@gmail.com)
+[debug] [2026-08-11T05:21:18.398Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:21:18.398Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:21:18.402Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects [none]
+[debug] [2026-08-11T05:21:18.402Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects {"projectId":"welfare-finder-20260811","name":"복지 Finder"}
+[debug] [2026-08-11T05:21:19.325Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects 400
+[debug] [2026-08-11T05:21:19.326Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects {"error":{"code":400,"message":"field [display_name] has issue [project display name contains invalid characters]","status":"INVALID_ARGUMENT","details":[{"@type":"type.googleapis.com/google.rpc.BadRequest","fieldViolations":[{"field":"display_name","description":"project display name contains invalid characters"}]},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"url":"https://cloud.google.com/resource-manager/reference/rest/v1/projects"}]}]}}
+[debug] [2026-08-11T05:21:19.511Z] FirebaseError: Request to https://cloudresourcemanager.googleapis.com/v1/projects had HTTP Error: 400, field [display_name] has issue [project display name contains invalid characters]
+    at responseToError (C:\Users\PC2411\AppData\Local\npm-cache\_npx\ba4f1959e38407b5\node_modules\firebase-tools\lib\responseToError.js:53:12)
+    at RetryOperation._fn (C:\Users\PC2411\AppData\Local\npm-cache\_npx\ba4f1959e38407b5\node_modules\firebase-tools\lib\apiv2.js:415:77)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+[error] 
+[error] Error: Failed to create project. See firebase-debug.log for more info.
+[debug] [2026-08-11T05:22:23.832Z] ----------------------------------------------------------------------
+[debug] [2026-08-11T05:22:23.848Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\PC2411\AppData\Local\npm-cache\_npx\ba4f1959e38407b5\node_modules\firebase-tools\lib\bin\firebase.js projects:create welfare-finder-20260811 --display-name Welfare Finder
+[debug] [2026-08-11T05:22:23.850Z] CLI Version:   15.26.0
+[debug] [2026-08-11T05:22:23.851Z] Platform:      win32
+[debug] [2026-08-11T05:22:23.852Z] Node Version:  v24.16.0
+[debug] [2026-08-11T05:22:23.853Z] Detected Agent: codex_cli
+[debug] [2026-08-11T05:22:23.854Z] Time:          Tue Aug 11 2026 14:22:23 GMT+0900 (한국 표준시)
+[debug] [2026-08-11T05:22:23.855Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-08-11T05:22:23.892Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-08-11T05:22:23.893Z] > authorizing via signed-in user (rhfkekd0903@gmail.com)
+[debug] [2026-08-11T05:22:23.962Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:22:23.963Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:22:23.969Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects [none]
+[debug] [2026-08-11T05:22:23.970Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects {"projectId":"welfare-finder-20260811","name":"Welfare Finder"}
+[debug] [2026-08-11T05:22:24.598Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects 200
+[debug] [2026-08-11T05:22:24.599Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects {"name":"operations/create_project.global.8401717315175497787"}
+[debug] [2026-08-11T05:22:24.603Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:22:24.603Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:22:24.605Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/operations/create_project.global.8401717315175497787 [none]
+[debug] [2026-08-11T05:22:25.416Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/operations/create_project.global.8401717315175497787 200
+[debug] [2026-08-11T05:22:25.417Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/operations/create_project.global.8401717315175497787 {"name":"operations/create_project.global.8401717315175497787","metadata":{"@type":"type.googleapis.com/google.cloudresourcemanager.v1.ProjectCreationStatus","ready":true},"done":true,"error":{"code":9,"message":"Callers must accept Terms of Service","details":[{"@type":"type.googleapis.com/google.rpc.PreconditionFailure","violations":[{"type":"TOS","subject":"cloud","description":"Callers must accept Terms of Service"}]}]}}
+[debug] [2026-08-11T05:22:25.608Z] FirebaseError: Callers must accept Terms of Service
+    at OperationPoller.poll (C:\Users\PC2411\AppData\Local\npm-cache\_npx\ba4f1959e38407b5\node_modules\firebase-tools\lib\operation-poller.js:25:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async createCloudProject (C:\Users\PC2411\AppData\Local\npm-cache\_npx\ba4f1959e38407b5\node_modules\firebase-tools\lib\management\projects.js:237:29)
+    at async createFirebaseProjectAndLog (C:\Users\PC2411\AppData\Local\npm-cache\_npx\ba4f1959e38407b5\node_modules\firebase-tools\lib\management\projects.js:102:9)
+    at async C:\Users\PC2411\AppData\Local\npm-cache\_npx\ba4f1959e38407b5\node_modules\firebase-tools\lib\command.js:280:28
+[error] 
+[error] Error: Failed to create project. See firebase-debug.log for more info.
+[debug] [2026-08-11T05:24:08.647Z] ----------------------------------------------------------------------
+[debug] [2026-08-11T05:24:08.694Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\PC2411\AppData\Local\npm-cache\_npx\ba4f1959e38407b5\node_modules\firebase-tools\lib\bin\firebase.js projects:create welfare-finder-20260811 --display-name Welfare Finder
+[debug] [2026-08-11T05:24:08.697Z] CLI Version:   15.26.0
+[debug] [2026-08-11T05:24:08.699Z] Platform:      win32
+[debug] [2026-08-11T05:24:08.700Z] Node Version:  v24.16.0
+[debug] [2026-08-11T05:24:08.702Z] Detected Agent: codex_cli
+[debug] [2026-08-11T05:24:08.704Z] Time:          Tue Aug 11 2026 14:24:08 GMT+0900 (한국 표준시)
+[debug] [2026-08-11T05:24:08.707Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-08-11T05:24:08.949Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-08-11T05:24:08.953Z] > authorizing via signed-in user (rhfkekd0903@gmail.com)
+[debug] [2026-08-11T05:24:09.332Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:24:09.334Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:24:09.360Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects [none]
+[debug] [2026-08-11T05:24:09.362Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects {"projectId":"welfare-finder-20260811","name":"Welfare Finder"}
+[debug] [2026-08-11T05:24:10.390Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects 200
+[debug] [2026-08-11T05:24:10.391Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects {"name":"operations/create_project.global.8014509159937463558"}
+[debug] [2026-08-11T05:24:10.402Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:24:10.404Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:24:10.412Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/operations/create_project.global.8014509159937463558 [none]
+[debug] [2026-08-11T05:24:11.224Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/operations/create_project.global.8014509159937463558 200
+[debug] [2026-08-11T05:24:11.226Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/operations/create_project.global.8014509159937463558 {"name":"operations/create_project.global.8014509159937463558"}
+[debug] [2026-08-11T05:24:11.730Z] [Project Creation Poller] Retrying task index 0
+[debug] [2026-08-11T05:24:11.731Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:24:11.732Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:24:11.733Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/operations/create_project.global.8014509159937463558 [none]
+[debug] [2026-08-11T05:24:11.972Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/operations/create_project.global.8014509159937463558 200
+[debug] [2026-08-11T05:24:11.980Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/operations/create_project.global.8014509159937463558 {"name":"operations/create_project.global.8014509159937463558"}
+[debug] [2026-08-11T05:24:12.989Z] [Project Creation Poller] Retrying task index 0
+[debug] [2026-08-11T05:24:12.992Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:24:12.995Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:24:12.997Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/operations/create_project.global.8014509159937463558 [none]
+[debug] [2026-08-11T05:24:13.217Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/operations/create_project.global.8014509159937463558 200
+[debug] [2026-08-11T05:24:13.223Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/operations/create_project.global.8014509159937463558 {"name":"operations/create_project.global.8014509159937463558","metadata":{"@type":"type.googleapis.com/google.cloudresourcemanager.v1.ProjectCreationStatus","gettable":true,"ready":true},"done":true,"response":{"@type":"type.googleapis.com/google.cloudresourcemanager.v1.Project","projectNumber":"719568554718","projectId":"welfare-finder-20260811","lifecycleState":"ACTIVE","name":"Welfare Finder","createTime":"2026-08-11T05:24:09.372Z"}}
+[debug] [2026-08-11T05:24:13.254Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:24:13.256Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:24:13.270Z] >>> [apiv2][query] POST https://firebase.googleapis.com/v1beta1/projects/welfare-finder-20260811:addFirebase [none]
+[debug] [2026-08-11T05:24:14.711Z] <<< [apiv2][status] POST https://firebase.googleapis.com/v1beta1/projects/welfare-finder-20260811:addFirebase 403
+[debug] [2026-08-11T05:24:14.712Z] <<< [apiv2][body] POST https://firebase.googleapis.com/v1beta1/projects/welfare-finder-20260811:addFirebase {"error":{"code":403,"message":"The caller does not have permission","status":"PERMISSION_DENIED"}}
+[debug] [2026-08-11T05:24:14.739Z] Request to https://firebase.googleapis.com/v1beta1/projects/welfare-finder-20260811:addFirebase had HTTP Error: 403, The caller does not have permission
+[debug] [2026-08-11T05:24:15.067Z] FirebaseError: Request to https://firebase.googleapis.com/v1beta1/projects/welfare-finder-20260811:addFirebase had HTTP Error: 403, The caller does not have permission
+    at responseToError (C:\Users\PC2411\AppData\Local\npm-cache\_npx\ba4f1959e38407b5\node_modules\firebase-tools\lib\responseToError.js:53:12)
+    at RetryOperation._fn (C:\Users\PC2411\AppData\Local\npm-cache\_npx\ba4f1959e38407b5\node_modules\firebase-tools\lib\apiv2.js:415:77)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+[error] 
+[error] Error: Failed to add Firebase to Google Cloud Platform project. See firebase-debug.log for more info.
+[debug] [2026-08-11T05:24:34.345Z] ----------------------------------------------------------------------
+[debug] [2026-08-11T05:24:34.357Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\PC2411\AppData\Local\npm-cache\_npx\ba4f1959e38407b5\node_modules\firebase-tools\lib\bin\firebase.js projects:addfirebase welfare-finder-20260811
+[debug] [2026-08-11T05:24:34.359Z] CLI Version:   15.26.0
+[debug] [2026-08-11T05:24:34.359Z] Platform:      win32
+[debug] [2026-08-11T05:24:34.360Z] Node Version:  v24.16.0
+[debug] [2026-08-11T05:24:34.361Z] Detected Agent: codex_cli
+[debug] [2026-08-11T05:24:34.361Z] Time:          Tue Aug 11 2026 14:24:34 GMT+0900 (한국 표준시)
+[debug] [2026-08-11T05:24:34.362Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-08-11T05:24:34.445Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-08-11T05:24:34.446Z] > authorizing via signed-in user (rhfkekd0903@gmail.com)
+[debug] [2026-08-11T05:24:34.504Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:24:34.505Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:24:34.510Z] >>> [apiv2][query] POST https://firebase.googleapis.com/v1beta1/projects/welfare-finder-20260811:addFirebase [none]
+[debug] [2026-08-11T05:24:36.114Z] <<< [apiv2][status] POST https://firebase.googleapis.com/v1beta1/projects/welfare-finder-20260811:addFirebase 403
+[debug] [2026-08-11T05:24:36.114Z] <<< [apiv2][body] POST https://firebase.googleapis.com/v1beta1/projects/welfare-finder-20260811:addFirebase {"error":{"code":403,"message":"The caller does not have permission","status":"PERMISSION_DENIED"}}
+[debug] [2026-08-11T05:24:36.116Z] Request to https://firebase.googleapis.com/v1beta1/projects/welfare-finder-20260811:addFirebase had HTTP Error: 403, The caller does not have permission
+[debug] [2026-08-11T05:24:36.303Z] FirebaseError: Request to https://firebase.googleapis.com/v1beta1/projects/welfare-finder-20260811:addFirebase had HTTP Error: 403, The caller does not have permission
+    at responseToError (C:\Users\PC2411\AppData\Local\npm-cache\_npx\ba4f1959e38407b5\node_modules\firebase-tools\lib\responseToError.js:53:12)
+    at RetryOperation._fn (C:\Users\PC2411\AppData\Local\npm-cache\_npx\ba4f1959e38407b5\node_modules\firebase-tools\lib\apiv2.js:415:77)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+[error] 
+[error] Error: Failed to add Firebase to Google Cloud Platform project. See firebase-debug.log for more info.
+[debug] [2026-08-11T05:24:52.519Z] ----------------------------------------------------------------------
+[debug] [2026-08-11T05:24:52.526Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\PC2411\AppData\Local\npm-cache\_npx\ba4f1959e38407b5\node_modules\firebase-tools\lib\bin\firebase.js projects:list
+[debug] [2026-08-11T05:24:52.527Z] CLI Version:   15.26.0
+[debug] [2026-08-11T05:24:52.528Z] Platform:      win32
+[debug] [2026-08-11T05:24:52.529Z] Node Version:  v24.16.0
+[debug] [2026-08-11T05:24:52.529Z] Detected Agent: codex_cli
+[debug] [2026-08-11T05:24:52.530Z] Time:          Tue Aug 11 2026 14:24:52 GMT+0900 (한국 표준시)
+[debug] [2026-08-11T05:24:52.530Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-08-11T05:24:52.612Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-08-11T05:24:52.613Z] > authorizing via signed-in user (rhfkekd0903@gmail.com)
+[debug] [2026-08-11T05:24:52.644Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:24:52.645Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:24:52.649Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects pageSize=1000
+[debug] [2026-08-11T05:24:53.400Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects 200
+[debug] [2026-08-11T05:24:53.401Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects [omitted]
+[info] No projects found.
+[debug] [2026-08-11T05:27:02.017Z] ----------------------------------------------------------------------
+[debug] [2026-08-11T05:27:02.034Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\PC2411\AppData\Local\npm-cache\_npx\ba4f1959e38407b5\node_modules\firebase-tools\lib\bin\firebase.js projects:addfirebase welfare-finder-20260811
+[debug] [2026-08-11T05:27:02.042Z] CLI Version:   15.26.0
+[debug] [2026-08-11T05:27:02.045Z] Platform:      win32
+[debug] [2026-08-11T05:27:02.047Z] Node Version:  v24.16.0
+[debug] [2026-08-11T05:27:02.052Z] Detected Agent: codex_cli
+[debug] [2026-08-11T05:27:02.059Z] Time:          Tue Aug 11 2026 14:27:02 GMT+0900 (한국 표준시)
+[debug] [2026-08-11T05:27:02.064Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-08-11T05:27:02.126Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-08-11T05:27:02.128Z] > authorizing via signed-in user (rhfkekd0903@gmail.com)
+[debug] [2026-08-11T05:27:02.197Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:27:02.198Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:27:02.203Z] >>> [apiv2][query] POST https://firebase.googleapis.com/v1beta1/projects/welfare-finder-20260811:addFirebase [none]
+[debug] [2026-08-11T05:27:04.560Z] <<< [apiv2][status] POST https://firebase.googleapis.com/v1beta1/projects/welfare-finder-20260811:addFirebase 200
+[debug] [2026-08-11T05:27:04.561Z] <<< [apiv2][body] POST https://firebase.googleapis.com/v1beta1/projects/welfare-finder-20260811:addFirebase {"name":"operations/workflows/N2NkMjg5MjQtZDI0MC00ZjljLTk0MmYtYjg3OGQ4ZGMwYjA4"}
+[debug] [2026-08-11T05:27:04.567Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:27:04.568Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:27:04.572Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/operations/workflows/N2NkMjg5MjQtZDI0MC00ZjljLTk0MmYtYjg3OGQ4ZGMwYjA4 [none]
+[debug] [2026-08-11T05:27:05.266Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/operations/workflows/N2NkMjg5MjQtZDI0MC00ZjljLTk0MmYtYjg3OGQ4ZGMwYjA4 200
+[debug] [2026-08-11T05:27:05.267Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/operations/workflows/N2NkMjg5MjQtZDI0MC00ZjljLTk0MmYtYjg3OGQ4ZGMwYjA4 {"name":"operations/workflows/N2NkMjg5MjQtZDI0MC00ZjljLTk0MmYtYjg3OGQ4ZGMwYjA4"}
+[debug] [2026-08-11T05:27:05.774Z] [Add Firebase Poller] Retrying task index 0
+[debug] [2026-08-11T05:27:05.775Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:27:05.776Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:27:05.778Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/operations/workflows/N2NkMjg5MjQtZDI0MC00ZjljLTk0MmYtYjg3OGQ4ZGMwYjA4 [none]
+[debug] [2026-08-11T05:27:12.577Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/operations/workflows/N2NkMjg5MjQtZDI0MC00ZjljLTk0MmYtYjg3OGQ4ZGMwYjA4 200
+[debug] [2026-08-11T05:27:12.578Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/operations/workflows/N2NkMjg5MjQtZDI0MC00ZjljLTk0MmYtYjg3OGQ4ZGMwYjA4 {"name":"operations/workflows/N2NkMjg5MjQtZDI0MC00ZjljLTk0MmYtYjg3OGQ4ZGMwYjA4","done":true,"response":{"@type":"type.googleapis.com/google.firebase.service.v1beta1.FirebaseProject","projectId":"welfare-finder-20260811","projectNumber":"719568554718","displayName":"Welfare Finder","name":"projects/welfare-finder-20260811","resources":{"hostingSite":"welfare-finder-20260811"}}}
+[info] 
+[info] === Your Firebase project is ready! ===
+[info] 
+[info] Project information:
+[info]    - Project ID: welfare-finder-20260811
+[info]    - Project Name: Welfare Finder
+[info] 
+[info] Firebase console is available at
+[info] https://console.firebase.google.com/project/welfare-finder-20260811/overview
+[debug] [2026-08-11T05:27:49.154Z] ----------------------------------------------------------------------
+[debug] [2026-08-11T05:27:49.164Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\PC2411\AppData\Local\npm-cache\_npx\ba4f1959e38407b5\node_modules\firebase-tools\lib\bin\firebase.js deploy --only hosting --project welfare-finder-20260811
+[debug] [2026-08-11T05:27:49.165Z] CLI Version:   15.26.0
+[debug] [2026-08-11T05:27:49.165Z] Platform:      win32
+[debug] [2026-08-11T05:27:49.166Z] Node Version:  v24.16.0
+[debug] [2026-08-11T05:27:49.166Z] Detected Agent: codex_cli
+[debug] [2026-08-11T05:27:49.167Z] Time:          Tue Aug 11 2026 14:27:49 GMT+0900 (한국 표준시)
+[debug] [2026-08-11T05:27:49.167Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-08-11T05:29:17.743Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-08-11T05:29:17.744Z] > authorizing via signed-in user (rhfkekd0903@gmail.com)
+[debug] [2026-08-11T05:29:17.744Z] [iam] checking project welfare-finder-20260811 for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2026-08-11T05:29:17.782Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:29:17.782Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:29:17.786Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/welfare-finder-20260811:testIamPermissions [none]
+[debug] [2026-08-11T05:29:17.787Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/welfare-finder-20260811:testIamPermissions  x-goog-user-project=welfare-finder-20260811
+[debug] [2026-08-11T05:29:17.787Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/welfare-finder-20260811:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-08-11T05:29:18.171Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/welfare-finder-20260811:testIamPermissions 200
+[debug] [2026-08-11T05:29:18.172Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/welfare-finder-20260811:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-08-11T05:29:18.174Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:29:18.174Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:29:18.175Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/welfare-finder-20260811 [none]
+[debug] [2026-08-11T05:29:18.607Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/welfare-finder-20260811 200
+[debug] [2026-08-11T05:29:18.607Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/welfare-finder-20260811 {"projectId":"welfare-finder-20260811","projectNumber":"719568554718","displayName":"Welfare Finder","name":"projects/welfare-finder-20260811","resources":{"hostingSite":"welfare-finder-20260811"},"state":"ACTIVE","labels":{"firebase":"enabled"},"etag":"1_e8980ff3-43a3-4094-97d4-4c8faef60dbe"}
+[info] 
+[info] === Deploying to 'welfare-finder-20260811'...
+[info] 
+[info] i  deploying hosting 
+[debug] [2026-08-11T05:29:18.614Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:29:18.614Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:29:18.614Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/welfare-finder-20260811/sites/welfare-finder-20260811 [none]
+[debug] [2026-08-11T05:29:19.894Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/welfare-finder-20260811/sites/welfare-finder-20260811 200
+[debug] [2026-08-11T05:29:19.895Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/welfare-finder-20260811/sites/welfare-finder-20260811 {"name":"projects/welfare-finder-20260811/sites/welfare-finder-20260811","defaultUrl":"https://welfare-finder-20260811.web.app","type":"DEFAULT_SITE"}
+[debug] [2026-08-11T05:29:19.904Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:29:19.905Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:29:19.907Z] >>> [apiv2][query] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/versions [none]
+[debug] [2026-08-11T05:29:19.907Z] >>> [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/versions {"status":"CREATED","labels":{"deployment-tool":"cli-firebase"}}
+[debug] [2026-08-11T05:29:21.815Z] <<< [apiv2][status] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/versions 200
+[debug] [2026-08-11T05:29:21.816Z] <<< [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/versions {"name":"projects/719568554718/sites/welfare-finder-20260811/versions/b8a238ea92b85e4e","status":"CREATED","config":{},"labels":{"deployment-tool":"cli-firebase"}}
+[info] i  hosting[welfare-finder-20260811]: beginning deploy... 
+[info] i  hosting[welfare-finder-20260811]: found 3 files in . 
+[debug] [2026-08-11T05:29:21.842Z] [hosting] uploading with 200 concurrency
+[debug] [2026-08-11T05:29:21.844Z] [hosting] hash cache [] not populated
+[debug] [2026-08-11T05:29:21.856Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:29:21.856Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:29:21.860Z] [hosting] hash cache [] stored for 3 files
+[debug] [2026-08-11T05:29:21.861Z] [hosting][hash queue][FINAL] {"max":9,"min":6,"avg":7,"active":0,"complete":3,"success":3,"errored":0,"retried":0,"total":3,"elapsed":16}
+[debug] [2026-08-11T05:29:21.861Z] >>> [apiv2][query] POST https://firebasehosting.googleapis.com/v1beta1/projects/719568554718/sites/welfare-finder-20260811/versions/b8a238ea92b85e4e:populateFiles [none]
+[debug] [2026-08-11T05:29:21.862Z] >>> [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/719568554718/sites/welfare-finder-20260811/versions/b8a238ea92b85e4e:populateFiles {"files":{"/index.html":"9171b04ff7bf0c596eeac6f335ac5ec4d17983b13cbea020896c8df9f1febdc3","/script.js":"def9ab1d485ad7e76dd20c8d991ab482af3dba5fff1948ec8c09ba77499dac92","/styles.css":"71a5c6840f783aef3e36d2f673646abffcc27c91f48d611fb09a746ea50d874c"}}
+[debug] [2026-08-11T05:29:22.457Z] <<< [apiv2][status] POST https://firebasehosting.googleapis.com/v1beta1/projects/719568554718/sites/welfare-finder-20260811/versions/b8a238ea92b85e4e:populateFiles 200
+[debug] [2026-08-11T05:29:22.457Z] <<< [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/719568554718/sites/welfare-finder-20260811/versions/b8a238ea92b85e4e:populateFiles {"uploadRequiredHashes":["9171b04ff7bf0c596eeac6f335ac5ec4d17983b13cbea020896c8df9f1febdc3","def9ab1d485ad7e76dd20c8d991ab482af3dba5fff1948ec8c09ba77499dac92","71a5c6840f783aef3e36d2f673646abffcc27c91f48d611fb09a746ea50d874c"],"uploadUrl":"https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/b8a238ea92b85e4e/files"}
+[debug] [2026-08-11T05:29:22.459Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:29:22.459Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:29:22.460Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:29:22.460Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:29:22.461Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:29:22.461Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:29:22.462Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/b8a238ea92b85e4e/files/9171b04ff7bf0c596eeac6f335ac5ec4d17983b13cbea020896c8df9f1febdc3 [none]
+[debug] [2026-08-11T05:29:22.462Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/b8a238ea92b85e4e/files/9171b04ff7bf0c596eeac6f335ac5ec4d17983b13cbea020896c8df9f1febdc3 [stream]
+[debug] [2026-08-11T05:29:22.464Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/b8a238ea92b85e4e/files/def9ab1d485ad7e76dd20c8d991ab482af3dba5fff1948ec8c09ba77499dac92 [none]
+[debug] [2026-08-11T05:29:22.464Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/b8a238ea92b85e4e/files/def9ab1d485ad7e76dd20c8d991ab482af3dba5fff1948ec8c09ba77499dac92 [stream]
+[debug] [2026-08-11T05:29:22.465Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/b8a238ea92b85e4e/files/71a5c6840f783aef3e36d2f673646abffcc27c91f48d611fb09a746ea50d874c [none]
+[debug] [2026-08-11T05:29:22.466Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/b8a238ea92b85e4e/files/71a5c6840f783aef3e36d2f673646abffcc27c91f48d611fb09a746ea50d874c [stream]
+[debug] [2026-08-11T05:29:22.471Z] [hosting][populate queue][FINAL] {"max":605,"min":605,"avg":605,"active":0,"complete":1,"success":1,"errored":0,"retried":0,"total":1,"elapsed":615}
+[debug] [2026-08-11T05:29:22.471Z] [hosting] uploads queued: 3
+[debug] [2026-08-11T05:29:23.796Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/b8a238ea92b85e4e/files/71a5c6840f783aef3e36d2f673646abffcc27c91f48d611fb09a746ea50d874c 200
+[debug] [2026-08-11T05:29:23.797Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/b8a238ea92b85e4e/files/71a5c6840f783aef3e36d2f673646abffcc27c91f48d611fb09a746ea50d874c [stream]
+[info] i  hosting: uploading new files [1/3] (33%) 
+[debug] [2026-08-11T05:29:23.934Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/b8a238ea92b85e4e/files/def9ab1d485ad7e76dd20c8d991ab482af3dba5fff1948ec8c09ba77499dac92 200
+[debug] [2026-08-11T05:29:23.934Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/b8a238ea92b85e4e/files/def9ab1d485ad7e76dd20c8d991ab482af3dba5fff1948ec8c09ba77499dac92 [stream]
+[debug] [2026-08-11T05:29:23.976Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/b8a238ea92b85e4e/files/9171b04ff7bf0c596eeac6f335ac5ec4d17983b13cbea020896c8df9f1febdc3 200
+[debug] [2026-08-11T05:29:23.977Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/b8a238ea92b85e4e/files/9171b04ff7bf0c596eeac6f335ac5ec4d17983b13cbea020896c8df9f1febdc3 [stream]
+[debug] [2026-08-11T05:29:23.977Z] [hosting][upload queue][FINAL] {"max":1519,"min":1337,"avg":1443.3333333333333,"active":0,"complete":3,"success":3,"errored":0,"retried":0,"total":3,"elapsed":1519}
+[info] i  hosting: upload complete 
+[info] +  hosting[welfare-finder-20260811]: file upload complete 
+[debug] [2026-08-11T05:29:23.978Z] [hosting] deploy completed after 2156ms
+[debug] [2026-08-11T05:29:23.978Z] [
+  {
+    "config": {
+      "public": ".",
+      "ignore": [
+        "firebase.json",
+        "firebase-debug.log",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ],
+      "cleanUrls": true,
+      "trailingSlash": false,
+      "site": "welfare-finder-20260811"
+    },
+    "version": "projects/719568554718/sites/welfare-finder-20260811/versions/b8a238ea92b85e4e"
+  }
+]
+[info] i  hosting[welfare-finder-20260811]: finalizing version... 
+[debug] [2026-08-11T05:29:23.983Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:29:23.983Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:29:23.983Z] >>> [apiv2][query] PATCH https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/versions/b8a238ea92b85e4e updateMask=status%2Cconfig
+[debug] [2026-08-11T05:29:23.984Z] >>> [apiv2][body] PATCH https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/versions/b8a238ea92b85e4e {"status":"FINALIZED","config":{"rewrites":[{"glob":"**","path":"/index.html"}],"cleanUrls":true,"trailingSlashBehavior":"REMOVE"}}
+[debug] [2026-08-11T05:29:24.654Z] <<< [apiv2][status] PATCH https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/versions/b8a238ea92b85e4e 200
+[debug] [2026-08-11T05:29:24.654Z] <<< [apiv2][body] PATCH https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/versions/b8a238ea92b85e4e {"name":"projects/719568554718/sites/welfare-finder-20260811/versions/b8a238ea92b85e4e","status":"FINALIZED","config":{"rewrites":[{"glob":"**","path":"/index.html"}],"cleanUrls":true,"trailingSlashBehavior":"REMOVE"},"labels":{"deployment-tool":"cli-firebase"},"createTime":"2026-08-11T05:29:19.686139Z","createUser":{"email":"rhfkekd0903@gmail.com"},"finalizeTime":"2026-08-11T05:29:23.833742Z","finalizeUser":{"email":"rhfkekd0903@gmail.com"}}
+[debug] [2026-08-11T05:29:24.654Z] [hosting] finalized version for welfare-finder-20260811:[object Object]
+[info] +  hosting[welfare-finder-20260811]: version finalized 
+[info] i  hosting[welfare-finder-20260811]: releasing new version... 
+[debug] [2026-08-11T05:29:24.655Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:29:24.655Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:29:24.656Z] >>> [apiv2][query] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/channels/live/releases versionName=projects%2F719568554718%2Fsites%2Fwelfare-finder-20260811%2Fversions%2Fb8a238ea92b85e4e
+[debug] [2026-08-11T05:29:24.656Z] >>> [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/channels/live/releases {}
+[debug] [2026-08-11T05:29:25.339Z] <<< [apiv2][status] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/channels/live/releases 200
+[debug] [2026-08-11T05:29:25.339Z] <<< [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/channels/live/releases {"name":"projects/719568554718/sites/welfare-finder-20260811/channels/live/releases/1786426163825000","version":{"name":"projects/719568554718/sites/welfare-finder-20260811/versions/b8a238ea92b85e4e","status":"FINALIZED","config":{"rewrites":[{"glob":"**","path":"/index.html"}],"cleanUrls":true,"trailingSlashBehavior":"REMOVE"},"labels":{"deployment-tool":"cli-firebase"},"createTime":"2026-08-11T05:29:19.686139Z","createUser":{"email":"rhfkekd0903@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocL4t6XfB4k-F-CMD9Iae3BOBy4wxQA0N-rUg-NFXDpG-KuO0sPJ"},"finalizeTime":"2026-08-11T05:29:23.833742Z","finalizeUser":{"email":"rhfkekd0903@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocL4t6XfB4k-F-CMD9Iae3BOBy4wxQA0N-rUg-NFXDpG-KuO0sPJ"}},"type":"DEPLOY","releaseTime":"2026-08-11T05:29:23.825Z","releaseUser":{"email":"rhfkekd0903@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocL4t6XfB4k-F-CMD9Iae3BOBy4wxQA0N-rUg-NFXDpG-KuO0sPJ"}}
+[debug] [2026-08-11T05:29:25.340Z] [hosting] release: {"name":"projects/719568554718/sites/welfare-finder-20260811/channels/live/releases/1786426163825000","version":{"name":"projects/719568554718/sites/welfare-finder-20260811/versions/b8a238ea92b85e4e","status":"FINALIZED","config":{"rewrites":[{"glob":"**","path":"/index.html"}],"cleanUrls":true,"trailingSlashBehavior":"REMOVE"},"labels":{"deployment-tool":"cli-firebase"},"createTime":"2026-08-11T05:29:19.686139Z","createUser":{"email":"rhfkekd0903@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocL4t6XfB4k-F-CMD9Iae3BOBy4wxQA0N-rUg-NFXDpG-KuO0sPJ"},"finalizeTime":"2026-08-11T05:29:23.833742Z","finalizeUser":{"email":"rhfkekd0903@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocL4t6XfB4k-F-CMD9Iae3BOBy4wxQA0N-rUg-NFXDpG-KuO0sPJ"}},"type":"DEPLOY","releaseTime":"2026-08-11T05:29:23.825Z","releaseUser":{"email":"rhfkekd0903@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocL4t6XfB4k-F-CMD9Iae3BOBy4wxQA0N-rUg-NFXDpG-KuO0sPJ"}}
+[info] +  hosting[welfare-finder-20260811]: release complete 
+[info] 
+[info] +  Deploy complete! 
+[info] 
+[info] Project Console: https://console.firebase.google.com/project/welfare-finder-20260811/overview
+[info] Hosting URL: https://welfare-finder-20260811.web.app
+[debug] [2026-08-11T05:39:42.110Z] ----------------------------------------------------------------------
+[debug] [2026-08-11T05:39:42.132Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\PC2411\AppData\Local\npm-cache\_npx\ba4f1959e38407b5\node_modules\firebase-tools\lib\bin\firebase.js deploy --only hosting --project welfare-finder-20260811
+[debug] [2026-08-11T05:39:42.134Z] CLI Version:   15.26.0
+[debug] [2026-08-11T05:39:42.135Z] Platform:      win32
+[debug] [2026-08-11T05:39:42.138Z] Node Version:  v24.16.0
+[debug] [2026-08-11T05:39:42.139Z] Detected Agent: codex_cli
+[debug] [2026-08-11T05:39:42.140Z] Time:          Tue Aug 11 2026 14:39:42 GMT+0900 (한국 표준시)
+[debug] [2026-08-11T05:39:42.141Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-08-11T05:39:48.933Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-08-11T05:39:48.935Z] > authorizing via signed-in user (rhfkekd0903@gmail.com)
+[debug] [2026-08-11T05:39:48.937Z] [iam] checking project welfare-finder-20260811 for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2026-08-11T05:39:49.000Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:39:49.001Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:39:49.006Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/welfare-finder-20260811:testIamPermissions [none]
+[debug] [2026-08-11T05:39:49.007Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/welfare-finder-20260811:testIamPermissions  x-goog-user-project=welfare-finder-20260811
+[debug] [2026-08-11T05:39:49.008Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/welfare-finder-20260811:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-08-11T05:39:49.452Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/welfare-finder-20260811:testIamPermissions 200
+[debug] [2026-08-11T05:39:49.453Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/welfare-finder-20260811:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-08-11T05:39:49.459Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:39:49.460Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:39:49.461Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/welfare-finder-20260811 [none]
+[debug] [2026-08-11T05:39:49.900Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/welfare-finder-20260811 200
+[debug] [2026-08-11T05:39:49.901Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/welfare-finder-20260811 {"projectId":"welfare-finder-20260811","projectNumber":"719568554718","displayName":"Welfare Finder","name":"projects/welfare-finder-20260811","resources":{"hostingSite":"welfare-finder-20260811"},"state":"ACTIVE","labels":{"firebase":"enabled"},"etag":"1_e8980ff3-43a3-4094-97d4-4c8faef60dbe"}
+[info] 
+[info] === Deploying to 'welfare-finder-20260811'...
+[info] 
+[info] i  deploying hosting 
+[debug] [2026-08-11T05:39:49.919Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:39:49.920Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:39:49.921Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/welfare-finder-20260811/sites/welfare-finder-20260811 [none]
+[debug] [2026-08-11T05:39:50.880Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/welfare-finder-20260811/sites/welfare-finder-20260811 200
+[debug] [2026-08-11T05:39:50.881Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/welfare-finder-20260811/sites/welfare-finder-20260811 {"name":"projects/welfare-finder-20260811/sites/welfare-finder-20260811","defaultUrl":"https://welfare-finder-20260811.web.app","type":"DEFAULT_SITE"}
+[debug] [2026-08-11T05:39:50.898Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:39:50.898Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:39:50.905Z] >>> [apiv2][query] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/versions [none]
+[debug] [2026-08-11T05:39:50.907Z] >>> [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/versions {"status":"CREATED","labels":{"deployment-tool":"cli-firebase"}}
+[debug] [2026-08-11T05:39:51.959Z] <<< [apiv2][status] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/versions 200
+[debug] [2026-08-11T05:39:51.960Z] <<< [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/versions {"name":"projects/719568554718/sites/welfare-finder-20260811/versions/e16bdb70f1f566b2","status":"CREATED","config":{},"labels":{"deployment-tool":"cli-firebase"}}
+[info] i  hosting[welfare-finder-20260811]: beginning deploy... 
+[info] i  hosting[welfare-finder-20260811]: found 3 files in dist 
+[debug] [2026-08-11T05:39:52.010Z] [hosting] uploading with 200 concurrency
+[debug] [2026-08-11T05:39:52.014Z] [hosting] hash cache [ZGlzdA] not populated
+[debug] [2026-08-11T05:39:52.070Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:39:52.070Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:39:52.076Z] [hosting] hash cache [ZGlzdA] stored for 3 files
+[debug] [2026-08-11T05:39:52.077Z] [hosting][hash queue][FINAL] {"max":48,"min":12,"avg":24.333333333333332,"active":0,"complete":3,"success":3,"errored":0,"retried":0,"total":3,"elapsed":62}
+[debug] [2026-08-11T05:39:52.079Z] >>> [apiv2][query] POST https://firebasehosting.googleapis.com/v1beta1/projects/719568554718/sites/welfare-finder-20260811/versions/e16bdb70f1f566b2:populateFiles [none]
+[debug] [2026-08-11T05:39:52.079Z] >>> [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/719568554718/sites/welfare-finder-20260811/versions/e16bdb70f1f566b2:populateFiles {"files":{"/index.html":"c2cd65058ed4274452db8050a09fd7b7f872a57d2e0cbaecec42a74a49abeb83","/assets/index-DI4e_9Cp.css":"bcc48a13b90887bdf7854c54057db2052505a9a7679fd3013acd2a3ee4d91823","/assets/index-CpEwENk8.js":"dd90c9da3f800bd67475b6c7782920ae99c6a3111dd79a57fe080834f133e83f"}}
+[debug] [2026-08-11T05:39:52.790Z] <<< [apiv2][status] POST https://firebasehosting.googleapis.com/v1beta1/projects/719568554718/sites/welfare-finder-20260811/versions/e16bdb70f1f566b2:populateFiles 200
+[debug] [2026-08-11T05:39:52.790Z] <<< [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/719568554718/sites/welfare-finder-20260811/versions/e16bdb70f1f566b2:populateFiles {"uploadRequiredHashes":["c2cd65058ed4274452db8050a09fd7b7f872a57d2e0cbaecec42a74a49abeb83","bcc48a13b90887bdf7854c54057db2052505a9a7679fd3013acd2a3ee4d91823","dd90c9da3f800bd67475b6c7782920ae99c6a3111dd79a57fe080834f133e83f"],"uploadUrl":"https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/e16bdb70f1f566b2/files"}
+[debug] [2026-08-11T05:39:52.794Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:39:52.794Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:39:52.798Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:39:52.799Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:39:52.801Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:39:52.802Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:39:52.803Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/e16bdb70f1f566b2/files/c2cd65058ed4274452db8050a09fd7b7f872a57d2e0cbaecec42a74a49abeb83 [none]
+[debug] [2026-08-11T05:39:52.804Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/e16bdb70f1f566b2/files/c2cd65058ed4274452db8050a09fd7b7f872a57d2e0cbaecec42a74a49abeb83 [stream]
+[debug] [2026-08-11T05:39:52.811Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/e16bdb70f1f566b2/files/bcc48a13b90887bdf7854c54057db2052505a9a7679fd3013acd2a3ee4d91823 [none]
+[debug] [2026-08-11T05:39:52.812Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/e16bdb70f1f566b2/files/bcc48a13b90887bdf7854c54057db2052505a9a7679fd3013acd2a3ee4d91823 [stream]
+[debug] [2026-08-11T05:39:52.815Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/e16bdb70f1f566b2/files/dd90c9da3f800bd67475b6c7782920ae99c6a3111dd79a57fe080834f133e83f [none]
+[debug] [2026-08-11T05:39:52.815Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/e16bdb70f1f566b2/files/dd90c9da3f800bd67475b6c7782920ae99c6a3111dd79a57fe080834f133e83f [stream]
+[debug] [2026-08-11T05:39:52.839Z] [hosting][populate queue][FINAL] {"max":733,"min":733,"avg":733,"active":0,"complete":1,"success":1,"errored":0,"retried":0,"total":1,"elapsed":770}
+[debug] [2026-08-11T05:39:52.849Z] [hosting] uploads queued: 3
+[info] i  hosting: uploading new files [0/3] (0%) 
+[debug] [2026-08-11T05:39:54.122Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/e16bdb70f1f566b2/files/c2cd65058ed4274452db8050a09fd7b7f872a57d2e0cbaecec42a74a49abeb83 200
+[debug] [2026-08-11T05:39:54.123Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/e16bdb70f1f566b2/files/c2cd65058ed4274452db8050a09fd7b7f872a57d2e0cbaecec42a74a49abeb83 [stream]
+[debug] [2026-08-11T05:39:54.310Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/e16bdb70f1f566b2/files/bcc48a13b90887bdf7854c54057db2052505a9a7679fd3013acd2a3ee4d91823 200
+[debug] [2026-08-11T05:39:54.310Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/e16bdb70f1f566b2/files/bcc48a13b90887bdf7854c54057db2052505a9a7679fd3013acd2a3ee4d91823 [stream]
+[debug] [2026-08-11T05:39:54.453Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/e16bdb70f1f566b2/files/dd90c9da3f800bd67475b6c7782920ae99c6a3111dd79a57fe080834f133e83f 200
+[debug] [2026-08-11T05:39:54.454Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/e16bdb70f1f566b2/files/dd90c9da3f800bd67475b6c7782920ae99c6a3111dd79a57fe080834f133e83f [stream]
+[debug] [2026-08-11T05:39:54.454Z] [hosting][upload queue][FINAL] {"max":1654,"min":1332,"avg":1500,"active":0,"complete":3,"success":3,"errored":0,"retried":0,"total":3,"elapsed":1663}
+[info] i  hosting: upload complete 
+[info] +  hosting[welfare-finder-20260811]: file upload complete 
+[debug] [2026-08-11T05:39:54.456Z] [hosting] deploy completed after 2487ms
+[debug] [2026-08-11T05:39:54.457Z] [
+  {
+    "config": {
+      "public": "dist",
+      "ignore": [
+        "firebase.json",
+        "firebase-debug.log",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ],
+      "cleanUrls": true,
+      "trailingSlash": false,
+      "site": "welfare-finder-20260811"
+    },
+    "version": "projects/719568554718/sites/welfare-finder-20260811/versions/e16bdb70f1f566b2"
+  }
+]
+[info] i  hosting[welfare-finder-20260811]: finalizing version... 
+[debug] [2026-08-11T05:39:54.465Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:39:54.465Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:39:54.467Z] >>> [apiv2][query] PATCH https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/versions/e16bdb70f1f566b2 updateMask=status%2Cconfig
+[debug] [2026-08-11T05:39:54.468Z] >>> [apiv2][body] PATCH https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/versions/e16bdb70f1f566b2 {"status":"FINALIZED","config":{"rewrites":[{"glob":"**","path":"/index.html"}],"cleanUrls":true,"trailingSlashBehavior":"REMOVE"}}
+[debug] [2026-08-11T05:39:55.334Z] <<< [apiv2][status] PATCH https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/versions/e16bdb70f1f566b2 200
+[debug] [2026-08-11T05:39:55.338Z] <<< [apiv2][body] PATCH https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/versions/e16bdb70f1f566b2 {"name":"projects/719568554718/sites/welfare-finder-20260811/versions/e16bdb70f1f566b2","status":"FINALIZED","config":{"rewrites":[{"glob":"**","path":"/index.html"}],"cleanUrls":true,"trailingSlashBehavior":"REMOVE"},"labels":{"deployment-tool":"cli-firebase"},"createTime":"2026-08-11T05:39:50.632448Z","createUser":{"email":"rhfkekd0903@gmail.com"},"finalizeTime":"2026-08-11T05:39:54.499416Z","finalizeUser":{"email":"rhfkekd0903@gmail.com"}}
+[debug] [2026-08-11T05:39:55.341Z] [hosting] finalized version for welfare-finder-20260811:[object Object]
+[info] +  hosting[welfare-finder-20260811]: version finalized 
+[info] i  hosting[welfare-finder-20260811]: releasing new version... 
+[debug] [2026-08-11T05:39:55.343Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:39:55.343Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:39:55.345Z] >>> [apiv2][query] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/channels/live/releases versionName=projects%2F719568554718%2Fsites%2Fwelfare-finder-20260811%2Fversions%2Fe16bdb70f1f566b2
+[debug] [2026-08-11T05:39:55.345Z] >>> [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/channels/live/releases {}
+[debug] [2026-08-11T05:39:56.144Z] <<< [apiv2][status] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/channels/live/releases 200
+[debug] [2026-08-11T05:39:56.144Z] <<< [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/channels/live/releases {"name":"projects/719568554718/sites/welfare-finder-20260811/channels/live/releases/1786426794635000","version":{"name":"projects/719568554718/sites/welfare-finder-20260811/versions/e16bdb70f1f566b2","status":"FINALIZED","config":{"rewrites":[{"glob":"**","path":"/index.html"}],"cleanUrls":true,"trailingSlashBehavior":"REMOVE"},"labels":{"deployment-tool":"cli-firebase"},"createTime":"2026-08-11T05:39:50.632448Z","createUser":{"email":"rhfkekd0903@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocL4t6XfB4k-F-CMD9Iae3BOBy4wxQA0N-rUg-NFXDpG-KuO0sPJ"},"finalizeTime":"2026-08-11T05:39:54.499416Z","finalizeUser":{"email":"rhfkekd0903@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocL4t6XfB4k-F-CMD9Iae3BOBy4wxQA0N-rUg-NFXDpG-KuO0sPJ"}},"type":"DEPLOY","releaseTime":"2026-08-11T05:39:54.635Z","releaseUser":{"email":"rhfkekd0903@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocL4t6XfB4k-F-CMD9Iae3BOBy4wxQA0N-rUg-NFXDpG-KuO0sPJ"}}
+[debug] [2026-08-11T05:39:56.146Z] [hosting] release: {"name":"projects/719568554718/sites/welfare-finder-20260811/channels/live/releases/1786426794635000","version":{"name":"projects/719568554718/sites/welfare-finder-20260811/versions/e16bdb70f1f566b2","status":"FINALIZED","config":{"rewrites":[{"glob":"**","path":"/index.html"}],"cleanUrls":true,"trailingSlashBehavior":"REMOVE"},"labels":{"deployment-tool":"cli-firebase"},"createTime":"2026-08-11T05:39:50.632448Z","createUser":{"email":"rhfkekd0903@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocL4t6XfB4k-F-CMD9Iae3BOBy4wxQA0N-rUg-NFXDpG-KuO0sPJ"},"finalizeTime":"2026-08-11T05:39:54.499416Z","finalizeUser":{"email":"rhfkekd0903@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocL4t6XfB4k-F-CMD9Iae3BOBy4wxQA0N-rUg-NFXDpG-KuO0sPJ"}},"type":"DEPLOY","releaseTime":"2026-08-11T05:39:54.635Z","releaseUser":{"email":"rhfkekd0903@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocL4t6XfB4k-F-CMD9Iae3BOBy4wxQA0N-rUg-NFXDpG-KuO0sPJ"}}
+[info] +  hosting[welfare-finder-20260811]: release complete 
+[info] 
+[info] +  Deploy complete! 
+[info] 
+[info] Project Console: https://console.firebase.google.com/project/welfare-finder-20260811/overview
+[info] Hosting URL: https://welfare-finder-20260811.web.app
+[debug] [2026-08-11T05:44:33.251Z] ----------------------------------------------------------------------
+[debug] [2026-08-11T05:44:33.263Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\PC2411\AppData\Local\npm-cache\_npx\ba4f1959e38407b5\node_modules\firebase-tools\lib\bin\firebase.js deploy --only hosting --project welfare-finder-20260811
+[debug] [2026-08-11T05:44:33.264Z] CLI Version:   15.26.0
+[debug] [2026-08-11T05:44:33.265Z] Platform:      win32
+[debug] [2026-08-11T05:44:33.266Z] Node Version:  v24.16.0
+[debug] [2026-08-11T05:44:33.267Z] Detected Agent: codex_cli
+[debug] [2026-08-11T05:44:33.268Z] Time:          Tue Aug 11 2026 14:44:33 GMT+0900 (한국 표준시)
+[debug] [2026-08-11T05:44:33.269Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-08-11T05:44:38.323Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-08-11T05:44:38.324Z] > authorizing via signed-in user (rhfkekd0903@gmail.com)
+[debug] [2026-08-11T05:44:38.325Z] [iam] checking project welfare-finder-20260811 for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2026-08-11T05:44:38.364Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:44:38.364Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:44:38.368Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/welfare-finder-20260811:testIamPermissions [none]
+[debug] [2026-08-11T05:44:38.369Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/welfare-finder-20260811:testIamPermissions  x-goog-user-project=welfare-finder-20260811
+[debug] [2026-08-11T05:44:38.369Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/welfare-finder-20260811:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-08-11T05:44:38.707Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/welfare-finder-20260811:testIamPermissions 200
+[debug] [2026-08-11T05:44:38.707Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/welfare-finder-20260811:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-08-11T05:44:38.711Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:44:38.711Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:44:38.712Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/welfare-finder-20260811 [none]
+[debug] [2026-08-11T05:44:39.152Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/welfare-finder-20260811 200
+[debug] [2026-08-11T05:44:39.152Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/welfare-finder-20260811 {"projectId":"welfare-finder-20260811","projectNumber":"719568554718","displayName":"Welfare Finder","name":"projects/welfare-finder-20260811","resources":{"hostingSite":"welfare-finder-20260811"},"state":"ACTIVE","labels":{"firebase":"enabled"},"etag":"1_e8980ff3-43a3-4094-97d4-4c8faef60dbe"}
+[info] 
+[info] === Deploying to 'welfare-finder-20260811'...
+[info] 
+[info] i  deploying hosting 
+[debug] [2026-08-11T05:44:39.161Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:44:39.162Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:44:39.162Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/welfare-finder-20260811/sites/welfare-finder-20260811 [none]
+[debug] [2026-08-11T05:44:40.074Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/welfare-finder-20260811/sites/welfare-finder-20260811 200
+[debug] [2026-08-11T05:44:40.075Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/welfare-finder-20260811/sites/welfare-finder-20260811 {"name":"projects/welfare-finder-20260811/sites/welfare-finder-20260811","defaultUrl":"https://welfare-finder-20260811.web.app","type":"DEFAULT_SITE"}
+[debug] [2026-08-11T05:44:40.088Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:44:40.088Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:44:40.091Z] >>> [apiv2][query] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/versions [none]
+[debug] [2026-08-11T05:44:40.091Z] >>> [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/versions {"status":"CREATED","labels":{"deployment-tool":"cli-firebase"}}
+[debug] [2026-08-11T05:44:41.294Z] <<< [apiv2][status] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/versions 200
+[debug] [2026-08-11T05:44:41.295Z] <<< [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/versions {"name":"projects/719568554718/sites/welfare-finder-20260811/versions/66f0530fa6406e0f","status":"CREATED","config":{},"labels":{"deployment-tool":"cli-firebase"}}
+[info] i  hosting[welfare-finder-20260811]: beginning deploy... 
+[info] i  hosting[welfare-finder-20260811]: found 3 files in dist 
+[debug] [2026-08-11T05:44:41.324Z] [hosting] uploading with 200 concurrency
+[debug] [2026-08-11T05:44:41.368Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:44:41.368Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:44:41.371Z] [hosting] hash cache [ZGlzdA] stored for 3 files
+[debug] [2026-08-11T05:44:41.372Z] [hosting][hash queue][FINAL] {"max":33,"min":11,"avg":19,"active":0,"complete":3,"success":3,"errored":0,"retried":0,"total":3,"elapsed":41}
+[debug] [2026-08-11T05:44:41.373Z] >>> [apiv2][query] POST https://firebasehosting.googleapis.com/v1beta1/projects/719568554718/sites/welfare-finder-20260811/versions/66f0530fa6406e0f:populateFiles [none]
+[debug] [2026-08-11T05:44:41.374Z] >>> [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/719568554718/sites/welfare-finder-20260811/versions/66f0530fa6406e0f:populateFiles {"files":{"/index.html":"cc8914eb61e67059c3a6ffe1cad1a9a197f6cf64a477b7fd446844df62a1f4f2","/assets/index-DLyt9U_e.css":"fc1bdd0b85c1b5f33ed22f9e124394504af84e41584a0a644b40e1f522d7ea64","/assets/index-DTM6_NIC.js":"dd90c9da3f800bd67475b6c7782920ae99c6a3111dd79a57fe080834f133e83f"}}
+[debug] [2026-08-11T05:44:41.961Z] <<< [apiv2][status] POST https://firebasehosting.googleapis.com/v1beta1/projects/719568554718/sites/welfare-finder-20260811/versions/66f0530fa6406e0f:populateFiles 200
+[debug] [2026-08-11T05:44:41.962Z] <<< [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/719568554718/sites/welfare-finder-20260811/versions/66f0530fa6406e0f:populateFiles {"uploadRequiredHashes":["cc8914eb61e67059c3a6ffe1cad1a9a197f6cf64a477b7fd446844df62a1f4f2","fc1bdd0b85c1b5f33ed22f9e124394504af84e41584a0a644b40e1f522d7ea64"],"uploadUrl":"https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/66f0530fa6406e0f/files"}
+[debug] [2026-08-11T05:44:41.964Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:44:41.965Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:44:41.966Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:44:41.967Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:44:41.968Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/66f0530fa6406e0f/files/cc8914eb61e67059c3a6ffe1cad1a9a197f6cf64a477b7fd446844df62a1f4f2 [none]
+[debug] [2026-08-11T05:44:41.968Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/66f0530fa6406e0f/files/cc8914eb61e67059c3a6ffe1cad1a9a197f6cf64a477b7fd446844df62a1f4f2 [stream]
+[debug] [2026-08-11T05:44:41.972Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/66f0530fa6406e0f/files/fc1bdd0b85c1b5f33ed22f9e124394504af84e41584a0a644b40e1f522d7ea64 [none]
+[debug] [2026-08-11T05:44:41.972Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/66f0530fa6406e0f/files/fc1bdd0b85c1b5f33ed22f9e124394504af84e41584a0a644b40e1f522d7ea64 [stream]
+[debug] [2026-08-11T05:44:41.979Z] [hosting][populate queue][FINAL] {"max":600,"min":600,"avg":600,"active":0,"complete":1,"success":1,"errored":0,"retried":0,"total":1,"elapsed":612}
+[debug] [2026-08-11T05:44:41.980Z] [hosting] uploads queued: 2
+[debug] [2026-08-11T05:44:43.288Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/66f0530fa6406e0f/files/cc8914eb61e67059c3a6ffe1cad1a9a197f6cf64a477b7fd446844df62a1f4f2 200
+[debug] [2026-08-11T05:44:43.288Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/66f0530fa6406e0f/files/cc8914eb61e67059c3a6ffe1cad1a9a197f6cf64a477b7fd446844df62a1f4f2 [stream]
+[debug] [2026-08-11T05:44:43.333Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/66f0530fa6406e0f/files/fc1bdd0b85c1b5f33ed22f9e124394504af84e41584a0a644b40e1f522d7ea64 200
+[debug] [2026-08-11T05:44:43.333Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/66f0530fa6406e0f/files/fc1bdd0b85c1b5f33ed22f9e124394504af84e41584a0a644b40e1f522d7ea64 [stream]
+[debug] [2026-08-11T05:44:43.334Z] [hosting][upload queue][FINAL] {"max":1369,"min":1326,"avg":1347.5,"active":0,"complete":2,"success":2,"errored":0,"retried":0,"total":2,"elapsed":1371}
+[info] i  hosting: upload complete 
+[info] +  hosting[welfare-finder-20260811]: file upload complete 
+[debug] [2026-08-11T05:44:43.335Z] [hosting] deploy completed after 2035ms
+[debug] [2026-08-11T05:44:43.336Z] [
+  {
+    "config": {
+      "public": "dist",
+      "ignore": [
+        "firebase.json",
+        "firebase-debug.log",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ],
+      "cleanUrls": true,
+      "trailingSlash": false,
+      "site": "welfare-finder-20260811"
+    },
+    "version": "projects/719568554718/sites/welfare-finder-20260811/versions/66f0530fa6406e0f"
+  }
+]
+[info] i  hosting[welfare-finder-20260811]: finalizing version... 
+[debug] [2026-08-11T05:44:43.341Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:44:43.341Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:44:43.342Z] >>> [apiv2][query] PATCH https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/versions/66f0530fa6406e0f updateMask=status%2Cconfig
+[debug] [2026-08-11T05:44:43.342Z] >>> [apiv2][body] PATCH https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/versions/66f0530fa6406e0f {"status":"FINALIZED","config":{"rewrites":[{"glob":"**","path":"/index.html"}],"cleanUrls":true,"trailingSlashBehavior":"REMOVE"}}
+[debug] [2026-08-11T05:44:45.038Z] <<< [apiv2][status] PATCH https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/versions/66f0530fa6406e0f 200
+[debug] [2026-08-11T05:44:45.039Z] <<< [apiv2][body] PATCH https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/versions/66f0530fa6406e0f {"name":"projects/719568554718/sites/welfare-finder-20260811/versions/66f0530fa6406e0f","status":"FINALIZED","config":{"rewrites":[{"glob":"**","path":"/index.html"}],"cleanUrls":true,"trailingSlashBehavior":"REMOVE"},"labels":{"deployment-tool":"cli-firebase"},"createTime":"2026-08-11T05:44:39.805058Z","createUser":{"email":"rhfkekd0903@gmail.com"},"finalizeTime":"2026-08-11T05:44:44.210841Z","finalizeUser":{"email":"rhfkekd0903@gmail.com"}}
+[debug] [2026-08-11T05:44:45.039Z] [hosting] finalized version for welfare-finder-20260811:[object Object]
+[info] +  hosting[welfare-finder-20260811]: version finalized 
+[info] i  hosting[welfare-finder-20260811]: releasing new version... 
+[debug] [2026-08-11T05:44:45.041Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:44:45.041Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:44:45.042Z] >>> [apiv2][query] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/channels/live/releases versionName=projects%2F719568554718%2Fsites%2Fwelfare-finder-20260811%2Fversions%2F66f0530fa6406e0f
+[debug] [2026-08-11T05:44:45.042Z] >>> [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/channels/live/releases {}
+[debug] [2026-08-11T05:44:45.923Z] <<< [apiv2][status] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/channels/live/releases 200
+[debug] [2026-08-11T05:44:45.924Z] <<< [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/channels/live/releases {"name":"projects/719568554718/sites/welfare-finder-20260811/channels/live/releases/1786427084333000","version":{"name":"projects/719568554718/sites/welfare-finder-20260811/versions/66f0530fa6406e0f","status":"FINALIZED","config":{"rewrites":[{"glob":"**","path":"/index.html"}],"cleanUrls":true,"trailingSlashBehavior":"REMOVE"},"labels":{"deployment-tool":"cli-firebase"},"createTime":"2026-08-11T05:44:39.805058Z","createUser":{"email":"rhfkekd0903@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocL4t6XfB4k-F-CMD9Iae3BOBy4wxQA0N-rUg-NFXDpG-KuO0sPJ"},"finalizeTime":"2026-08-11T05:44:44.210841Z","finalizeUser":{"email":"rhfkekd0903@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocL4t6XfB4k-F-CMD9Iae3BOBy4wxQA0N-rUg-NFXDpG-KuO0sPJ"}},"type":"DEPLOY","releaseTime":"2026-08-11T05:44:44.333Z","releaseUser":{"email":"rhfkekd0903@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocL4t6XfB4k-F-CMD9Iae3BOBy4wxQA0N-rUg-NFXDpG-KuO0sPJ"}}
+[debug] [2026-08-11T05:44:45.924Z] [hosting] release: {"name":"projects/719568554718/sites/welfare-finder-20260811/channels/live/releases/1786427084333000","version":{"name":"projects/719568554718/sites/welfare-finder-20260811/versions/66f0530fa6406e0f","status":"FINALIZED","config":{"rewrites":[{"glob":"**","path":"/index.html"}],"cleanUrls":true,"trailingSlashBehavior":"REMOVE"},"labels":{"deployment-tool":"cli-firebase"},"createTime":"2026-08-11T05:44:39.805058Z","createUser":{"email":"rhfkekd0903@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocL4t6XfB4k-F-CMD9Iae3BOBy4wxQA0N-rUg-NFXDpG-KuO0sPJ"},"finalizeTime":"2026-08-11T05:44:44.210841Z","finalizeUser":{"email":"rhfkekd0903@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocL4t6XfB4k-F-CMD9Iae3BOBy4wxQA0N-rUg-NFXDpG-KuO0sPJ"}},"type":"DEPLOY","releaseTime":"2026-08-11T05:44:44.333Z","releaseUser":{"email":"rhfkekd0903@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocL4t6XfB4k-F-CMD9Iae3BOBy4wxQA0N-rUg-NFXDpG-KuO0sPJ"}}
+[info] +  hosting[welfare-finder-20260811]: release complete 
+[info] 
+[info] +  Deploy complete! 
+[info] 
+[info] Project Console: https://console.firebase.google.com/project/welfare-finder-20260811/overview
+[info] Hosting URL: https://welfare-finder-20260811.web.app
+[debug] [2026-08-11T05:48:25.396Z] ----------------------------------------------------------------------
+[debug] [2026-08-11T05:48:25.417Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\PC2411\AppData\Local\npm-cache\_npx\ba4f1959e38407b5\node_modules\firebase-tools\lib\bin\firebase.js deploy --only hosting --project welfare-finder-20260811
+[debug] [2026-08-11T05:48:25.420Z] CLI Version:   15.26.0
+[debug] [2026-08-11T05:48:25.421Z] Platform:      win32
+[debug] [2026-08-11T05:48:25.421Z] Node Version:  v24.16.0
+[debug] [2026-08-11T05:48:25.423Z] Detected Agent: codex_cli
+[debug] [2026-08-11T05:48:25.424Z] Time:          Tue Aug 11 2026 14:48:25 GMT+0900 (한국 표준시)
+[debug] [2026-08-11T05:48:25.425Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-08-11T05:48:31.926Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-08-11T05:48:31.928Z] > authorizing via signed-in user (rhfkekd0903@gmail.com)
+[debug] [2026-08-11T05:48:31.930Z] [iam] checking project welfare-finder-20260811 for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2026-08-11T05:48:31.989Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:48:31.990Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:48:31.998Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/welfare-finder-20260811:testIamPermissions [none]
+[debug] [2026-08-11T05:48:31.999Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/welfare-finder-20260811:testIamPermissions  x-goog-user-project=welfare-finder-20260811
+[debug] [2026-08-11T05:48:32.000Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/welfare-finder-20260811:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-08-11T05:48:32.467Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/welfare-finder-20260811:testIamPermissions 200
+[debug] [2026-08-11T05:48:32.468Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/welfare-finder-20260811:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-08-11T05:48:32.471Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:48:32.472Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:48:32.474Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/welfare-finder-20260811 [none]
+[debug] [2026-08-11T05:48:32.933Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/welfare-finder-20260811 200
+[debug] [2026-08-11T05:48:32.934Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/welfare-finder-20260811 {"projectId":"welfare-finder-20260811","projectNumber":"719568554718","displayName":"Welfare Finder","name":"projects/welfare-finder-20260811","resources":{"hostingSite":"welfare-finder-20260811"},"state":"ACTIVE","labels":{"firebase":"enabled"},"etag":"1_e8980ff3-43a3-4094-97d4-4c8faef60dbe"}
+[info] 
+[info] === Deploying to 'welfare-finder-20260811'...
+[info] 
+[info] i  deploying hosting 
+[debug] [2026-08-11T05:48:32.946Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:48:32.946Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:48:32.947Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/welfare-finder-20260811/sites/welfare-finder-20260811 [none]
+[debug] [2026-08-11T05:48:33.895Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/welfare-finder-20260811/sites/welfare-finder-20260811 200
+[debug] [2026-08-11T05:48:33.896Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/welfare-finder-20260811/sites/welfare-finder-20260811 {"name":"projects/welfare-finder-20260811/sites/welfare-finder-20260811","defaultUrl":"https://welfare-finder-20260811.web.app","type":"DEFAULT_SITE"}
+[debug] [2026-08-11T05:48:33.913Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:48:33.914Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:48:33.918Z] >>> [apiv2][query] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/versions [none]
+[debug] [2026-08-11T05:48:33.919Z] >>> [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/versions {"status":"CREATED","labels":{"deployment-tool":"cli-firebase"}}
+[debug] [2026-08-11T05:48:34.792Z] <<< [apiv2][status] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/versions 200
+[debug] [2026-08-11T05:48:34.792Z] <<< [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/versions {"name":"projects/719568554718/sites/welfare-finder-20260811/versions/99cdbd74a4c65e5d","status":"CREATED","config":{},"labels":{"deployment-tool":"cli-firebase"}}
+[info] i  hosting[welfare-finder-20260811]: beginning deploy... 
+[info] i  hosting[welfare-finder-20260811]: found 3 files in dist 
+[debug] [2026-08-11T05:48:34.823Z] [hosting] uploading with 200 concurrency
+[debug] [2026-08-11T05:48:34.865Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:48:34.866Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:48:34.869Z] [hosting] hash cache [ZGlzdA] stored for 3 files
+[debug] [2026-08-11T05:48:34.870Z] [hosting][hash queue][FINAL] {"max":31,"min":13,"avg":19.333333333333332,"active":0,"complete":3,"success":3,"errored":0,"retried":0,"total":3,"elapsed":41}
+[debug] [2026-08-11T05:48:34.872Z] >>> [apiv2][query] POST https://firebasehosting.googleapis.com/v1beta1/projects/719568554718/sites/welfare-finder-20260811/versions/99cdbd74a4c65e5d:populateFiles [none]
+[debug] [2026-08-11T05:48:34.872Z] >>> [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/719568554718/sites/welfare-finder-20260811/versions/99cdbd74a4c65e5d:populateFiles {"files":{"/index.html":"e827b9699b66fc5d46faa31d5efe56d1e67d18102816b6c71fb5f021c1146912","/assets/index-vmP8KbKb.css":"a89c20155a50072eb5f10f16f53d8be42846ad2785a436631d8788d4628a2127","/assets/index-BnlhmAd-.js":"72124dbe7882fba5932c5a8dc24b25141b2f65a6b720daba8e0424982a701610"}}
+[debug] [2026-08-11T05:48:35.441Z] <<< [apiv2][status] POST https://firebasehosting.googleapis.com/v1beta1/projects/719568554718/sites/welfare-finder-20260811/versions/99cdbd74a4c65e5d:populateFiles 200
+[debug] [2026-08-11T05:48:35.441Z] <<< [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/719568554718/sites/welfare-finder-20260811/versions/99cdbd74a4c65e5d:populateFiles {"uploadRequiredHashes":["e827b9699b66fc5d46faa31d5efe56d1e67d18102816b6c71fb5f021c1146912","a89c20155a50072eb5f10f16f53d8be42846ad2785a436631d8788d4628a2127","72124dbe7882fba5932c5a8dc24b25141b2f65a6b720daba8e0424982a701610"],"uploadUrl":"https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/99cdbd74a4c65e5d/files"}
+[debug] [2026-08-11T05:48:35.443Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:48:35.444Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:48:35.445Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:48:35.445Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:48:35.447Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:48:35.447Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:48:35.448Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/99cdbd74a4c65e5d/files/e827b9699b66fc5d46faa31d5efe56d1e67d18102816b6c71fb5f021c1146912 [none]
+[debug] [2026-08-11T05:48:35.448Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/99cdbd74a4c65e5d/files/e827b9699b66fc5d46faa31d5efe56d1e67d18102816b6c71fb5f021c1146912 [stream]
+[debug] [2026-08-11T05:48:35.452Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/99cdbd74a4c65e5d/files/a89c20155a50072eb5f10f16f53d8be42846ad2785a436631d8788d4628a2127 [none]
+[debug] [2026-08-11T05:48:35.453Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/99cdbd74a4c65e5d/files/a89c20155a50072eb5f10f16f53d8be42846ad2785a436631d8788d4628a2127 [stream]
+[debug] [2026-08-11T05:48:35.455Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/99cdbd74a4c65e5d/files/72124dbe7882fba5932c5a8dc24b25141b2f65a6b720daba8e0424982a701610 [none]
+[debug] [2026-08-11T05:48:35.456Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/99cdbd74a4c65e5d/files/72124dbe7882fba5932c5a8dc24b25141b2f65a6b720daba8e0424982a701610 [stream]
+[debug] [2026-08-11T05:48:35.464Z] [hosting][populate queue][FINAL] {"max":582,"min":582,"avg":582,"active":0,"complete":1,"success":1,"errored":0,"retried":0,"total":1,"elapsed":599}
+[debug] [2026-08-11T05:48:35.465Z] [hosting] uploads queued: 3
+[info] i  hosting: uploading new files [0/3] (0%) 
+[debug] [2026-08-11T05:48:36.842Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/99cdbd74a4c65e5d/files/a89c20155a50072eb5f10f16f53d8be42846ad2785a436631d8788d4628a2127 200
+[debug] [2026-08-11T05:48:36.843Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/99cdbd74a4c65e5d/files/a89c20155a50072eb5f10f16f53d8be42846ad2785a436631d8788d4628a2127 [stream]
+[debug] [2026-08-11T05:48:37.174Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/99cdbd74a4c65e5d/files/72124dbe7882fba5932c5a8dc24b25141b2f65a6b720daba8e0424982a701610 200
+[debug] [2026-08-11T05:48:37.174Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/99cdbd74a4c65e5d/files/72124dbe7882fba5932c5a8dc24b25141b2f65a6b720daba8e0424982a701610 [stream]
+[debug] [2026-08-11T05:48:37.386Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/99cdbd74a4c65e5d/files/e827b9699b66fc5d46faa31d5efe56d1e67d18102816b6c71fb5f021c1146912 200
+[debug] [2026-08-11T05:48:37.387Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/99cdbd74a4c65e5d/files/e827b9699b66fc5d46faa31d5efe56d1e67d18102816b6c71fb5f021c1146912 [stream]
+[debug] [2026-08-11T05:48:37.387Z] [hosting][upload queue][FINAL] {"max":1945,"min":1399,"avg":1690.6666666666667,"active":0,"complete":3,"success":3,"errored":0,"retried":0,"total":3,"elapsed":1945}
+[info] i  hosting: upload complete 
+[info] +  hosting[welfare-finder-20260811]: file upload complete 
+[debug] [2026-08-11T05:48:37.389Z] [hosting] deploy completed after 2591ms
+[debug] [2026-08-11T05:48:37.389Z] [
+  {
+    "config": {
+      "public": "dist",
+      "ignore": [
+        "firebase.json",
+        "firebase-debug.log",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ],
+      "cleanUrls": true,
+      "trailingSlash": false,
+      "site": "welfare-finder-20260811"
+    },
+    "version": "projects/719568554718/sites/welfare-finder-20260811/versions/99cdbd74a4c65e5d"
+  }
+]
+[info] i  hosting[welfare-finder-20260811]: finalizing version... 
+[debug] [2026-08-11T05:48:37.395Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:48:37.396Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:48:37.396Z] >>> [apiv2][query] PATCH https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/versions/99cdbd74a4c65e5d updateMask=status%2Cconfig
+[debug] [2026-08-11T05:48:37.397Z] >>> [apiv2][body] PATCH https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/versions/99cdbd74a4c65e5d {"status":"FINALIZED","config":{"rewrites":[{"glob":"**","path":"/index.html"}],"cleanUrls":true,"trailingSlashBehavior":"REMOVE"}}
+[debug] [2026-08-11T05:48:38.123Z] <<< [apiv2][status] PATCH https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/versions/99cdbd74a4c65e5d 200
+[debug] [2026-08-11T05:48:38.123Z] <<< [apiv2][body] PATCH https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/versions/99cdbd74a4c65e5d {"name":"projects/719568554718/sites/welfare-finder-20260811/versions/99cdbd74a4c65e5d","status":"FINALIZED","config":{"rewrites":[{"glob":"**","path":"/index.html"}],"cleanUrls":true,"trailingSlashBehavior":"REMOVE"},"labels":{"deployment-tool":"cli-firebase"},"createTime":"2026-08-11T05:48:33.595110Z","createUser":{"email":"rhfkekd0903@gmail.com"},"finalizeTime":"2026-08-11T05:48:37.311454Z","finalizeUser":{"email":"rhfkekd0903@gmail.com"}}
+[debug] [2026-08-11T05:48:38.124Z] [hosting] finalized version for welfare-finder-20260811:[object Object]
+[info] +  hosting[welfare-finder-20260811]: version finalized 
+[info] i  hosting[welfare-finder-20260811]: releasing new version... 
+[debug] [2026-08-11T05:48:38.125Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:48:38.126Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:48:38.126Z] >>> [apiv2][query] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/channels/live/releases versionName=projects%2F719568554718%2Fsites%2Fwelfare-finder-20260811%2Fversions%2F99cdbd74a4c65e5d
+[debug] [2026-08-11T05:48:38.127Z] >>> [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/channels/live/releases {}
+[debug] [2026-08-11T05:48:38.916Z] <<< [apiv2][status] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/channels/live/releases 200
+[debug] [2026-08-11T05:48:38.917Z] <<< [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/channels/live/releases {"name":"projects/719568554718/sites/welfare-finder-20260811/channels/live/releases/1786427317411000","version":{"name":"projects/719568554718/sites/welfare-finder-20260811/versions/99cdbd74a4c65e5d","status":"FINALIZED","config":{"rewrites":[{"glob":"**","path":"/index.html"}],"cleanUrls":true,"trailingSlashBehavior":"REMOVE"},"labels":{"deployment-tool":"cli-firebase"},"createTime":"2026-08-11T05:48:33.595110Z","createUser":{"email":"rhfkekd0903@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocL4t6XfB4k-F-CMD9Iae3BOBy4wxQA0N-rUg-NFXDpG-KuO0sPJ"},"finalizeTime":"2026-08-11T05:48:37.311454Z","finalizeUser":{"email":"rhfkekd0903@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocL4t6XfB4k-F-CMD9Iae3BOBy4wxQA0N-rUg-NFXDpG-KuO0sPJ"}},"type":"DEPLOY","releaseTime":"2026-08-11T05:48:37.411Z","releaseUser":{"email":"rhfkekd0903@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocL4t6XfB4k-F-CMD9Iae3BOBy4wxQA0N-rUg-NFXDpG-KuO0sPJ"}}
+[debug] [2026-08-11T05:48:38.917Z] [hosting] release: {"name":"projects/719568554718/sites/welfare-finder-20260811/channels/live/releases/1786427317411000","version":{"name":"projects/719568554718/sites/welfare-finder-20260811/versions/99cdbd74a4c65e5d","status":"FINALIZED","config":{"rewrites":[{"glob":"**","path":"/index.html"}],"cleanUrls":true,"trailingSlashBehavior":"REMOVE"},"labels":{"deployment-tool":"cli-firebase"},"createTime":"2026-08-11T05:48:33.595110Z","createUser":{"email":"rhfkekd0903@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocL4t6XfB4k-F-CMD9Iae3BOBy4wxQA0N-rUg-NFXDpG-KuO0sPJ"},"finalizeTime":"2026-08-11T05:48:37.311454Z","finalizeUser":{"email":"rhfkekd0903@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocL4t6XfB4k-F-CMD9Iae3BOBy4wxQA0N-rUg-NFXDpG-KuO0sPJ"}},"type":"DEPLOY","releaseTime":"2026-08-11T05:48:37.411Z","releaseUser":{"email":"rhfkekd0903@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocL4t6XfB4k-F-CMD9Iae3BOBy4wxQA0N-rUg-NFXDpG-KuO0sPJ"}}
+[info] +  hosting[welfare-finder-20260811]: release complete 
+[info] 
+[info] +  Deploy complete! 
+[info] 
+[info] Project Console: https://console.firebase.google.com/project/welfare-finder-20260811/overview
+[info] Hosting URL: https://welfare-finder-20260811.web.app
+[debug] [2026-08-11T05:49:27.813Z] ----------------------------------------------------------------------
+[debug] [2026-08-11T05:49:27.830Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\PC2411\AppData\Local\npm-cache\_npx\ba4f1959e38407b5\node_modules\firebase-tools\lib\bin\firebase.js deploy --only hosting --project welfare-finder-20260811
+[debug] [2026-08-11T05:49:27.832Z] CLI Version:   15.26.0
+[debug] [2026-08-11T05:49:27.833Z] Platform:      win32
+[debug] [2026-08-11T05:49:27.836Z] Node Version:  v24.16.0
+[debug] [2026-08-11T05:49:27.837Z] Detected Agent: codex_cli
+[debug] [2026-08-11T05:49:27.838Z] Time:          Tue Aug 11 2026 14:49:27 GMT+0900 (한국 표준시)
+[debug] [2026-08-11T05:49:27.839Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-08-11T05:49:36.822Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-08-11T05:49:36.823Z] > authorizing via signed-in user (rhfkekd0903@gmail.com)
+[debug] [2026-08-11T05:49:36.825Z] [iam] checking project welfare-finder-20260811 for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2026-08-11T05:49:36.901Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:49:36.904Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:49:36.914Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/welfare-finder-20260811:testIamPermissions [none]
+[debug] [2026-08-11T05:49:36.915Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/welfare-finder-20260811:testIamPermissions  x-goog-user-project=welfare-finder-20260811
+[debug] [2026-08-11T05:49:36.916Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/welfare-finder-20260811:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-08-11T05:49:37.401Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/welfare-finder-20260811:testIamPermissions 200
+[debug] [2026-08-11T05:49:37.402Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/welfare-finder-20260811:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-08-11T05:49:37.411Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:49:37.411Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:49:37.412Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/welfare-finder-20260811 [none]
+[debug] [2026-08-11T05:49:37.889Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/welfare-finder-20260811 200
+[debug] [2026-08-11T05:49:37.889Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/welfare-finder-20260811 {"projectId":"welfare-finder-20260811","projectNumber":"719568554718","displayName":"Welfare Finder","name":"projects/welfare-finder-20260811","resources":{"hostingSite":"welfare-finder-20260811"},"state":"ACTIVE","labels":{"firebase":"enabled"},"etag":"1_e8980ff3-43a3-4094-97d4-4c8faef60dbe"}
+[info] 
+[info] === Deploying to 'welfare-finder-20260811'...
+[info] 
+[info] i  deploying hosting 
+[debug] [2026-08-11T05:49:37.906Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:49:37.907Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:49:37.909Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/welfare-finder-20260811/sites/welfare-finder-20260811 [none]
+[debug] [2026-08-11T05:49:38.795Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/welfare-finder-20260811/sites/welfare-finder-20260811 200
+[debug] [2026-08-11T05:49:38.795Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/welfare-finder-20260811/sites/welfare-finder-20260811 {"name":"projects/welfare-finder-20260811/sites/welfare-finder-20260811","defaultUrl":"https://welfare-finder-20260811.web.app","type":"DEFAULT_SITE"}
+[debug] [2026-08-11T05:49:38.826Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:49:38.827Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:49:38.833Z] >>> [apiv2][query] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/versions [none]
+[debug] [2026-08-11T05:49:38.834Z] >>> [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/versions {"status":"CREATED","labels":{"deployment-tool":"cli-firebase"}}
+[debug] [2026-08-11T05:49:39.808Z] <<< [apiv2][status] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/versions 200
+[debug] [2026-08-11T05:49:39.808Z] <<< [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/versions {"name":"projects/719568554718/sites/welfare-finder-20260811/versions/f5e8dd3427789be5","status":"CREATED","config":{},"labels":{"deployment-tool":"cli-firebase"}}
+[info] i  hosting[welfare-finder-20260811]: beginning deploy... 
+[info] i  hosting[welfare-finder-20260811]: found 3 files in dist 
+[debug] [2026-08-11T05:49:39.878Z] [hosting] uploading with 200 concurrency
+[debug] [2026-08-11T05:49:39.894Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:49:39.894Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:49:39.899Z] [hosting] hash cache [ZGlzdA] stored for 3 files
+[debug] [2026-08-11T05:49:39.900Z] [hosting][hash queue][FINAL] {"max":4,"min":2,"avg":2,"active":0,"complete":3,"success":3,"errored":0,"retried":0,"total":3,"elapsed":13}
+[debug] [2026-08-11T05:49:39.903Z] >>> [apiv2][query] POST https://firebasehosting.googleapis.com/v1beta1/projects/719568554718/sites/welfare-finder-20260811/versions/f5e8dd3427789be5:populateFiles [none]
+[debug] [2026-08-11T05:49:39.905Z] >>> [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/719568554718/sites/welfare-finder-20260811/versions/f5e8dd3427789be5:populateFiles {"files":{"/index.html":"e827b9699b66fc5d46faa31d5efe56d1e67d18102816b6c71fb5f021c1146912","/assets/index-vmP8KbKb.css":"a89c20155a50072eb5f10f16f53d8be42846ad2785a436631d8788d4628a2127","/assets/index-BnlhmAd-.js":"72124dbe7882fba5932c5a8dc24b25141b2f65a6b720daba8e0424982a701610"}}
+[debug] [2026-08-11T05:49:40.541Z] <<< [apiv2][status] POST https://firebasehosting.googleapis.com/v1beta1/projects/719568554718/sites/welfare-finder-20260811/versions/f5e8dd3427789be5:populateFiles 200
+[debug] [2026-08-11T05:49:40.542Z] <<< [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/719568554718/sites/welfare-finder-20260811/versions/f5e8dd3427789be5:populateFiles {"uploadUrl":"https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/f5e8dd3427789be5/files"}
+[debug] [2026-08-11T05:49:40.567Z] [hosting][populate queue][FINAL] {"max":674,"min":674,"avg":674,"active":0,"complete":1,"success":1,"errored":0,"retried":0,"total":1,"elapsed":675}
+[debug] [2026-08-11T05:49:40.569Z] [hosting] uploads queued: 0
+[debug] [2026-08-11T05:49:40.570Z] [hosting][upload queue][FINAL] {"max":0,"min":9999999999,"avg":0,"active":0,"complete":0,"success":0,"errored":0,"retried":0,"total":0,"elapsed":1786427380570}
+[info] i  hosting: upload complete 
+[info] +  hosting[welfare-finder-20260811]: file upload complete 
+[debug] [2026-08-11T05:49:40.607Z] [hosting] deploy completed after 788ms
+[debug] [2026-08-11T05:49:40.607Z] [
+  {
+    "config": {
+      "public": "dist",
+      "ignore": [
+        "firebase.json",
+        "firebase-debug.log",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ],
+      "headers": [
+        {
+          "source": "/index.html",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "no-cache, no-store, must-revalidate"
+            }
+          ]
+        }
+      ],
+      "cleanUrls": true,
+      "trailingSlash": false,
+      "site": "welfare-finder-20260811"
+    },
+    "version": "projects/719568554718/sites/welfare-finder-20260811/versions/f5e8dd3427789be5"
+  }
+]
+[info] i  hosting[welfare-finder-20260811]: finalizing version... 
+[debug] [2026-08-11T05:49:40.629Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:49:40.629Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:49:40.630Z] >>> [apiv2][query] PATCH https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/versions/f5e8dd3427789be5 updateMask=status%2Cconfig
+[debug] [2026-08-11T05:49:40.631Z] >>> [apiv2][body] PATCH https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/versions/f5e8dd3427789be5 {"status":"FINALIZED","config":{"rewrites":[{"glob":"**","path":"/index.html"}],"headers":[{"glob":"/index.html","headers":{"Cache-Control":"no-cache, no-store, must-revalidate"}}],"cleanUrls":true,"trailingSlashBehavior":"REMOVE"}}
+[debug] [2026-08-11T05:49:41.555Z] <<< [apiv2][status] PATCH https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/versions/f5e8dd3427789be5 200
+[debug] [2026-08-11T05:49:41.556Z] <<< [apiv2][body] PATCH https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/versions/f5e8dd3427789be5 {"name":"projects/719568554718/sites/welfare-finder-20260811/versions/f5e8dd3427789be5","status":"FINALIZED","config":{"headers":[{"headers":{"Cache-Control":"no-cache, no-store, must-revalidate"},"glob":"/index.html"}],"rewrites":[{"glob":"**","path":"/index.html"}],"cleanUrls":true,"trailingSlashBehavior":"REMOVE"},"labels":{"deployment-tool":"cli-firebase"},"createTime":"2026-08-11T05:49:38.521958Z","createUser":{"email":"rhfkekd0903@gmail.com"},"finalizeTime":"2026-08-11T05:49:40.716685Z","finalizeUser":{"email":"rhfkekd0903@gmail.com"}}
+[debug] [2026-08-11T05:49:41.559Z] [hosting] finalized version for welfare-finder-20260811:[object Object]
+[info] +  hosting[welfare-finder-20260811]: version finalized 
+[info] i  hosting[welfare-finder-20260811]: releasing new version... 
+[debug] [2026-08-11T05:49:41.563Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:49:41.564Z] Checked if tokens are valid: true, expires at: 1786429252811
+[debug] [2026-08-11T05:49:41.566Z] >>> [apiv2][query] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/channels/live/releases versionName=projects%2F719568554718%2Fsites%2Fwelfare-finder-20260811%2Fversions%2Ff5e8dd3427789be5
+[debug] [2026-08-11T05:49:41.567Z] >>> [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/channels/live/releases {}
+[debug] [2026-08-11T05:49:42.455Z] <<< [apiv2][status] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/channels/live/releases 200
+[debug] [2026-08-11T05:49:42.456Z] <<< [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/channels/live/releases {"name":"projects/719568554718/sites/welfare-finder-20260811/channels/live/releases/1786427380883000","version":{"name":"projects/719568554718/sites/welfare-finder-20260811/versions/f5e8dd3427789be5","status":"FINALIZED","config":{"headers":[{"headers":{"Cache-Control":"no-cache, no-store, must-revalidate"},"glob":"/index.html"}],"rewrites":[{"glob":"**","path":"/index.html"}],"cleanUrls":true,"trailingSlashBehavior":"REMOVE"},"labels":{"deployment-tool":"cli-firebase"},"createTime":"2026-08-11T05:49:38.521958Z","createUser":{"email":"rhfkekd0903@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocL4t6XfB4k-F-CMD9Iae3BOBy4wxQA0N-rUg-NFXDpG-KuO0sPJ"},"finalizeTime":"2026-08-11T05:49:40.716685Z","finalizeUser":{"email":"rhfkekd0903@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocL4t6XfB4k-F-CMD9Iae3BOBy4wxQA0N-rUg-NFXDpG-KuO0sPJ"}},"type":"DEPLOY","releaseTime":"2026-08-11T05:49:40.883Z","releaseUser":{"email":"rhfkekd0903@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocL4t6XfB4k-F-CMD9Iae3BOBy4wxQA0N-rUg-NFXDpG-KuO0sPJ"}}
+[debug] [2026-08-11T05:49:42.458Z] [hosting] release: {"name":"projects/719568554718/sites/welfare-finder-20260811/channels/live/releases/1786427380883000","version":{"name":"projects/719568554718/sites/welfare-finder-20260811/versions/f5e8dd3427789be5","status":"FINALIZED","config":{"headers":[{"headers":{"Cache-Control":"no-cache, no-store, must-revalidate"},"glob":"/index.html"}],"rewrites":[{"glob":"**","path":"/index.html"}],"cleanUrls":true,"trailingSlashBehavior":"REMOVE"},"labels":{"deployment-tool":"cli-firebase"},"createTime":"2026-08-11T05:49:38.521958Z","createUser":{"email":"rhfkekd0903@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocL4t6XfB4k-F-CMD9Iae3BOBy4wxQA0N-rUg-NFXDpG-KuO0sPJ"},"finalizeTime":"2026-08-11T05:49:40.716685Z","finalizeUser":{"email":"rhfkekd0903@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocL4t6XfB4k-F-CMD9Iae3BOBy4wxQA0N-rUg-NFXDpG-KuO0sPJ"}},"type":"DEPLOY","releaseTime":"2026-08-11T05:49:40.883Z","releaseUser":{"email":"rhfkekd0903@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocL4t6XfB4k-F-CMD9Iae3BOBy4wxQA0N-rUg-NFXDpG-KuO0sPJ"}}
+[info] +  hosting[welfare-finder-20260811]: release complete 
+[info] 
+[info] +  Deploy complete! 
+[info] 
+[info] Project Console: https://console.firebase.google.com/project/welfare-finder-20260811/overview
+[info] Hosting URL: https://welfare-finder-20260811.web.app
+[debug] [2026-08-11T06:07:17.785Z] ----------------------------------------------------------------------
+[debug] [2026-08-11T06:07:17.797Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\PC2411\AppData\Local\npm-cache\_npx\ba4f1959e38407b5\node_modules\firebase-tools\lib\bin\firebase.js deploy --only hosting --project welfare-finder-20260811
+[debug] [2026-08-11T06:07:17.798Z] CLI Version:   15.26.0
+[debug] [2026-08-11T06:07:17.798Z] Platform:      win32
+[debug] [2026-08-11T06:07:17.799Z] Node Version:  v24.16.0
+[debug] [2026-08-11T06:07:17.800Z] Detected Agent: codex_cli
+[debug] [2026-08-11T06:07:17.801Z] Time:          Tue Aug 11 2026 15:07:17 GMT+0900 (한국 표준시)
+[debug] [2026-08-11T06:07:17.801Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-08-11T06:07:21.768Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-08-11T06:07:21.769Z] > authorizing via signed-in user (rhfkekd0903@gmail.com)
+[debug] [2026-08-11T06:07:21.770Z] [iam] checking project welfare-finder-20260811 for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2026-08-11T06:07:21.804Z] Checked if tokens are valid: false, expires at: 1786429252811
+[debug] [2026-08-11T06:07:21.804Z] Checked if tokens are valid: false, expires at: 1786429252811
+[debug] [2026-08-11T06:07:21.805Z] > refreshing access token with scopes: []
+[debug] [2026-08-11T06:07:21.812Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-08-11T06:07:21.813Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-08-11T06:07:22.098Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-08-11T06:07:22.098Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-08-11T06:07:22.147Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/welfare-finder-20260811:testIamPermissions [none]
+[debug] [2026-08-11T06:07:22.148Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/welfare-finder-20260811:testIamPermissions  x-goog-user-project=welfare-finder-20260811
+[debug] [2026-08-11T06:07:22.148Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/welfare-finder-20260811:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-08-11T06:07:22.433Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/welfare-finder-20260811:testIamPermissions 200
+[debug] [2026-08-11T06:07:22.433Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/welfare-finder-20260811:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-08-11T06:07:22.435Z] Checked if tokens are valid: true, expires at: 1786432041099
+[debug] [2026-08-11T06:07:22.435Z] Checked if tokens are valid: true, expires at: 1786432041099
+[debug] [2026-08-11T06:07:22.436Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/welfare-finder-20260811 [none]
+[debug] [2026-08-11T06:07:22.870Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/welfare-finder-20260811 200
+[debug] [2026-08-11T06:07:22.871Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/welfare-finder-20260811 {"projectId":"welfare-finder-20260811","projectNumber":"719568554718","displayName":"Welfare Finder","name":"projects/welfare-finder-20260811","resources":{"hostingSite":"welfare-finder-20260811"},"state":"ACTIVE","labels":{"firebase":"enabled"},"etag":"1_e8980ff3-43a3-4094-97d4-4c8faef60dbe"}
+[info] 
+[info] === Deploying to 'welfare-finder-20260811'...
+[info] 
+[info] i  deploying hosting 
+[debug] [2026-08-11T06:07:22.878Z] Checked if tokens are valid: true, expires at: 1786432041099
+[debug] [2026-08-11T06:07:22.878Z] Checked if tokens are valid: true, expires at: 1786432041099
+[debug] [2026-08-11T06:07:22.879Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/welfare-finder-20260811/sites/welfare-finder-20260811 [none]
+[debug] [2026-08-11T06:07:23.895Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/welfare-finder-20260811/sites/welfare-finder-20260811 200
+[debug] [2026-08-11T06:07:23.895Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/welfare-finder-20260811/sites/welfare-finder-20260811 {"name":"projects/welfare-finder-20260811/sites/welfare-finder-20260811","defaultUrl":"https://welfare-finder-20260811.web.app","type":"DEFAULT_SITE"}
+[debug] [2026-08-11T06:07:23.909Z] Checked if tokens are valid: true, expires at: 1786432041099
+[debug] [2026-08-11T06:07:23.909Z] Checked if tokens are valid: true, expires at: 1786432041099
+[debug] [2026-08-11T06:07:23.911Z] >>> [apiv2][query] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/versions [none]
+[debug] [2026-08-11T06:07:23.912Z] >>> [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/versions {"status":"CREATED","labels":{"deployment-tool":"cli-firebase"}}
+[debug] [2026-08-11T06:07:24.903Z] <<< [apiv2][status] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/versions 200
+[debug] [2026-08-11T06:07:24.903Z] <<< [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/versions {"name":"projects/719568554718/sites/welfare-finder-20260811/versions/6c75143b664b93af","status":"CREATED","config":{},"labels":{"deployment-tool":"cli-firebase"}}
+[info] i  hosting[welfare-finder-20260811]: beginning deploy... 
+[info] i  hosting[welfare-finder-20260811]: found 3 files in dist 
+[debug] [2026-08-11T06:07:24.942Z] [hosting] uploading with 200 concurrency
+[debug] [2026-08-11T06:07:24.974Z] Checked if tokens are valid: true, expires at: 1786432041099
+[debug] [2026-08-11T06:07:24.975Z] Checked if tokens are valid: true, expires at: 1786432041099
+[debug] [2026-08-11T06:07:24.977Z] [hosting] hash cache [ZGlzdA] stored for 3 files
+[debug] [2026-08-11T06:07:24.977Z] [hosting][hash queue][FINAL] {"max":23,"min":9,"avg":13.666666666666666,"active":0,"complete":3,"success":3,"errored":0,"retried":0,"total":3,"elapsed":30}
+[debug] [2026-08-11T06:07:24.978Z] >>> [apiv2][query] POST https://firebasehosting.googleapis.com/v1beta1/projects/719568554718/sites/welfare-finder-20260811/versions/6c75143b664b93af:populateFiles [none]
+[debug] [2026-08-11T06:07:24.978Z] >>> [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/719568554718/sites/welfare-finder-20260811/versions/6c75143b664b93af:populateFiles {"files":{"/index.html":"e827b9699b66fc5d46faa31d5efe56d1e67d18102816b6c71fb5f021c1146912","/assets/index-vmP8KbKb.css":"a89c20155a50072eb5f10f16f53d8be42846ad2785a436631d8788d4628a2127","/assets/index-BnlhmAd-.js":"72124dbe7882fba5932c5a8dc24b25141b2f65a6b720daba8e0424982a701610"}}
+[debug] [2026-08-11T06:07:25.922Z] <<< [apiv2][status] POST https://firebasehosting.googleapis.com/v1beta1/projects/719568554718/sites/welfare-finder-20260811/versions/6c75143b664b93af:populateFiles 200
+[debug] [2026-08-11T06:07:25.922Z] <<< [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/719568554718/sites/welfare-finder-20260811/versions/6c75143b664b93af:populateFiles {"uploadUrl":"https://upload-firebasehosting.googleapis.com/upload/sites/welfare-finder-20260811/versions/6c75143b664b93af/files"}
+[debug] [2026-08-11T06:07:25.923Z] [hosting][populate queue][FINAL] {"max":949,"min":949,"avg":949,"active":0,"complete":1,"success":1,"errored":0,"retried":0,"total":1,"elapsed":949}
+[debug] [2026-08-11T06:07:25.923Z] [hosting] uploads queued: 0
+[debug] [2026-08-11T06:07:25.924Z] [hosting][upload queue][FINAL] {"max":0,"min":9999999999,"avg":0,"active":0,"complete":0,"success":0,"errored":0,"retried":0,"total":0,"elapsed":1786428445924}
+[info] i  hosting: upload complete 
+[info] +  hosting[welfare-finder-20260811]: file upload complete 
+[debug] [2026-08-11T06:07:25.925Z] [hosting] deploy completed after 1015ms
+[debug] [2026-08-11T06:07:25.926Z] [
+  {
+    "config": {
+      "public": "dist",
+      "ignore": [
+        "firebase.json",
+        "firebase-debug.log",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ],
+      "headers": [
+        {
+          "source": "/index.html",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "no-cache, no-store, must-revalidate"
+            }
+          ]
+        }
+      ],
+      "cleanUrls": true,
+      "trailingSlash": false,
+      "site": "welfare-finder-20260811"
+    },
+    "version": "projects/719568554718/sites/welfare-finder-20260811/versions/6c75143b664b93af"
+  }
+]
+[info] i  hosting[welfare-finder-20260811]: finalizing version... 
+[debug] [2026-08-11T06:07:25.931Z] Checked if tokens are valid: true, expires at: 1786432041099
+[debug] [2026-08-11T06:07:25.931Z] Checked if tokens are valid: true, expires at: 1786432041099
+[debug] [2026-08-11T06:07:25.932Z] >>> [apiv2][query] PATCH https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/versions/6c75143b664b93af updateMask=status%2Cconfig
+[debug] [2026-08-11T06:07:25.932Z] >>> [apiv2][body] PATCH https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/versions/6c75143b664b93af {"status":"FINALIZED","config":{"rewrites":[{"glob":"**","path":"/index.html"}],"headers":[{"glob":"/index.html","headers":{"Cache-Control":"no-cache, no-store, must-revalidate"}}],"cleanUrls":true,"trailingSlashBehavior":"REMOVE"}}
+[debug] [2026-08-11T06:07:26.691Z] <<< [apiv2][status] PATCH https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/versions/6c75143b664b93af 200
+[debug] [2026-08-11T06:07:26.691Z] <<< [apiv2][body] PATCH https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/versions/6c75143b664b93af {"name":"projects/719568554718/sites/welfare-finder-20260811/versions/6c75143b664b93af","status":"FINALIZED","config":{"headers":[{"headers":{"Cache-Control":"no-cache, no-store, must-revalidate"},"glob":"/index.html"}],"rewrites":[{"glob":"**","path":"/index.html"}],"cleanUrls":true,"trailingSlashBehavior":"REMOVE"},"labels":{"deployment-tool":"cli-firebase"},"createTime":"2026-08-11T06:07:23.631898Z","createUser":{"email":"rhfkekd0903@gmail.com"},"finalizeTime":"2026-08-11T06:07:25.828722Z","finalizeUser":{"email":"rhfkekd0903@gmail.com"}}
+[debug] [2026-08-11T06:07:26.691Z] [hosting] finalized version for welfare-finder-20260811:[object Object]
+[info] +  hosting[welfare-finder-20260811]: version finalized 
+[info] i  hosting[welfare-finder-20260811]: releasing new version... 
+[debug] [2026-08-11T06:07:26.692Z] Checked if tokens are valid: true, expires at: 1786432041099
+[debug] [2026-08-11T06:07:26.693Z] Checked if tokens are valid: true, expires at: 1786432041099
+[debug] [2026-08-11T06:07:26.693Z] >>> [apiv2][query] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/channels/live/releases versionName=projects%2F719568554718%2Fsites%2Fwelfare-finder-20260811%2Fversions%2F6c75143b664b93af
+[debug] [2026-08-11T06:07:26.693Z] >>> [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/channels/live/releases {}
+[debug] [2026-08-11T06:07:27.513Z] <<< [apiv2][status] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/channels/live/releases 200
+[debug] [2026-08-11T06:07:27.513Z] <<< [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/welfare-finder-20260811/channels/live/releases {"name":"projects/719568554718/sites/welfare-finder-20260811/channels/live/releases/1786428445972000","version":{"name":"projects/719568554718/sites/welfare-finder-20260811/versions/6c75143b664b93af","status":"FINALIZED","config":{"headers":[{"headers":{"Cache-Control":"no-cache, no-store, must-revalidate"},"glob":"/index.html"}],"rewrites":[{"glob":"**","path":"/index.html"}],"cleanUrls":true,"trailingSlashBehavior":"REMOVE"},"labels":{"deployment-tool":"cli-firebase"},"createTime":"2026-08-11T06:07:23.631898Z","createUser":{"email":"rhfkekd0903@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocL4t6XfB4k-F-CMD9Iae3BOBy4wxQA0N-rUg-NFXDpG-KuO0sPJ"},"finalizeTime":"2026-08-11T06:07:25.828722Z","finalizeUser":{"email":"rhfkekd0903@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocL4t6XfB4k-F-CMD9Iae3BOBy4wxQA0N-rUg-NFXDpG-KuO0sPJ"}},"type":"DEPLOY","releaseTime":"2026-08-11T06:07:25.972Z","releaseUser":{"email":"rhfkekd0903@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocL4t6XfB4k-F-CMD9Iae3BOBy4wxQA0N-rUg-NFXDpG-KuO0sPJ"}}
+[debug] [2026-08-11T06:07:27.514Z] [hosting] release: {"name":"projects/719568554718/sites/welfare-finder-20260811/channels/live/releases/1786428445972000","version":{"name":"projects/719568554718/sites/welfare-finder-20260811/versions/6c75143b664b93af","status":"FINALIZED","config":{"headers":[{"headers":{"Cache-Control":"no-cache, no-store, must-revalidate"},"glob":"/index.html"}],"rewrites":[{"glob":"**","path":"/index.html"}],"cleanUrls":true,"trailingSlashBehavior":"REMOVE"},"labels":{"deployment-tool":"cli-firebase"},"createTime":"2026-08-11T06:07:23.631898Z","createUser":{"email":"rhfkekd0903@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocL4t6XfB4k-F-CMD9Iae3BOBy4wxQA0N-rUg-NFXDpG-KuO0sPJ"},"finalizeTime":"2026-08-11T06:07:25.828722Z","finalizeUser":{"email":"rhfkekd0903@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocL4t6XfB4k-F-CMD9Iae3BOBy4wxQA0N-rUg-NFXDpG-KuO0sPJ"}},"type":"DEPLOY","releaseTime":"2026-08-11T06:07:25.972Z","releaseUser":{"email":"rhfkekd0903@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocL4t6XfB4k-F-CMD9Iae3BOBy4wxQA0N-rUg-NFXDpG-KuO0sPJ"}}
+[info] +  hosting[welfare-finder-20260811]: release complete 
+[info] 
+[info] +  Deploy complete! 
+[info] 
+[info] Project Console: https://console.firebase.google.com/project/welfare-finder-20260811/overview
+[info] Hosting URL: https://welfare-finder-20260811.web.app

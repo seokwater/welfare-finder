@@ -1,0 +1,25 @@
+{
+  "expo": {
+    "name": "복지 Finder",
+    "slug": "welfare-finder-ai",
+    "version": "2.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "scheme": "welfarefinder",
+    "plugins": [
+      [
+        "expo-calendar",
+        {
+          "calendarPermission": "복지 Finder가 신청 시작일과 마감일을 캘린더에 추가할 수 있도록 접근을 허용해 주세요."
+        }
+      ]
+    ],
+    "android": {
+      "package": "com.estai.welfarefinder"
+    },
+    "ios": {
+      "bundleIdentifier": "com.estai.welfarefinder",
+      "supportsTablet": true
+    }
+  }
+}
