@@ -1,10 +1,12 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { legacySessionToSearchState, normalizeSearchState } from './searchHistory'
 
 const KEYS = {
   onboarded: 'wf:onboarded',
   profile: 'wf:profile',
   apiBase: 'wf:apiBase',
-  searchSession: 'wf:searchSession',
+  searchState: 'wf:searchConversations:v1',
+  legacySearchSession: 'wf:searchSession',
   calendarCacheIndex: 'wf:calendarCacheIndex:v1',
 }
 
@@ -62,32 +64,32 @@ export async function saveApiBase(apiBase) {
   return normalized
 }
 
-export async function loadSearchSession() {
-  const raw = await AsyncStorage.getItem(KEYS.searchSession)
-  if (!raw) return null
-
+function parseJson(raw) {
   try {
-    const session = JSON.parse(raw)
-    const messages = Array.isArray(session?.messages)
-      ? session.messages.filter((message) => (
-          ['user', 'assistant'].includes(message?.role)
-          && typeof message?.content === 'string'
-        ))
-      : []
-
-    if (!messages.length) return null
-    return {
-      messages,
-      result: session?.result && typeof session.result === 'object' ? session.result : null,
-    }
+    return raw ? JSON.parse(raw) : null
   } catch {
-    await AsyncStorage.removeItem(KEYS.searchSession)
     return null
   }
 }
 
-export async function saveSearchSession({ messages, result }) {
-  await AsyncStorage.setItem(KEYS.searchSession, JSON.stringify({ messages, result }))
+export async function loadSearchState() {
+  const saved = parseJson(await AsyncStorage.getItem(KEYS.searchState))
+  if (saved?.conversations?.length) return normalizeSearchState(saved)
+
+  const legacyRaw = await AsyncStorage.getItem(KEYS.legacySearchSession)
+  const migrated = legacySessionToSearchState(parseJson(legacyRaw))
+  if (!migrated) {
+    if (legacyRaw) await AsyncStorage.removeItem(KEYS.legacySearchSession)
+    return null
+  }
+
+  await AsyncStorage.setItem(KEYS.searchState, JSON.stringify(migrated))
+  await AsyncStorage.removeItem(KEYS.legacySearchSession)
+  return migrated
+}
+
+export async function saveSearchState(state) {
+  await AsyncStorage.setItem(KEYS.searchState, JSON.stringify(normalizeSearchState(state)))
 }
 
 export function getCalendarCacheEntry(apiBase, year, month) {
@@ -132,5 +134,5 @@ export async function saveCalendarCache(apiBase, year, month, data, etag = '') {
 }
 
 export async function resetAppState() {
-  await AsyncStorage.multiRemove([KEYS.onboarded, KEYS.profile, KEYS.searchSession])
+  await AsyncStorage.multiRemove([KEYS.onboarded, KEYS.profile, KEYS.searchState, KEYS.legacySearchSession])
 }

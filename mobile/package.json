@@ -2,6 +2,7 @@
   "name": "welfare-finder-mobile",
   "version": "2.0.0",
   "private": true,
+  "type": "module",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "node scripts/start-expo-go.mjs",
@@ -9,7 +10,8 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "doctor": "expo-doctor"
+    "doctor": "expo-doctor",
+    "test:search-history": "node --test tests/searchHistory.test.mjs"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "2.2.0",
