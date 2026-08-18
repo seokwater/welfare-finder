@@ -22,21 +22,6 @@ npm start
 `npm start`는 PC의 사설 IPv4 주소를 자동으로 선택해 Expo Go에 전달합니다.
 휴대폰과 PC를 같은 Wi-Fi에 연결한 뒤 표시되는 QR 코드를 스캔합니다.
 
-공유기나 방화벽 때문에 LAN 연결이 되지 않을 때만 터널을 사용합니다.
-
-```bash
-npm run start:tunnel
-```
-
-종료된 Android 에뮬레이터가 `offline`으로 남아 터널 시작을 막으면 ADB 서버를
-재시작한 뒤 다시 실행합니다.
-
-```powershell
-adb kill-server
-adb start-server
-npm run start:tunnel
-```
-
 에뮬레이터나 PC 내부에서만 실행하려면 다음 명령을 사용합니다.
 
 ```bash

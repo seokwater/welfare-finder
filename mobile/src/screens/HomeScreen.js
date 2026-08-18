@@ -19,7 +19,7 @@ export default function HomeScreen({ apiBase, profile, onOpenPolicy, onNavigate,
     setError('')
     try {
       const now = new Date()
-      const [rec, calendarResponse] = await Promise.all([
+      const [rec, cal] = await Promise.all([
         api.alanSearch(apiBase, {
           query: '내 프로필 기준으로 지금 신청할 수 있는 청년 혜택을 우선 추천해줘',
           profileContext: profile || {},
@@ -29,7 +29,7 @@ export default function HomeScreen({ apiBase, profile, onOpenPolicy, onNavigate,
         api.calendar(apiBase, now.getFullYear(), now.getMonth() + 1),
       ])
       setRecommendation(rec)
-      setCalendar(calendarResponse.data)
+      setCalendar(cal)
     } catch (e) {
       setError(e.message)
     } finally {

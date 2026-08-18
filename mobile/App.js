@@ -9,49 +9,26 @@ import HomeScreen from './src/screens/HomeScreen'
 import MyScreen from './src/screens/MyScreen'
 import OnboardingScreen from './src/screens/OnboardingScreen'
 import SearchScreen, { INITIAL_SEARCH_SESSION } from './src/screens/SearchScreen'
-import { loadAppState, loadSearchSessions, resetAppState, saveActiveProfileId, saveApiBase, saveOnboarded, saveProfiles, saveSearchSessions } from './src/storage'
+import { loadAppState, loadSearchSession, resetAppState, saveApiBase, saveOnboarded, saveProfile, saveSearchSession } from './src/storage'
 import { colors } from './src/theme'
-
-function createProfileId() {
-  return `profile-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
-}
-
-function nextProfileName(profiles) {
-  const names = new Set(profiles.map((entry) => entry.name))
-  let index = 1
-  while (names.has(`프로필 ${index}`)) index += 1
-  return `프로필 ${index}`
-}
 
 export default function App() {
   const [booting, setBooting] = useState(true)
   const [onboarded, setOnboarded] = useState(false)
-  const [profiles, setProfiles] = useState([])
-  const [activeProfileId, setActiveProfileId] = useState('')
+  const [profile, setProfile] = useState(null)
   const [apiBase, setApiBase] = useState(defaultApiBase())
-  const [profileEditor, setProfileEditor] = useState(null)
+  const [profileFlow, setProfileFlow] = useState(false)
   const [activeTab, setActiveTab] = useState('home')
   const [selectedPolicy, setSelectedPolicy] = useState(null)
-  const [searchSessions, setSearchSessions] = useState({})
-
-  const activeProfileEntry = profiles.find((entry) => entry.id === activeProfileId) || null
-  const profile = activeProfileEntry?.data || null
-  const searchSessionKey = activeProfileId || 'guest'
-  const searchSession = searchSessions[searchSessionKey] || INITIAL_SEARCH_SESSION
+  const [searchSession, setSearchSession] = useState(INITIAL_SEARCH_SESSION)
 
   useEffect(() => {
-    Promise.all([loadAppState(), loadSearchSessions()])
-      .then(([state, savedSearchSessions]) => {
+    Promise.all([loadAppState(), loadSearchSession()])
+      .then(([state, savedSearchSession]) => {
         setOnboarded(state.onboarded)
-        setProfiles(state.profiles)
-        setActiveProfileId(state.activeProfileId)
+        setProfile(state.profile)
         if (state.apiBase) setApiBase(state.apiBase)
-        if (savedSearchSessions.__legacy__) {
-          const { __legacy__, ...rest } = savedSearchSessions
-          setSearchSessions({ ...rest, [state.activeProfileId || 'guest']: __legacy__ })
-        } else {
-          setSearchSessions(savedSearchSessions)
-        }
+        if (savedSearchSession) setSearchSession(savedSearchSession)
       })
       .catch(() => {})
       .finally(() => setBooting(false))
@@ -59,8 +36,8 @@ export default function App() {
 
   useEffect(() => {
     if (booting || !onboarded) return
-    saveSearchSessions(searchSessions).catch(() => {})
-  }, [booting, onboarded, searchSessions])
+    saveSearchSession(searchSession).catch(() => {})
+  }, [booting, onboarded, searchSession])
 
   if (booting) {
     return (
@@ -79,7 +56,7 @@ export default function App() {
           onStart={async () => {
             await saveOnboarded(true)
             setOnboarded(true)
-            setProfileEditor({ profileId: null })
+            setProfileFlow(true)
           }}
           onSkip={async () => {
             await saveOnboarded(true)
@@ -91,41 +68,18 @@ export default function App() {
     )
   }
 
-  if (profileEditor) {
-    const editingEntry = profiles.find((entry) => entry.id === profileEditor.profileId) || null
+  if (profileFlow) {
     return (
       <>
         <StatusBar barStyle="dark-content" backgroundColor={colors.white} />
         <AIProfileScreen
           apiBase={apiBase}
-          initialProfile={editingEntry?.data || null}
-          profileName={editingEntry?.name || nextProfileName(profiles)}
-          isEditing={!!editingEntry}
-          onCancel={() => setProfileEditor(null)}
+          initialProfile={profile}
+          onCancel={() => setProfileFlow(false)}
           onComplete={async (nextProfile) => {
-            const now = Date.now()
-            let nextProfiles
-            let nextActiveProfileId
-            if (editingEntry) {
-              nextProfiles = profiles.map((entry) => (
-                entry.id === editingEntry.id ? { ...entry, data: nextProfile, updatedAt: now } : entry
-              ))
-              nextActiveProfileId = editingEntry.id
-            } else {
-              const nextEntry = {
-                id: createProfileId(),
-                name: nextProfileName(profiles),
-                data: nextProfile,
-                createdAt: now,
-                updatedAt: now,
-              }
-              nextProfiles = [...profiles, nextEntry]
-              nextActiveProfileId = nextEntry.id
-            }
-            const saved = await saveProfiles(nextProfiles, nextActiveProfileId)
-            setProfiles(saved.profiles)
-            setActiveProfileId(saved.activeProfileId)
-            setProfileEditor(null)
+            await saveProfile(nextProfile)
+            setProfile(nextProfile)
+            setProfileFlow(false)
             setActiveTab('home')
           }}
         />
@@ -143,7 +97,7 @@ export default function App() {
           <HomeScreen
             {...common}
             onNavigate={setActiveTab}
-            onEditProfile={() => setProfileEditor({ profileId: activeProfileId || null })}
+            onEditProfile={() => setProfileFlow(true)}
           />
         )}
         {activeTab === 'calendar' && <CalendarScreen {...common} />}
@@ -151,52 +105,23 @@ export default function App() {
           <SearchScreen
             {...common}
             searchSession={searchSession}
-            onSearchSessionChange={(update) => {
-              setSearchSessions((current) => {
-                const existing = current[searchSessionKey] || INITIAL_SEARCH_SESSION
-                const next = typeof update === 'function' ? update(existing) : update
-                return { ...current, [searchSessionKey]: next }
-              })
-            }}
+            onSearchSessionChange={setSearchSession}
           />
         )}
         {activeTab === 'my' && (
           <MyScreen
             {...common}
-            profiles={profiles}
-            activeProfileId={activeProfileId}
-            onSelectProfile={async (profileId) => {
-              if (!profiles.some((entry) => entry.id === profileId)) return
-              await saveActiveProfileId(profileId)
-              setActiveProfileId(profileId)
-            }}
-            onAddProfile={() => setProfileEditor({ profileId: null })}
-            onEditProfile={(profileId) => setProfileEditor({ profileId })}
-            onDeleteProfile={async (profileId) => {
-              const nextProfiles = profiles.filter((entry) => entry.id !== profileId)
-              const nextActiveProfileId = activeProfileId === profileId
-                ? (nextProfiles[0]?.id || '')
-                : activeProfileId
-              const saved = await saveProfiles(nextProfiles, nextActiveProfileId)
-              setProfiles(saved.profiles)
-              setActiveProfileId(saved.activeProfileId)
-              setSearchSessions((current) => {
-                const next = { ...current }
-                delete next[profileId]
-                return next
-              })
-            }}
+            onEditProfile={() => setProfileFlow(true)}
             onSaveApiBase={async (next) => {
               const saved = await saveApiBase(next)
               setApiBase(saved || defaultApiBase())
             }}
             onReset={async () => {
               await resetAppState()
-              setProfiles([])
-              setActiveProfileId('')
-              setSearchSessions({})
+              setProfile(null)
+              setSearchSession(INITIAL_SEARCH_SESSION)
               setOnboarded(false)
-              setProfileEditor(null)
+              setProfileFlow(false)
               setActiveTab('home')
             }}
           />
