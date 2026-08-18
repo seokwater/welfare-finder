@@ -3,6 +3,8 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import threading
+import time
 from contextlib import asynccontextmanager
 from datetime import date
 from pathlib import Path
@@ -19,21 +21,27 @@ from calendar_service import build_policy_calendar
 from database import create_tables, engine as db_engine, ping_database
 from filter_options import FILTER_OPTIONS
 from filter_service import SelectedFilters, search_with_filters
+from policy_repository import get_policy_data_version
 from search_engine import UserProfile, YouthPolicySearchEngine
 
 BASE_DIR = Path(__file__).resolve().parent
 search_engine: YouthPolicySearchEngine | None = None
 search_index_error: str | None = None
+search_index_version: str | None = None
+search_index_last_checked = 0.0
+search_index_lock = threading.Lock()
 calendar_response_cache: dict[tuple[int, int, str], tuple[bytes, str]] = {}
 
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    global search_engine, search_index_error
+    global search_engine, search_index_error, search_index_version, search_index_last_checked
     try:
         create_tables()
         ping_database()
         search_engine = YouthPolicySearchEngine.from_postgresql()
+        search_index_version = get_policy_data_version()
+        search_index_last_checked = time.monotonic()
         search_index_error = None
         calendar_response_cache.clear()
     except Exception as exc:  # 서버는 뜨되 health에서 상태를 확인할 수 있게 한다.
@@ -42,7 +50,7 @@ async def lifespan(_: FastAPI):
     yield
 
 
-app = FastAPI(title="복지 Finder Alan AI Mobile API", version="7.0.0", lifespan=lifespan)
+app = FastAPI(title="복지 Finder Alan AI Mobile API", version="7.1.0", lifespan=lifespan)
 origins = [v.strip() for v in os.getenv("CORS_ORIGINS", "*").split(",") if v.strip()]
 app.add_middleware(
     CORSMiddleware,
@@ -111,6 +119,7 @@ class AISearchRequest(BaseModel):
 
 
 def engine_required() -> YouthPolicySearchEngine:
+    maybe_reload_search_index()
     if search_engine is None:
         raise HTTPException(
             503,
@@ -119,8 +128,38 @@ def engine_required() -> YouthPolicySearchEngine:
     return search_engine
 
 
+def maybe_reload_search_index() -> None:
+    """Cron 갱신 버전을 짧은 주기로 확인하고 새 검색 인덱스를 원자적으로 교체한다."""
+
+    global search_engine, search_index_error, search_index_version, search_index_last_checked
+    interval = max(float(os.getenv("POLICY_INDEX_REFRESH_CHECK_SECONDS", "30")), 1.0)
+    now = time.monotonic()
+    if now - search_index_last_checked < interval or not search_index_lock.acquire(blocking=False):
+        return
+    try:
+        now = time.monotonic()
+        if now - search_index_last_checked < interval:
+            return
+        search_index_last_checked = now
+        current_version = get_policy_data_version()
+        if search_engine is not None and (not current_version or current_version == search_index_version):
+            return
+
+        refreshed_engine = YouthPolicySearchEngine.from_postgresql()
+        search_engine = refreshed_engine
+        search_index_version = current_version
+        search_index_error = None
+        calendar_response_cache.clear()
+    except Exception as exc:
+        # 기존 인덱스는 계속 제공하고 다음 확인 주기에 다시 시도한다.
+        search_index_error = f"{type(exc).__name__}: {exc}"
+    finally:
+        search_index_lock.release()
+
+
 @app.get("/health")
 def health():
+    maybe_reload_search_index()
     try:
         db = ping_database()
     except Exception:
@@ -131,6 +170,7 @@ def health():
         "database_connected": db,
         "policies": len(search_engine.df) if search_engine is not None else 0,
         "search_index_ready": search_engine is not None,
+        "policy_data_version": search_index_version,
         "alan_enabled": alan_enabled(),
         "alan_provider": "ESTsoft Alan",
         "alan_api_base_url": ALAN_API_BASE_URL if alan_enabled() else None,

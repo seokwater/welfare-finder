@@ -91,3 +91,15 @@ class Policy(Base):
     views = mapped_column(Integer, default=0, nullable=False)
     source_created_at = mapped_column(DateTime)
     source_updated_at = mapped_column(DateTime)
+
+
+class PolicyRefreshState(Base):
+    """웹 프로세스가 DB 갱신을 감지하기 위한 단일 행 메타데이터."""
+
+    __tablename__ = "policy_refresh_state"
+
+    id = mapped_column(Integer, primary_key=True, default=1)
+    data_version = mapped_column(String(64), nullable=False)
+    completed_at = mapped_column(DateTime(timezone=True), nullable=False)
+    policy_count = mapped_column(Integer, nullable=False)
+    source = mapped_column(String(32), nullable=False, default="csv")

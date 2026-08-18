@@ -148,6 +148,35 @@ python db_check.py
 
 정상 적재 시 정책 약 2,702개가 `policies` 테이블에 들어갑니다.
 
+## 청년정책 API 자동 갱신
+
+`policy_refresh.py`는 아래 과정을 한 번에 실행합니다.
+
+1. 온통청년 API의 모든 페이지를 재시도와 함께 수집
+2. `01_youth_policy_raw.csv`와 `01_youth_policy_raw_한글컬럼.csv` 생성
+3. 코드·기간·지역·자격 조건을 39개 컬럼의 `data/youth_policy.csv` 형식으로 변환
+4. 정책 수 급감, 빈 정책번호, 중복 정책번호를 검증
+5. PostgreSQL에 한 트랜잭션으로 upsert하고 API에서 사라진 정책을 정리
+6. 갱신 버전을 기록해 실행 중인 API 서버가 30초 이내에 검색 인덱스와 캘린더 캐시를 교체
+
+`.env`에 발급받은 키를 설정한 뒤 수동 실행할 수 있습니다.
+
+```env
+YOUTH_POLICY_API_KEY=발급받은-API-키
+```
+
+```bat
+python policy_refresh.py
+```
+
+DB 반영 없이 제공받은 원본으로 변환만 검증하려면 다음처럼 실행합니다.
+
+```bat
+python policy_refresh.py --source-korean-csv "01_youth_policy_raw_한글컬럼.csv" --output-dir tmp\policy-check --skip-db
+```
+
+운영 환경의 `render.yaml`에는 매일 한국시간 00:00에 실행되는 Cron Job이 포함되어 있습니다. Render 스케줄은 UTC 기준이므로 `0 15 * * *`로 설정되어 있습니다. Blueprint를 처음 연결할 때 Cron Job의 `YOUTH_POLICY_API_KEY` 비밀 환경변수를 Render Dashboard에서 입력해야 합니다.
+
 ## 5. FastAPI 실행
 
 ```bat

@@ -4,7 +4,7 @@ import pandas as pd
 from sqlalchemy import func, select
 
 from database import engine
-from models import CSV_COLUMN_MAP, Policy
+from models import CSV_COLUMN_MAP, Policy, PolicyRefreshState
 
 
 def load_policies_dataframe() -> pd.DataFrame:
@@ -20,3 +20,9 @@ def count_policies() -> int:
     stmt = select(func.count()).select_from(Policy)
     with engine.connect() as conn:
         return int(conn.execute(stmt).scalar_one())
+
+
+def get_policy_data_version() -> str | None:
+    stmt = select(PolicyRefreshState.data_version).where(PolicyRefreshState.id == 1)
+    with engine.connect() as conn:
+        return conn.execute(stmt).scalar_one_or_none()

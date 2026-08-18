@@ -16,4 +16,6 @@ mobile/.expo/
 dist/
 mobile/dist/
 frontend/dist/
+data/01_youth_policy_raw.csv
+data/01_youth_policy_raw_한글컬럼.csv
 .DS_Store

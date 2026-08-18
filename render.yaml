@@ -26,6 +26,32 @@ services:
         value: "60"
       - key: CORS_ORIGINS
         value: "*"
+      - key: POLICY_INDEX_REFRESH_CHECK_SECONDS
+        value: "30"
+
+  # Render cron은 UTC 기준입니다. 15:00 UTC는 다음 날 00:00 KST입니다.
+  - type: cron
+    name: welfare-finder-policy-refresh
+    runtime: python
+    plan: starter
+    region: singapore
+    buildCommand: pip install -r requirements.txt
+    startCommand: python policy_refresh.py
+    schedule: "0 15 * * *"
+    autoDeployTrigger: commit
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: DATABASE_URL
+        fromDatabase:
+          name: welfare-finder-postgres
+          property: connectionString
+      - key: YOUTH_POLICY_API_KEY
+        sync: false
+      - key: YOUTH_POLICY_MIN_ROWS
+        value: "1000"
+      - key: YOUTH_POLICY_MAX_DROP_RATIO
+        value: "0.25"
 
 
 databases:
