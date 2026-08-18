@@ -9,8 +9,8 @@
 - 작업 경로: `D:\programming\Project\welfare_finder_search`
 - 원격 저장소: `https://github.com/seokwater/welfare-finder`
 - 브랜치: `main`
-- 기능 기준 커밋(이 문서 작성 직전): `5cce0178f274308893938b2d5c842ba82dfbe289`
-- 기능 기준 커밋 설명: `Add searchable conversation history management`
+- 기능 기준 커밋(이 문서 갱신 직전): `4d54db74d3a07948b01111ec1f318af2633b1f33`
+- 기능 기준 커밋 설명: `Fix editing completed profiles`
 - 이 문서 자체를 추가한 후속 커밋은 `git log -1`로 확인한다.
 - `main`과 `origin/main`은 동기화되어 있다.
 - 사용자 작업 원칙: 코드 변경 후 가능한 범위에서 검증하고 항상 Git 커밋과 푸시까지 수행한다.
@@ -44,6 +44,7 @@ Welfare Finder는 청년정책을 검색하고 추천하는 Expo/React Native �
 11. 변환된 정책을 PostgreSQL에 원자적으로 upsert하고 API에서 사라진 정책 정리
 12. DB 정책 갱신 후 실행 중인 검색 인덱스와 캘린더 캐시 자동 교체
 13. Render 초기 DB 준비 스크립트 추가
+14. 완성된 프로필의 각 항목을 선택형 또는 LLM 자유 입력으로 다시 수정하고 저장
 
 ### 요청됐지만 현재 브랜치에는 포함되지 않은 항목
 
@@ -96,15 +97,28 @@ Welfare Finder는 청년정책을 검색하고 추천하는 Expo/React Native �
 
 ## 5. 프로필 생성 흐름
 
-관련 과거 커밋: `e5b3907 Optimize profile input flow`
+관련 커밋:
+
+- `e5b3907 Optimize profile input flow`
+- `4d54db7 Fix editing completed profiles`
 
 - `mobile/src/screens/AIProfileScreen.js`가 프로필 단계를 관리한다.
 - 제공된 선택지를 누르면 앱 내부 로직으로 즉시 다음 필드에 반영한다.
 - 자유 문장을 입력하면 백엔드의 Alan 프로필 분석 API를 호출한다.
 - 주요 필드: 거주지, 나이, 주거, 취업, 소득
 - 프로필 완성 시 메시지 입력 UI 대신 `혜택 보러가기` 버튼을 표시한다.
+- 저장된 프로필을 수정할 때는 거주지, 나이, 주거, 취업, 소득 행을 눌러 원하는 항목을 다시 연다.
+- 선택지는 로컬에서 즉시 반영하고, `직접 입력`은 선택한 필드를 비운 프로필 문맥과 함께 Alan API에 전달한다.
+- 서버 분석 결과가 비어 있어도 기존 프로필 값은 유실하지 않는다.
+- 수정 화면에서는 `수정 내용 저장하기`로 AsyncStorage의 기존 프로필을 갱신한다.
 - 현재 프로필 저장 키는 `wf:profile` 하나이므로 단일 프로필만 지원한다.
 - 백엔드 호환 경로는 `/api/alan/profile`과 레거시 `/api/ai/profile`이다.
+
+검증:
+
+- `npm run test:profile-flow`: 프로필 재선택, LLM 요청 문맥, 결과 병합 테스트 3개 통과
+- `npm run test:search-history`: 기존 검색 기록 테스트 3개 통과
+- `npx expo export --platform android`: Android production bundle 성공
 
 ## 6. 캘린더 최적화
 
@@ -269,8 +283,9 @@ EXPO_PUBLIC_API_BASE_URL=http://PC의-사설-IP:8000
 - `8613abe` tree reverted to `b11b34cc97f0b902cbf13f1656837c09b3201487`
 - `a938e24` nightly youth-policy API/DB refresh
 - `5cce017` search conversation list and per-conversation deletion
+- `4d54db7` completed profile editing fix
 
-사용자는 특정 커밋 `b11b34cc97f0b902cbf13f1656837c09b3201487`로 회귀를 요청했다. 현재 브랜치는 그 회귀 상태 위에 정책 자동 갱신과 검색 대화 기록 기능만 다시 추가된 상태다.
+사용자는 특정 커밋 `b11b34cc97f0b902cbf13f1656837c09b3201487`로 회귀를 요청했다. 현재 브랜치는 그 회귀 상태 위에 정책 자동 갱신, 검색 대화 기록, 완성된 프로필 수정 기능을 다시 추가한 상태다.
 
 ## 11. 참고 자료와 대화 맥락
 
@@ -312,6 +327,7 @@ EXPO_PUBLIC_API_BASE_URL=http://PC의-사설-IP:8000
 - `mobile/App.js`: 앱 전역 상태, 화면 전환, 검색 대화 상태
 - `mobile/src/api.js`: FastAPI 호출
 - `mobile/src/storage.js`: 프로필, 검색 대화, 캘린더 캐시 저장
+- `mobile/src/profileFlow.js`: 프로필 단계, 선택형 수정, LLM 요청 문맥과 분석 결과 병합
 - `mobile/src/searchHistory.js`: 다중 검색 대화 상태 로직
 - `mobile/src/screens/SearchScreen.js`: Alan 검색, 대화 목록, 선택, 삭제
 - `mobile/src/screens/AIProfileScreen.js`: 선택형/자연어 프로필 생성
@@ -328,6 +344,7 @@ EXPO_PUBLIC_API_BASE_URL=http://PC의-사설-IP:8000
 - `tests/test_policy_refresh.py`: 정책 변환 테스트
 - `tests/test_database_sync.py`: DB upsert/삭제/버전 테스트
 - `mobile/tests/searchHistory.test.mjs`: 검색 대화 상태 테스트
+- `mobile/tests/profileFlow.test.mjs`: 완성된 프로필 수정 회귀 테스트
 
 ## 13. 재현 및 검증 명령
 
@@ -358,6 +375,7 @@ python policy_refresh.py --source-korean-csv "C:\Users\bulkk\Documents\카카오
 
 ```powershell
 cd mobile
+npm run test:profile-flow
 npm run test:search-history
 npx expo export --platform android
 ```
@@ -371,9 +389,10 @@ npx expo export --platform android
 1. Render Blueprint를 동기화하고 Cron Job에 새 청년정책 API 키 등록
 2. Cron을 수동 1회 실행하여 API 수집 건수, DB 정책 수, `policy_data_version` 확인
 3. Render의 Alan 환경변수를 확인하여 프로필 생성 서버 연결 오류 재검증
-4. 실제 Expo Go 기기에서 대화 목록 열기, 전환, 삭제, 앱 재실행 후 복원 확인
-5. 사용자가 다시 원하면 현재 브랜치 위에 다중 프로필 기능 재구현
-6. 실제 기기 검증 후 EAS preview APK 생성
+4. 실제 Expo Go 기기에서 프로필 각 항목의 선택형/자유 입력 수정과 저장 후 재진입 확인
+5. 실제 Expo Go 기기에서 대화 목록 열기, 전환, 삭제, 앱 재실행 후 복원 확인
+6. 사용자가 다시 원하면 현재 브랜치 위에 다중 프로필 기능 재구현
+7. 실제 기기 검증 후 EAS preview APK 생성
 
 ## 15. 보안 및 작업 주의사항
 
