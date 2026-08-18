@@ -22,6 +22,14 @@ npm start
 `npm start`는 PC의 사설 IPv4 주소를 자동으로 선택해 Expo Go에 전달합니다.
 휴대폰과 PC를 같은 Wi-Fi에 연결한 뒤 표시되는 QR 코드를 스캔합니다.
 
+Expo Go에서 `failed to download remote update`가 표시되거나 공용 Wi-Fi가 LAN 접속을 차단하면 터널로 시작하고 새 QR 코드를 스캔합니다.
+
+```bash
+npm run start:tunnel
+```
+
+LAN과 터널 시작 명령은 Expo Go 모드를 강제하고, Metro 캐시를 비운 뒤 사용 가능한 새 포트를 선택합니다. 이전 실행의 QR 코드나 Expo Go 최근 항목 대신 현재 터미널에 표시된 QR 코드를 사용해야 합니다.
+
 에뮬레이터나 PC 내부에서만 실행하려면 다음 명령을 사용합니다.
 
 ```bash

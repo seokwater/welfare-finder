@@ -559,3 +559,12 @@ npx expo export --platform android
 - 키보드 이벤트가 늦거나 누락되는 기기에서는 포커스 후 약 1초 동안 `Keyboard.metrics()`를 확인해 좌표를 보완한다.
 - 시스템 `resize`가 정상 적용된 경우에는 추가 이동이 0이므로 이중으로 화면이 올라가지 않는다.
 - 키보드가 화면을 덮는 Expo Go 환경에서는 입력창이 보일 때까지 실제 겹침만 보정한다.
+
+## 29. Expo Go 원격 업데이트 다운로드 오류 대응
+
+- SDK 54 프로젝트에 SDK 57 `expo-font`가 함께 설치된 중복 상태를 `expo-font ~14.0.12` 단일 버전으로 정리했다.
+- `expo-doctor` 18개 검사를 모두 통과했다.
+- Expo 시작 시 `--go`, `--clear`, 사용 가능한 새 포트를 적용해 이전 개발 서버 주소와 캐시를 재사용하지 않는다.
+- LAN 주소는 Wi-Fi·유선 어댑터를 우선하고 WSL·Hyper-V·VPN 같은 가상 어댑터를 제외해 선택한다.
+- `npm run start:tunnel`을 추가했으며 실제 ngrok 터널 연결과 QR 생성을 확인했다.
+- LAN manifest는 SDK 54로 HTTP 200, Android 개발 번들은 약 5.16MB로 HTTP 200 응답하는 것을 확인했다.
