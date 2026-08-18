@@ -6,6 +6,8 @@ import { getHomeCacheEntry, isHomeCacheFresh, loadHomeCacheEntry, saveHomeCache 
 import { colors } from '../theme'
 import { isoToday } from '../utils'
 
+const EMPTY_RECOMMENDATION = { answer: '', count: 0, results: [] }
+
 function ageLabel(value) {
   const age = String(value || '').trim()
   if (!age) return '만 나이'
@@ -29,9 +31,9 @@ function sameData(current, next) {
 
 export default function HomeScreen({ apiBase, profile, profileCacheKey = 'guest', profileName = '프로필', onOpenPolicy, onNavigate, onEditProfile }) {
   const initialCache = getHomeCacheEntry(apiBase, profileCacheKey)
-  const [recommendation, setRecommendation] = useState(initialCache?.recommendation || null)
+  const [recommendation, setRecommendation] = useState(profile ? (initialCache?.recommendation || null) : EMPTY_RECOMMENDATION)
   const [calendar, setCalendar] = useState(initialCache?.calendar || null)
-  const [loading, setLoading] = useState(!initialCache)
+  const [loading, setLoading] = useState(Boolean(profile && !initialCache))
   const [refreshing, setRefreshing] = useState(false)
   const [error, setError] = useState('')
   const [benefitsExpanded, setBenefitsExpanded] = useState(false)
@@ -41,16 +43,16 @@ export default function HomeScreen({ apiBase, profile, profileCacheKey = 'guest'
 
   const load = useCallback(async ({ showLoading = false, silent = false } = {}) => {
     if (!silent) setError('')
-    if (showLoading) setLoading(true)
+    if (showLoading && profile) setLoading(true)
     try {
       const now = new Date()
       const [rec, calendarResponse] = await Promise.all([
-        api.alanSearch(apiBase, {
+        profile ? api.alanSearch(apiBase, {
           query: '내 프로필 기준으로 지금 신청할 수 있는 청년 혜택을 우선 추천해줘',
-          profileContext: profile || {},
+          profileContext: profile,
           topK: 6,
           openOnly: true,
-        }),
+        }) : Promise.resolve(EMPTY_RECOMMENDATION),
         api.calendar(apiBase, now.getFullYear(), now.getMonth() + 1),
       ])
       setRecommendation((current) => sameData(current, rec) ? current : rec)
@@ -71,13 +73,13 @@ export default function HomeScreen({ apiBase, profile, profileCacheKey = 'guest'
       const cached = getHomeCacheEntry(apiBase, profileCacheKey) || await loadHomeCacheEntry(apiBase, profileCacheKey)
       if (cancelled) return
       if (cached) {
-        setRecommendation(cached.recommendation)
+        setRecommendation(profile ? cached.recommendation : EMPTY_RECOMMENDATION)
         setCalendar(cached.calendar)
         setLoading(false)
         setError('')
       }
       if (!isHomeCacheFresh(cached)) {
-        await load({ showLoading: !cached, silent: Boolean(cached) })
+        await load({ showLoading: Boolean(profile && !cached), silent: Boolean(cached || !profile) })
       }
     }
     hydrate()
@@ -149,7 +151,7 @@ export default function HomeScreen({ apiBase, profile, profileCacheKey = 'guest'
               <PolicyCard key={item.policy?.['정책번호'] || `${item.policy?.['정책명']}-${index}`} item={item} compact onPress={onOpenPolicy} />
             ))}
             {!loading && !error && (recommendation?.results || []).length === 0 && (
-              <TouchableOpacity style={styles.emptyBenefits} onPress={() => load({ showLoading: true })}>
+              <TouchableOpacity style={styles.emptyBenefits} onPress={() => profile ? load({ showLoading: true }) : onEditProfile()}>
                 <Text style={styles.emptyBenefitsTitle}>{profile ? '현재 표시할 추천 혜택이 없어요.' : '아직 선택된 프로필이 없어요.'}</Text>
                 <Text style={styles.emptyBenefitsText}>{profile ? '새로고침하거나 AI 검색에서 조건을 넓혀보세요.' : 'My 화면에서 프로필을 추가해 맞춤 추천을 시작하세요.'}</Text>
               </TouchableOpacity>
