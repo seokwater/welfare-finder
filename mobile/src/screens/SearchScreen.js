@@ -123,7 +123,7 @@ export default function SearchScreen({ apiBase, profile, onOpenPolicy, searchSta
 
   return (
     <>
-      <KeyboardAvoidingView style={styles.screen} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <KeyboardAvoidingView style={styles.screen} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <ScreenHeader
           title="정check Alan AI"
           subtitle="Alan AI + 정책 DB 검색"

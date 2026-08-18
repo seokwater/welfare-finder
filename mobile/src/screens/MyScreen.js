@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import Ionicons from '@expo/vector-icons/Ionicons'
+import Entypo from '@expo/vector-icons/Entypo'
 import * as ImagePicker from 'expo-image-picker'
 import {
   Alert,
@@ -62,6 +63,7 @@ export default function MyScreen({
   onReset,
 }) {
   const [profileChooserVisible, setProfileChooserVisible] = useState(false)
+  const [favoritesVisible, setFavoritesVisible] = useState(false)
   const [renamingProfile, setRenamingProfile] = useState(null)
   const [profileNameInput, setProfileNameInput] = useState('')
   const [profileNameError, setProfileNameError] = useState('')
@@ -165,7 +167,7 @@ export default function MyScreen({
 
               <View style={styles.profileFacts}>
                 <ProfileFact icon="location" value={profile?.location || '지역 미입력'} />
-                <ProfileFact emoji="🎂" value={ageLabel(profile?.age)} />
+                <ProfileFact cake value={ageLabel(profile?.age)} />
                 <ProfileFact icon="briefcase" value={profile?.employment || '직업 미입력'} />
               </View>
               <View style={styles.updateRow}>
@@ -200,8 +202,8 @@ export default function MyScreen({
           <Text style={styles.sectionCount}>{favoritePolicies.length}개</Text>
         </View>
         <View style={styles.listCard}>
-          {favoritePolicies.length ? favoritePolicies.map((entry, index) => (
-            <FavoritePolicyRow key={entry.id || index} item={entry.item} onPress={() => onOpenPolicy(entry.item)} last={index === favoritePolicies.length - 1} />
+          {favoritePolicies.length ? favoritePolicies.slice(0, 2).map((entry, index) => (
+            <FavoritePolicyRow key={entry.id || index} item={entry.item} onPress={() => onOpenPolicy(entry.item)} last={index === Math.min(favoritePolicies.length, 2) - 1} />
           )) : (
             <View style={styles.emptyFavorites}>
               <View style={styles.emptyFavoriteIcon}><Ionicons name="bookmark-outline" size={25} color={colors.greenDark} /></View>
@@ -210,6 +212,12 @@ export default function MyScreen({
             </View>
           )}
         </View>
+        {!!favoritePolicies.length && (
+          <TouchableOpacity style={styles.moreFavoritesButton} onPress={() => setFavoritesVisible(true)}>
+            <Text style={styles.moreFavoritesText}>찜한 정책 더보기</Text>
+            <Ionicons name="chevron-down" size={13} color={colors.muted} />
+          </TouchableOpacity>
+        )}
 
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>정책 알림 설정</Text>
@@ -273,8 +281,38 @@ export default function MyScreen({
         </Pressable>
       </Modal>
 
+      <Modal visible={favoritesVisible} transparent animationType="fade" onRequestClose={() => setFavoritesVisible(false)}>
+        <View style={styles.favoritesModalOverlay}>
+          <Pressable style={StyleSheet.absoluteFill} onPress={() => setFavoritesVisible(false)} />
+          <View style={styles.favoritesSheet}>
+            <View style={styles.favoritesSheetHeader}>
+              <View>
+                <Text style={styles.favoritesSheetTitle}>찜한 정책 목록</Text>
+                <Text style={styles.favoritesSheetCount}>현재 프로필에 저장된 정책 {favoritePolicies.length}개</Text>
+              </View>
+              <TouchableOpacity accessibilityLabel="찜한 정책 목록 닫기" style={styles.closeSheetButton} onPress={() => setFavoritesVisible(false)}>
+                <Ionicons name="close" size={24} color={colors.ink} />
+              </TouchableOpacity>
+            </View>
+            <ScrollView style={styles.favoritesList} contentContainerStyle={styles.favoritesListContent}>
+              {favoritePolicies.map((entry, index) => (
+                <FavoritePolicyRow
+                  key={entry.id || index}
+                  item={entry.item}
+                  last={index === favoritePolicies.length - 1}
+                  onPress={() => {
+                    setFavoritesVisible(false)
+                    setTimeout(() => onOpenPolicy(entry.item), 180)
+                  }}
+                />
+              ))}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
+
       <Modal visible={Boolean(renamingProfile)} transparent animationType="fade" onRequestClose={closeRename}>
-        <KeyboardAvoidingView style={styles.modalKeyboard} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        <KeyboardAvoidingView style={styles.modalKeyboard} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
           <Pressable style={styles.modalOverlay} onPress={closeRename}>
             <Pressable style={styles.renameCard} onPress={(event) => event.stopPropagation()}>
               <View style={styles.renameIcon}><Ionicons name="person-outline" size={22} color={colors.greenDark} /></View>
@@ -305,8 +343,8 @@ export default function MyScreen({
   )
 }
 
-function ProfileFact({ icon, emoji, value }) {
-  return <View style={styles.fact}>{emoji ? <Text style={styles.factEmoji}>{emoji}</Text> : <Ionicons name={icon} size={15} color={colors.muted} />}<Text numberOfLines={1} style={styles.factText}>{value}</Text></View>
+function ProfileFact({ icon, cake, value }) {
+  return <View style={styles.fact}>{cake ? <Entypo name="cake" size={15} color={colors.muted} /> : <Ionicons name={icon} size={15} color={colors.muted} />}<Text numberOfLines={1} style={styles.factText}>{value}</Text></View>
 }
 
 function FavoritePolicyRow({ item, onPress, last }) {
@@ -360,7 +398,6 @@ const styles = StyleSheet.create({
   switchProfileText: { color: colors.text, fontSize: 12, fontWeight: '900' },
   profileFacts: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginTop: 17, paddingTop: 14, borderTopWidth: 1, borderTopColor: colors.line },
   fact: { flexDirection: 'row', alignItems: 'center', gap: 5 },
-  factEmoji: { fontSize: 14, lineHeight: 17 },
   factText: { color: colors.text, fontSize: 11, fontWeight: '700' },
   updateRow: { flexDirection: 'row', alignItems: 'center', gap: 7, marginTop: 13 },
   updateText: { color: colors.muted, fontSize: 9, lineHeight: 14 },
@@ -385,6 +422,8 @@ const styles = StyleSheet.create({
   emptyFavoriteIcon: { width: 48, height: 48, borderRadius: 17, backgroundColor: colors.greenSoft, alignItems: 'center', justifyContent: 'center' },
   emptyFavoriteTitle: { color: colors.ink, fontSize: 13, fontWeight: '900', marginTop: 10 },
   emptyFavoriteText: { color: colors.muted, fontSize: 10, lineHeight: 16, textAlign: 'center', marginTop: 5 },
+  moreFavoritesButton: { alignSelf: 'center', flexDirection: 'row', alignItems: 'center', gap: 3, paddingHorizontal: 12, paddingVertical: 8, marginTop: 5 },
+  moreFavoritesText: { color: colors.muted, fontSize: 10, fontWeight: '800' },
   notificationRow: { minHeight: 91, flexDirection: 'row', alignItems: 'center', gap: 11, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.line },
   notificationIcon: { width: 46, height: 46, borderRadius: 23, alignItems: 'center', justifyContent: 'center' },
   notificationTitle: { color: colors.ink, fontSize: 13, fontWeight: '900' },
@@ -393,6 +432,14 @@ const styles = StyleSheet.create({
   resetLinkText: { color: colors.muted, fontSize: 10, fontWeight: '700' },
   version: { textAlign: 'center', color: '#A7AEA9', fontSize: 9 },
   modalOverlay: { flex: 1, backgroundColor: 'rgba(16, 27, 21, 0.45)', alignItems: 'center', justifyContent: 'center', padding: 20 },
+  favoritesModalOverlay: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(16, 27, 21, 0.45)' },
+  favoritesSheet: { maxHeight: '80%', minHeight: 280, backgroundColor: colors.white, borderTopLeftRadius: 25, borderTopRightRadius: 25, paddingHorizontal: 16, paddingTop: 18, paddingBottom: Platform.OS === 'ios' ? 28 : 18 },
+  favoritesSheetHeader: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', paddingHorizontal: 2, paddingBottom: 12 },
+  favoritesSheetTitle: { color: colors.ink, fontSize: 20, fontWeight: '900' },
+  favoritesSheetCount: { color: colors.muted, fontSize: 10, marginTop: 5 },
+  closeSheetButton: { width: 38, height: 38, alignItems: 'center', justifyContent: 'center' },
+  favoritesList: { borderWidth: 1, borderColor: colors.line, borderRadius: 18 },
+  favoritesListContent: { paddingHorizontal: 13 },
   chooserCard: { width: '100%', maxWidth: 400, maxHeight: '75%', borderRadius: 23, backgroundColor: colors.white, padding: 18 },
   modalTitleRow: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' },
   modalTitle: { color: colors.ink, fontSize: 19, fontWeight: '900' },

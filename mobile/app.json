@@ -22,6 +22,7 @@
     ],
     "android": {
       "package": "com.estai.welfarefinder",
+      "softwareKeyboardLayoutMode": "resize",
       "permissions": [
         "android.permission.READ_CALENDAR",
         "android.permission.WRITE_CALENDAR"
