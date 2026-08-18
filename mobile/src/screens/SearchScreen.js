@@ -21,7 +21,9 @@ export default function SearchScreen({ apiBase, profile, onOpenPolicy, searchSta
   const [conversationErrors, setConversationErrors] = useState({})
   const [historyVisible, setHistoryVisible] = useState(false)
   const scrollRef = useRef(null)
-  const keyboardInset = useAndroidKeyboardInset()
+  const inputRef = useRef(null)
+  const [inputFocused, setInputFocused] = useState(false)
+  const keyboardInset = useAndroidKeyboardInset(inputRef, inputFocused)
   const normalizedState = normalizeSearchState(searchState)
   const activeConversation = normalizedState.conversations.find(
     (conversation) => conversation.id === normalizedState.activeConversationId,
@@ -199,8 +201,11 @@ export default function SearchScreen({ apiBase, profile, onOpenPolicy, searchSta
 
         <View style={styles.composer}>
           <TextInput
+            ref={inputRef}
             value={query}
             onChangeText={setQuery}
+            onFocus={() => setInputFocused(true)}
+            onBlur={() => setInputFocused(false)}
             onSubmitEditing={() => submit()}
             placeholder="혜택을 검색해보세요…"
             placeholderTextColor="#98A09B"

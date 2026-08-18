@@ -34,8 +34,9 @@ export default function AIProfileScreen({ apiBase, initialProfile, profileName =
   const [text, setText] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [inputFocused, setInputFocused] = useState(false)
   const inputRef = useRef(null)
-  const keyboardInset = useAndroidKeyboardInset()
+  const keyboardInset = useAndroidKeyboardInset(inputRef, inputFocused)
 
   const filled = useMemo(() => countFilledProfile(profile), [profile])
   const complete = filled === PROFILE_STEPS.length
@@ -164,6 +165,8 @@ export default function AIProfileScreen({ apiBase, initialProfile, profileName =
                   ref={inputRef}
                   value={text}
                   onChangeText={setText}
+                  onFocus={() => setInputFocused(true)}
+                  onBlur={() => setInputFocused(false)}
                   onSubmitEditing={() => send()}
                   placeholder={`${question.label} 정보를 말로 입력하세요…`}
                   placeholderTextColor="#A0A8A3"
@@ -190,6 +193,8 @@ export default function AIProfileScreen({ apiBase, initialProfile, profileName =
                 ref={inputRef}
                 value={text}
                 onChangeText={setText}
+                onFocus={() => setInputFocused(true)}
+                onBlur={() => setInputFocused(false)}
                 onSubmitEditing={() => send()}
                 placeholder="직접 말로 입력하세요…"
                 placeholderTextColor="#A0A8A3"
