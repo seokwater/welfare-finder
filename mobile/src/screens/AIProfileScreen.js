@@ -2,35 +2,30 @@ import React, { useMemo, useRef, useState } from 'react'
 import { ActivityIndicator, KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { api } from '../api'
 import ChatBubble from '../components/ChatBubble'
+import {
+  EMPTY_PROFILE,
+  PROFILE_STEPS,
+  applyProfileChoice,
+  countFilledProfile,
+  createProfileEditRequest,
+  mergeAnalyzedProfile,
+  nextProfileStep,
+  profileStep,
+} from '../profileFlow'
 import { colors } from '../theme'
 
-const EMPTY = { location: '', age: '', housing: '', employment: '', income: '' }
-const PROFILE_STEPS = [
-  { field: 'location', text: '현재 살고 있는 지역을 알려주세요.', choices: ['서울', '경기', '전주', '부산', '직접 입력'] },
-  { field: 'age', text: '나이도 알려주실 수 있나요?', choices: ['19~24살', '25~29살', '30~34살', '직접 입력'] },
-  { field: 'housing', text: '현재 어떤 형태로 거주하고 있나요?', choices: ['자취/원룸', '부모님과 거주', '기숙사', '전월세', '직접 입력'] },
-  { field: 'employment', text: '현재 취업 상태도 알려주세요.', choices: ['취업준비생', '대학생', '재직 중', '프리랜서', '무직'] },
-  { field: 'income', text: '마지막으로 월 소득도 알려주실 수 있나요?', choices: ['소득 없음', '100만원 이하', '100~200만원', '200만원 이상', '직접 입력'] },
-]
 const COMPLETE_MESSAGE = '프로필을 완성했어요. 이제 조건에 맞는 청년 혜택을 찾아볼 수 있어요.'
 
-function nextProfileStep(profile) {
-  return PROFILE_STEPS.find(({ field }) => !profile[field]) || null
-}
-
-function profileStep(field) {
-  return PROFILE_STEPS.find((step) => step.field === field) || null
-}
-
 export default function AIProfileScreen({ apiBase, initialProfile, onComplete, onCancel }) {
-  const initial = { ...EMPTY, ...(initialProfile || {}) }
+  const initial = { ...EMPTY_PROFILE, ...(initialProfile || {}) }
   const initialStep = nextProfileStep(initial)
+  const editingExisting = Boolean(initialProfile)
   const [profile, setProfile] = useState(initial)
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
       content: initialProfile
-        ? (initialStep ? `프로필을 수정해볼게요.\n\n${initialStep.text}` : '저장된 프로필을 확인해주세요.')
+        ? (initialStep ? `프로필을 수정해볼게요.\n\n${initialStep.text}` : '수정할 항목을 아래 프로필에서 선택해주세요.')
         : `안녕하세요! 복지 Finder Alan AI예요. ${initialStep.text}`,
     },
   ])
@@ -40,20 +35,31 @@ export default function AIProfileScreen({ apiBase, initialProfile, onComplete, o
   const [error, setError] = useState('')
   const inputRef = useRef(null)
 
-  const filled = useMemo(() => Object.values(profile).filter(Boolean).length, [profile])
+  const filled = useMemo(() => countFilledProfile(profile), [profile])
   const complete = filled === PROFILE_STEPS.length
 
+  const editField = (step) => {
+    if (loading) return
+    setError('')
+    setText('')
+    setQuestion(step)
+    setMessages((prev) => [
+      ...prev,
+      { role: 'assistant', content: `${step.label} 정보를 수정할게요.\n\n${step.text}` },
+    ])
+  }
+
   const selectChoice = (choice) => {
-    if (loading || complete) return
+    if (loading) return
     if (choice === '직접 입력') {
-      inputRef.current?.focus()
+      setTimeout(() => inputRef.current?.focus(), 0)
       return
     }
 
     const currentStep = question?.field ? question : nextProfileStep(profile)
     if (!currentStep) return
 
-    const nextProfile = { ...profile, [currentStep.field]: choice }
+    const nextProfile = applyProfileChoice(profile, currentStep.field, choice)
     const nextStep = nextProfileStep(nextProfile)
     setError('')
     setProfile(nextProfile)
@@ -61,24 +67,35 @@ export default function AIProfileScreen({ apiBase, initialProfile, onComplete, o
     setMessages((prev) => [
       ...prev,
       { role: 'user', content: choice },
-      { role: 'assistant', content: nextStep?.text || COMPLETE_MESSAGE },
+      {
+        role: 'assistant',
+        content: nextStep?.text || (editingExisting
+          ? `${currentStep.label} 정보를 ${choice}(으)로 수정했어요. 다른 항목도 선택해서 수정할 수 있어요.`
+          : COMPLETE_MESSAGE),
+      },
     ])
   }
 
   const send = async (raw) => {
     const message = String(raw ?? text).trim()
-    if (!message || loading || complete) return
+    if (!message || loading || (editingExisting && !question) || (!editingExisting && complete)) return
     setText('')
     setError('')
     setMessages((prev) => [...prev, { role: 'user', content: message }])
     setLoading(true)
     try {
-      const data = await api.profileTurn(apiBase, message, profile)
-      const nextProfile = data.profile || profile
+      const requestProfile = createProfileEditRequest(profile, question?.field)
+      const data = await api.profileTurn(apiBase, message, requestProfile)
+      const nextProfile = mergeAnalyzedProfile(profile, data.profile)
       const nextStep = data.complete ? null : (profileStep(data.missing_field) || nextProfileStep(nextProfile))
       setProfile(nextProfile)
-      setMessages((prev) => [...prev, { role: 'assistant', content: data.reply || '내용을 반영했어요.' }])
-      setQuestion(nextStep)
+      setMessages((prev) => [...prev, {
+        role: 'assistant',
+        content: editingExisting && !nextStep
+          ? '말씀해주신 내용으로 수정했어요. 다른 항목도 선택해서 수정할 수 있어요.'
+          : (data.reply || '내용을 반영했어요.'),
+      }])
+      setQuestion(nextStep || null)
     } catch (e) {
       setError(e.message)
       setMessages((prev) => [...prev, { role: 'assistant', content: '서버 연결을 확인해주세요. 입력한 내용은 아직 저장하지 않았어요.' }])
@@ -93,7 +110,7 @@ export default function AIProfileScreen({ apiBase, initialProfile, onComplete, o
         <View style={styles.header}>
           <TouchableOpacity onPress={onCancel} style={styles.back}><Text style={styles.backText}>‹</Text></TouchableOpacity>
           <View style={styles.bot}><Text style={styles.botText}>AI</Text></View>
-          <View style={{ flex: 1 }}><Text style={styles.title}>복지 Finder Alan AI</Text><Text style={styles.sub}>프로필 생성 · {filled}/5</Text></View>
+          <View style={{ flex: 1 }}><Text style={styles.title}>복지 Finder Alan AI</Text><Text style={styles.sub}>프로필 {editingExisting ? '수정' : '생성'} · {filled}/5</Text></View>
         </View>
 
         <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
@@ -102,11 +119,17 @@ export default function AIProfileScreen({ apiBase, initialProfile, onComplete, o
 
           <View style={styles.profileCard}>
             <Text style={styles.profileTitle}>이렇게 이해했어요</Text>
-            <ProfileRow icon="📍" label="거주지" value={profile.location} />
-            <ProfileRow icon="🎂" label="나이" value={profile.age} />
-            <ProfileRow icon="🏠" label="주거" value={profile.housing} />
-            <ProfileRow icon="💼" label="취업" value={profile.employment} />
-            <ProfileRow icon="💰" label="소득" value={profile.income} />
+            {editingExisting && <Text style={styles.profileHelp}>바꿀 항목을 눌러주세요.</Text>}
+            {PROFILE_STEPS.map((step) => (
+              <ProfileRow
+                key={step.field}
+                icon={step.icon}
+                label={step.label}
+                value={profile[step.field]}
+                active={question?.field === step.field}
+                onPress={editingExisting ? () => editField(step) : undefined}
+              />
+            ))}
           </View>
 
           {!!question?.choices?.length && (
@@ -121,7 +144,28 @@ export default function AIProfileScreen({ apiBase, initialProfile, onComplete, o
           {!!error && <Text style={styles.error}>{error}</Text>}
         </ScrollView>
 
-        {complete ? (
+        {editingExisting ? (
+          <View style={styles.completeBar}>
+            {!!question && (
+              <View style={styles.composerInline}>
+                <TextInput
+                  ref={inputRef}
+                  value={text}
+                  onChangeText={setText}
+                  onSubmitEditing={() => send()}
+                  placeholder={`${question.label} 정보를 말로 입력하세요…`}
+                  placeholderTextColor="#A0A8A3"
+                  style={styles.input}
+                  returnKeyType="send"
+                />
+                <TouchableOpacity style={styles.send} onPress={() => send()}><Text style={styles.sendText}>↑</Text></TouchableOpacity>
+              </View>
+            )}
+            <TouchableOpacity style={[styles.save, !complete && styles.saveDisabled]} disabled={!complete} onPress={() => onComplete(profile)}>
+              <Text style={styles.saveText}>수정 내용 저장하기</Text>
+            </TouchableOpacity>
+          </View>
+        ) : complete ? (
           <View style={styles.completeBar}>
             <TouchableOpacity style={styles.save} onPress={() => onComplete(profile)}>
               <Text style={styles.saveText}>혜택 보러가기</Text>
@@ -154,13 +198,16 @@ export default function AIProfileScreen({ apiBase, initialProfile, onComplete, o
   )
 }
 
-function ProfileRow({ icon, label, value }) {
-  return (
-    <View style={styles.profileRow}>
+function ProfileRow({ icon, label, value, active, onPress }) {
+  const content = (
+    <>
       <Text style={styles.profileIcon}>{icon}</Text><Text style={styles.profileLabel}>{label}</Text>
       <Text numberOfLines={1} style={[styles.profileValue, !value && styles.empty]}>{value || '아직 확인 전'}</Text>
-    </View>
+      {!!onPress && <Text style={[styles.editLabel, active && styles.editLabelActive]}>{active ? '수정 중' : '수정'}</Text>}
+    </>
   )
+  if (!onPress) return <View style={styles.profileRow}>{content}</View>
+  return <TouchableOpacity style={[styles.profileRow, styles.editableRow, active && styles.activeRow]} onPress={onPress}>{content}</TouchableOpacity>
 }
 
 const styles = StyleSheet.create({
@@ -177,16 +224,22 @@ const styles = StyleSheet.create({
   loadingText: { color: colors.muted, fontSize: 12 },
   profileCard: { marginTop: 8, borderWidth: 1, borderColor: colors.line, borderRadius: 17, padding: 14, backgroundColor: '#FBFCFB' },
   profileTitle: { color: colors.ink, fontWeight: '900', fontSize: 13, marginBottom: 7 },
-  profileRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 6 },
+  profileHelp: { color: colors.muted, fontSize: 10, marginTop: -3, marginBottom: 5 },
+  profileRow: { flexDirection: 'row', alignItems: 'center', minHeight: 36, paddingVertical: 6, paddingHorizontal: 4, borderRadius: 10 },
+  editableRow: { marginHorizontal: -4 },
+  activeRow: { backgroundColor: colors.greenSoft },
   profileIcon: { width: 25, fontSize: 14 },
   profileLabel: { width: 50, color: colors.muted, fontSize: 11, fontWeight: '700' },
   profileValue: { flex: 1, color: colors.text, fontSize: 12, fontWeight: '700' },
   empty: { color: '#B7BEB9', fontWeight: '500' },
+  editLabel: { color: colors.greenDark, fontSize: 10, fontWeight: '900', marginLeft: 8 },
+  editLabelActive: { color: colors.green },
   choices: { flexDirection: 'row', flexWrap: 'wrap', gap: 7, marginTop: 14 },
   choice: { borderWidth: 1, borderColor: colors.line, borderRadius: 999, paddingHorizontal: 13, paddingVertical: 9, backgroundColor: colors.white },
   choiceText: { color: colors.text, fontSize: 12, fontWeight: '800' },
   error: { color: colors.danger, fontSize: 11, marginTop: 10 },
   composer: { flexDirection: 'row', padding: 10, gap: 8, borderTopWidth: 1, borderTopColor: colors.line, backgroundColor: colors.white },
+  composerInline: { flexDirection: 'row', gap: 8, marginBottom: 10 },
   input: { flex: 1, height: 46, borderWidth: 1, borderColor: colors.line, backgroundColor: '#FAFCFB', borderRadius: 14, paddingHorizontal: 14, color: colors.ink, fontSize: 13 },
   send: { width: 46, height: 46, borderRadius: 14, backgroundColor: colors.green, alignItems: 'center', justifyContent: 'center' },
   sendText: { color: colors.white, fontSize: 23, fontWeight: '900' },

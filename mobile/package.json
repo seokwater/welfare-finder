@@ -11,6 +11,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "doctor": "expo-doctor",
+    "test:profile-flow": "node --test tests/profileFlow.test.mjs",
     "test:search-history": "node --test tests/searchHistory.test.mjs"
   },
   "dependencies": {
