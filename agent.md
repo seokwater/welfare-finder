@@ -467,7 +467,13 @@ npx expo export --platform android
 - Expo Android 설정에 `softwareKeyboardLayoutMode: resize`를 추가해 소프트 키보드가 입력창을 덮지 않고 화면 높이를 조정하게 했다.
 - 모바일 단위 테스트 16개와 Android Expo export를 통과했다.
 
-## 18. 보안 및 작업 주의사항
+## 18. 프로필 입력 화면 키보드 복원 수정
+
+- 프로필 생성·정보 수정 화면에서 Android 시스템 `resize`와 `KeyboardAvoidingView(height)`가 중복 적용되어 키보드를 닫은 뒤 화면 높이가 완전히 복원되지 않는 문제를 수정했다.
+- 해당 화면의 `KeyboardAvoidingView`는 iOS에서만 활성화하고 Android는 `softwareKeyboardLayoutMode: resize` 한 가지 방식으로 처리한다.
+- 검색 화면과 프로필 이름 수정 모달은 증상이 없어 기존 키보드 회피 방식을 유지한다.
+
+## 19. 보안 및 작업 주의사항
 
 - API 키, DB 비밀번호, Alan 인증값을 코드, 문서, 커밋 메시지에 넣지 않는다.
 - 사용자 외부 파일의 평문 키를 복사하지 않는다.
