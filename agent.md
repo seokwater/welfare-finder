@@ -9,15 +9,15 @@
 - 작업 경로: `D:\programming\Project\welfare_finder_search`
 - 원격 저장소: `https://github.com/seokwater/welfare-finder`
 - 브랜치: `main`
-- 기능 기준 커밋(이 문서 갱신 직전): `61b07eca5af51d39400753dccbd2486af2b1c0e1`
-- 기능 기준 커밋 설명: `Match collapsible home reference`
+- 기능 기준 커밋(이 문서 갱신 직전): `f5542bed9d303a285b2b6533b949614b19dfc05c`
+- 기능 기준 커밋 설명: `Rebrand app and add profile renaming`
 - 이 문서 자체를 추가한 후속 커밋은 `git log -1`로 확인한다.
 - `main`과 `origin/main`은 동기화되어 있다.
 - 사용자 작업 원칙: 코드 변경 후 가능한 범위에서 검증하고 항상 Git 커밋과 푸시까지 수행한다.
 
 ## 2. 프로젝트 개요
 
-Welfare Finder는 청년정책을 검색하고 추천하는 Expo/React Native 모바일 앱과 FastAPI 백엔드 프로젝트다.
+정check(기존 Welfare Finder)는 청년정책을 검색하고 추천하는 Expo/React Native 모바일 앱과 FastAPI 백엔드 프로젝트다.
 
 - 모바일: Expo 54, React Native 0.81, React 19
 - 백엔드: FastAPI
@@ -48,6 +48,7 @@ Welfare Finder는 청년정책을 검색하고 추천하는 Expo/React Native �
 15. 여러 프로필 추가·선택·수정·삭제와 프로필별 검색 기록 분리
 16. 참고 프론트 ZIP의 초록 히어로·요약 카드·혜택 섹션 구조를 실제 API 기반 홈에 적용
 17. 첨부 이미지와 동일한 간결한 홈 구성 및 추천 혜택 기본 접힘·카드 터치 펼침
+18. 앱 표시 브랜드를 `정check`으로 통일하고 프로필 이름 수정 및 Ionicons 하단 탭 적용
 
 ### 요청됐지만 현재 브랜치에는 포함되지 않은 항목
 
@@ -116,7 +117,9 @@ Welfare Finder는 청년정책을 검색하고 추천하는 Expo/React Native �
 - 선택지는 로컬에서 즉시 반영하고, `직접 입력`은 선택한 필드를 비운 프로필 문맥과 함께 Alan API에 전달한다.
 - 서버 분석 결과가 비어 있어도 기존 프로필 값은 유실하지 않는다.
 - 수정 화면에서는 `수정 내용 저장하기`로 AsyncStorage의 기존 프로필을 갱신한다.
-- 마이 화면에서 프로필을 여러 개 추가·선택·수정·삭제할 수 있고 홈 상단에서도 즉시 전환할 수 있다.
+- My 화면에서 프로필을 여러 개 추가·선택·수정·삭제할 수 있고 선택한 프로필은 홈과 AI 검색에 즉시 반영된다.
+- My 화면의 연필 아이콘으로 프로필 이름을 최대 20자로 수정하며 빈 이름과 중복 이름은 저장하지 않는다.
+- 수정한 프로필 이름은 홈의 `안녕하세요, {프로필명}님!` 문구에 즉시 반영된다.
 - 활성 프로필만 홈 추천과 AI 검색의 `profile_context`로 전달된다.
 - 현재 저장 키는 프로필 목록 `wf:profiles:v3`, 활성 프로필 `wf:activeProfileId:v3`이다.
 - 과거 단일 `wf:profile`과 과거 멀티 `wf:profiles:v2` 데이터는 최초 실행 시 자동 이전한다.
@@ -125,7 +128,7 @@ Welfare Finder는 청년정책을 검색하고 추천하는 Expo/React Native �
 검증:
 
 - `npm run test:profile-flow`: 프로필 재선택, LLM 요청 문맥, 결과 병합 테스트 3개 통과
-- `npm run test:profiles`: 생성, 추가, 수정, 삭제, 정규화 테스트 4개 통과
+- `npm run test:profiles`: 생성, 추가, 정보 수정, 이름 수정, 삭제, 정규화 테스트 6개 통과
 - `npm run test:search-history`: 기존 검색 기록 테스트 3개 통과
 - `npx expo export --platform android`: Android production bundle 성공
 
@@ -140,6 +143,8 @@ Welfare Finder는 청년정책을 검색하고 추천하는 Expo/React Native �
 - `지금 확인할 혜택` 목록은 기본 접힘 상태이며 `지금 확인할 추천 혜택` 요약 카드를 누르면 펼쳐지고 다시 누르면 접힌다.
 - 접힌 상태에서는 AI 추천 설명 다음에 `곧 챙겨야 할 일정`이 바로 표시된다.
 - 프로필 변경 시 추천 목록은 다시 접히고 새 활성 프로필 기준으로 서버에서 다시 조회한다.
+- 홈 상단에는 `정check`, 활성 프로필의 지역·만 나이·직업 형태, `프로필 수정` 버튼을 표시한다.
+- 하단 탭은 Expo Ionicons의 홈·캘린더·검색·사용자 아이콘을 사용하고 `마이` 라벨은 `My`로 표시한다.
 
 ## 6. 캘린더 최적화
 
@@ -307,6 +312,7 @@ EXPO_PUBLIC_API_BASE_URL=http://PC의-사설-IP:8000
 - `4d54db7` completed profile editing fix
 - `a006404` multi-profile storage, profile-scoped search history, and reference-based home UI
 - `61b07ec` image-matched collapsible home layout
+- `f5542be` 정check rebrand, profile header/icons, and profile name editing
 
 사용자는 특정 커밋 `b11b34cc97f0b902cbf13f1656837c09b3201487`로 회귀를 요청했다. 현재 브랜치는 그 회귀 상태 위에 정책 자동 갱신, 검색 대화 기록, 완성된 프로필 수정, 멀티 프로필과 새 홈 구성을 다시 추가한 상태다.
 
@@ -360,6 +366,7 @@ EXPO_PUBLIC_API_BASE_URL=http://PC의-사설-IP:8000
 - `mobile/src/screens/HomeScreen.js`: 프로필 기반 추천
 - `mobile/src/screens/MyScreen.js`: 프로필/API 서버/초기화
 - `mobile/src/components/PolicyDetailModal.js`: 정책 상세
+- `mobile/src/components/BottomTabs.js`: Ionicons 기반 홈·캘린더·검색·My 탭
 - `mobile/scripts/start-expo-go.mjs`: LAN Expo Go 시작
 
 ### 데이터와 테스트
@@ -416,8 +423,8 @@ npx expo export --platform android
 1. Render Blueprint를 동기화하고 Cron Job에 새 청년정책 API 키 등록
 2. Cron을 수동 1회 실행하여 API 수집 건수, DB 정책 수, `policy_data_version` 확인
 3. Render의 Alan 환경변수를 확인하여 프로필 생성 서버 연결 오류 재검증
-4. 실제 Expo Go 기기에서 프로필 추가·홈 전환·수정·삭제와 앱 재실행 후 복원 확인
-5. 작은 화면에서 홈 프로필 칩과 추천 요약 카드의 레이아웃 확인
+4. 실제 Expo Go 기기에서 프로필 추가·이름 수정·정보 수정·삭제와 앱 재실행 후 복원 확인
+5. 작은 화면에서 홈 프로필 헤더, 추천 요약 카드와 하단 Ionicons 레이아웃 확인
 6. 실제 Expo Go 기기에서 프로필별 대화 목록 분리, 전환, 삭제, 앱 재실행 후 복원 확인
 7. 실제 기기 검증 후 EAS preview APK 생성
 
