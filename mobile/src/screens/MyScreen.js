@@ -160,7 +160,6 @@ export default function MyScreen({
                       <Ionicons name="pencil" size={14} color={colors.greenDark} />
                     </TouchableOpacity>
                   </View>
-                  <View style={styles.youthBadge}><Ionicons name="person" size={11} color={colors.greenDark} /><Text style={styles.youthText}>청년</Text></View>
                 </View>
 
               </View>
@@ -389,8 +388,6 @@ const styles = StyleSheet.create({
   nameRow: { flexDirection: 'row', alignItems: 'center' },
   profileName: { flexShrink: 1, color: colors.ink, fontSize: 20, fontWeight: '900' },
   nameEdit: { padding: 7 },
-  youthBadge: { alignSelf: 'flex-start', flexDirection: 'row', gap: 4, backgroundColor: colors.greenSoft, borderRadius: 99, paddingHorizontal: 9, paddingVertical: 5, marginTop: 7 },
-  youthText: { color: colors.greenDark, fontSize: 10, fontWeight: '900' },
   profileToolbar: { flexDirection: 'row', gap: 9, marginHorizontal: 14, marginTop: 12 },
   editButton: { flex: 1, height: 46, borderRadius: 13, borderWidth: 1, borderColor: '#B9E2CB', backgroundColor: colors.white, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },
   editButtonText: { color: colors.greenDark, fontSize: 12, fontWeight: '900' },
