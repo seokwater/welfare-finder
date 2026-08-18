@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { ActivityIndicator, Modal, RefreshControl, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Modal, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { api } from '../api'
 import PolicyCard from '../components/PolicyCard'
 import { getHomeCacheEntry, isHomeCacheFresh, loadHomeCacheEntry, saveHomeCache } from '../storage'

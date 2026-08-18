@@ -1,5 +1,6 @@
-import React, { useMemo, useRef, useState } from 'react'
-import { ActivityIndicator, KeyboardAvoidingView, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { ActivityIndicator, Dimensions, Keyboard, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { api } from '../api'
 import ChatBubble from '../components/ChatBubble'
 import {
@@ -15,6 +16,31 @@ import {
 import { colors } from '../theme'
 
 const COMPLETE_MESSAGE = '프로필을 완성했어요. 이제 조건에 맞는 청년 혜택을 찾아볼 수 있어요.'
+
+function useAndroidKeyboardInset() {
+  const [inset, setInset] = useState(0)
+
+  useEffect(() => {
+    if (Platform.OS !== 'android') return undefined
+    let frame = null
+    const shown = Keyboard.addListener('keyboardDidShow', (event) => {
+      if (frame) cancelAnimationFrame(frame)
+      frame = requestAnimationFrame(() => {
+        const windowHeight = Dimensions.get('window').height
+        const keyboardTop = Number(event.endCoordinates?.screenY) || windowHeight
+        setInset(Math.max(0, Math.round(windowHeight - keyboardTop)))
+      })
+    })
+    const hidden = Keyboard.addListener('keyboardDidHide', () => setInset(0))
+    return () => {
+      if (frame) cancelAnimationFrame(frame)
+      shown.remove()
+      hidden.remove()
+    }
+  }, [])
+
+  return inset
+}
 
 export default function AIProfileScreen({ apiBase, initialProfile, profileName = '프로필', isEditing = false, onComplete, onCancel }) {
   const initial = { ...EMPTY_PROFILE, ...(initialProfile || {}) }
@@ -34,6 +60,7 @@ export default function AIProfileScreen({ apiBase, initialProfile, profileName =
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const inputRef = useRef(null)
+  const keyboardInset = useAndroidKeyboardInset()
 
   const filled = useMemo(() => countFilledProfile(profile), [profile])
   const complete = filled === PROFILE_STEPS.length
@@ -112,7 +139,11 @@ export default function AIProfileScreen({ apiBase, initialProfile, profileName =
 
   return (
     <SafeAreaView style={styles.safe}>
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
+      <KeyboardAvoidingView
+        style={[styles.keyboardLayout, keyboardInset > 0 && { paddingBottom: keyboardInset }]}
+        behavior="padding"
+        enabled={Platform.OS === 'ios'}
+      >
         <View style={styles.header}>
           <TouchableOpacity onPress={onCancel} style={styles.back}><Text style={styles.backText}>‹</Text></TouchableOpacity>
           <View style={styles.bot}><Text style={styles.botText}>AI</Text></View>
@@ -218,6 +249,7 @@ function ProfileRow({ icon, label, value, active, onPress }) {
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.white },
+  keyboardLayout: { flex: 1 },
   header: { flexDirection: 'row', alignItems: 'center', height: 62, paddingHorizontal: 12, gap: 9, borderBottomWidth: 1, borderBottomColor: colors.line },
   back: { width: 34, height: 42, alignItems: 'center', justifyContent: 'center' },
   backText: { fontSize: 34, color: colors.ink, lineHeight: 36 },

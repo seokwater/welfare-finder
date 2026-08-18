@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { ActivityIndicator, Alert, SafeAreaView, StatusBar, StyleSheet, View } from 'react-native'
+import { ActivityIndicator, Alert, StatusBar, StyleSheet, View } from 'react-native'
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
 import { defaultApiBase } from './src/api'
 import BottomTabs from './src/components/BottomTabs'
 import PolicyDetailModal from './src/components/PolicyDetailModal'
@@ -30,6 +31,10 @@ import { colors } from './src/theme'
 const EMPTY_SEARCH_STATE = createInitialSearchState()
 
 export default function App() {
+  return <SafeAreaProvider><AppRoot /></SafeAreaProvider>
+}
+
+function AppRoot() {
   const [booting, setBooting] = useState(true)
   const [onboarded, setOnboarded] = useState(false)
   const [profiles, setProfiles] = useState([])

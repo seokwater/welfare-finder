@@ -1,6 +1,7 @@
 import React from 'react'
 import { Linking, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import Ionicons from '@expo/vector-icons/Ionicons'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { colors } from '../theme'
 
 function Criterion({ item }) {
@@ -25,7 +26,7 @@ export default function PolicyDetailModal({ item, onClose, favorite = false, onT
 
   return (
     <Modal visible={!!item} animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose}>
-      <View style={styles.safe}>
+      <SafeAreaView style={styles.safe}>
         <View style={styles.header}>
           <TouchableOpacity onPress={onClose} style={styles.headerButton}><Text style={styles.headerIcon}>‹</Text></TouchableOpacity>
           <Text numberOfLines={1} style={styles.headerTitle}>{policy['정책명'] || '정책 상세'}</Text>
@@ -84,7 +85,7 @@ export default function PolicyDetailModal({ item, onClose, favorite = false, onT
             </TouchableOpacity>
           </View>
         )}
-      </View>
+      </SafeAreaView>
     </Modal>
   )
 }

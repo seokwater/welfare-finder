@@ -523,3 +523,12 @@ npx expo export --platform android
 - 프로필 생성·정보 수정 화면의 `KeyboardAvoidingView`를 Android에서도 활성화하고 `padding` 방식을 사용한다.
 - 이전에 화면 높이가 완전히 복원되지 않았던 `height` 방식은 사용하지 않는다.
 - 모바일 단위 테스트 17개와 Android Expo export를 통과했다.
+
+## 25. 시스템 안전영역과 동적 키보드 겹침 보정
+
+- `react-native-safe-area-context`를 설치하고 앱 루트에 `SafeAreaProvider`를 적용했다.
+- 앱 본문·온보딩·프로필 입력·추천 목록·정책 상세 화면을 상단 상태바와 하단 시스템 내비게이션 영역 안쪽에 배치한다.
+- Android 프로필 입력 화면은 키보드 상단 좌표와 현재 창 높이를 비교해 실제 겹치는 부분만 하단 패딩으로 적용한다.
+- 운영 앱처럼 창이 이미 `resize`된 경우 추가 패딩은 0이며, Expo Go처럼 창이 줄지 않은 경우에만 겹치는 높이를 보정한다.
+- 키보드가 닫히면 보정 패딩을 0으로 초기화해 화면 높이가 최초 높이보다 커지지 않게 한다.
+- 모바일 단위 테스트 17개와 Android Expo export를 통과했다.
