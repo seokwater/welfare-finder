@@ -78,6 +78,13 @@ def _month_bounds(year: int, month: int) -> tuple[date, date]:
     return date(year, month, 1), date(year, month, last_day)
 
 
+def _calendar_grid_bounds(month_start: date) -> tuple[date, date]:
+    """일요일부터 시작하는 모바일 6주 달력의 실제 표시 범위를 반환한다."""
+    days_from_sunday = (month_start.weekday() + 1) % 7
+    grid_start = month_start - timedelta(days=days_from_sunday)
+    return grid_start, grid_start + timedelta(days=41)
+
+
 def build_policy_calendar(
     engine: YouthPolicySearchEngine,
     *,
@@ -85,6 +92,7 @@ def build_policy_calendar(
     month: int,
     today: date | None = None,
     max_events: int = 500,
+    include_adjacent: bool = False,
 ) -> dict[str, Any]:
     """PostgreSQL에서 로드된 정책 DataFrame을 월간 일정 데이터로 변환한다.
 
@@ -92,6 +100,9 @@ def build_policy_calendar(
     `상시` 정책은 특정 날짜 이벤트로 만들지 않고 summary.always_open_count로 제공한다.
     """
     month_start, month_end = _month_bounds(year, month)
+    display_start, display_end = (
+        _calendar_grid_bounds(month_start) if include_adjacent else (month_start, month_end)
+    )
     today = today or date.today()
 
     event_keys: set[tuple[str, str, str]] = set()
@@ -116,19 +127,19 @@ def build_policy_calendar(
         period_text = _safe(row.get("신청기간_정리"))
 
         for start, end in ranges:
-            # 해당 월과 겹치지 않는 기간은 제외한다.
-            if end < month_start or start > month_end:
+            # 모바일 달력에 실제 표시되는 날짜 범위와 겹치지 않으면 제외한다.
+            if end < display_start or start > display_end:
                 continue
 
-            active_start = max(start, month_start)
-            active_end = min(end, month_end)
+            active_start = max(start, display_start)
+            active_end = min(end, display_end)
             cursor = active_start
             while cursor <= active_end:
                 active_by_day[cursor.isoformat()].add(policy_no)
                 cursor += timedelta(days=1)
 
             def add_event(event_date: date, event_type: str, label: str) -> None:
-                if not (month_start <= event_date <= month_end):
+                if not (display_start <= event_date <= display_end):
                     return
                 key = (policy_no, event_type, event_date.isoformat())
                 if key in event_keys or len(events) >= max_events:
@@ -178,10 +189,10 @@ def build_policy_calendar(
                 add_event(start, "start", "신청 시작")
                 add_event(end, "deadline", "신청 마감")
 
-    # 월의 모든 날짜를 내려주면 프론트에서 날짜를 선택할 때 추가 연산 없이 바로 표시할 수 있다.
+    # 화면에 표시되는 42일을 내려주면 인접 월 날짜도 추가 요청 없이 점과 상세를 표시할 수 있다.
     day_counts: dict[str, dict[str, int]] = {}
-    cursor = month_start
-    while cursor <= month_end:
+    cursor = display_start
+    while cursor <= display_end:
         key = cursor.isoformat()
         day_counts[key] = {
             "start": len(start_by_day.get(key, set())),
@@ -193,16 +204,19 @@ def build_policy_calendar(
 
     events.sort(key=lambda e: (e["date"], 0 if e["type"] in {"start", "single"} else 1, e["title"]))
     today_key = today.isoformat()
+    requested_month = lambda value: month_start.isoformat() <= value <= month_end.isoformat()
     return {
         "year": year,
         "month": month,
         "month_label": f"{year}년 {month}월",
+        "range_start": display_start.isoformat(),
+        "range_end": display_end.isoformat(),
         "today": today_key,
         "events": events,
         "day_counts": day_counts,
         "summary": {
-            "start_count": sum(len(v) for v in start_by_day.values()),
-            "deadline_count": sum(len(v) for v in deadline_by_day.values()),
+            "start_count": sum(len(v) for key, v in start_by_day.items() if requested_month(key)),
+            "deadline_count": sum(len(v) for key, v in deadline_by_day.items() if requested_month(key)),
             "always_open_count": always_open_count,
             "active_today": day_counts.get(today_key, {}).get("active", 0),
             "open_estimate_today": day_counts.get(today_key, {}).get("open_estimate", always_open_count),

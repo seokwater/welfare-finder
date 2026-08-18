@@ -20,7 +20,8 @@ function calendarCacheKey(apiBase, year, month) {
 function parseCalendarCache(raw) {
   try {
     const value = raw ? JSON.parse(raw) : null
-    return value?.data && typeof value.data === 'object' ? value : null
+    const hasGridRange = typeof value?.data?.range_start === 'string' && typeof value?.data?.range_end === 'string'
+    return value?.data && typeof value.data === 'object' && hasGridRange ? value : null
   } catch {
     return null
   }
@@ -89,24 +90,24 @@ export async function saveSearchSession({ messages, result }) {
   await AsyncStorage.setItem(KEYS.searchSession, JSON.stringify({ messages, result }))
 }
 
-export function getCalendarCacheSnapshot(apiBase, year, month) {
-  return calendarMemoryCache.get(calendarCacheKey(apiBase, year, month))?.data || null
+export function getCalendarCacheEntry(apiBase, year, month) {
+  return calendarMemoryCache.get(calendarCacheKey(apiBase, year, month)) || null
 }
 
-export async function loadCalendarCache(apiBase, year, month) {
+export async function loadCalendarCacheEntry(apiBase, year, month) {
   const key = calendarCacheKey(apiBase, year, month)
   const memoryValue = calendarMemoryCache.get(key)
-  if (memoryValue) return memoryValue.data
+  if (memoryValue) return memoryValue
 
   const cached = parseCalendarCache(await AsyncStorage.getItem(key))
   if (!cached) return null
   calendarMemoryCache.set(key, cached)
-  return cached.data
+  return cached
 }
 
-export async function saveCalendarCache(apiBase, year, month, data) {
+export async function saveCalendarCache(apiBase, year, month, data, etag = '') {
   const key = calendarCacheKey(apiBase, year, month)
-  const entry = { data, savedAt: Date.now() }
+  const entry = { data, etag, savedAt: Date.now() }
   calendarMemoryCache.set(key, entry)
   await AsyncStorage.setItem(key, JSON.stringify(entry))
 

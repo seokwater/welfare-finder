@@ -13,17 +13,28 @@ function normalizeBase(base) {
 async function request(base, path, options = {}) {
   const url = `${normalizeBase(base)}${path}`
   const controller = new AbortController()
-  const timeout = setTimeout(() => controller.abort(), options.timeoutMs || 20000)
+  const {
+    timeoutMs = 20000,
+    allowNotModified = false,
+    returnMetadata = false,
+    headers: requestHeaders = {},
+    ...fetchOptions
+  } = options
+  const timeout = setTimeout(() => controller.abort(), timeoutMs)
   try {
     const response = await fetch(url, {
-      ...options,
+      ...fetchOptions,
       signal: controller.signal,
       headers: {
         Accept: 'application/json',
-        ...(options.body ? { 'Content-Type': 'application/json' } : {}),
-        ...(options.headers || {}),
+        ...(fetchOptions.body ? { 'Content-Type': 'application/json' } : {}),
+        ...requestHeaders,
       },
     })
+    const etag = response.headers?.get?.('etag') || ''
+    if (allowNotModified && response.status === 304) {
+      return { data: null, etag, notModified: true }
+    }
     const raw = await response.text()
     let data = raw
     try { data = raw ? JSON.parse(raw) : null } catch {}
@@ -31,7 +42,7 @@ async function request(base, path, options = {}) {
       const message = data?.detail || data?.message || raw || `HTTP ${response.status}`
       throw new Error(typeof message === 'string' ? message : JSON.stringify(message))
     }
-    return data
+    return returnMetadata ? { data, etag, notModified: false } : data
   } catch (error) {
     if (error?.name === 'AbortError') throw new Error('서버 응답 시간이 초과되었습니다.')
     throw error
@@ -64,5 +75,10 @@ export const api = {
     body: JSON.stringify(payload),
     timeoutMs: 30000,
   }),
-  calendar: (base, year, month) => request(base, `/api/calendar?year=${year}&month=${month}`, { timeoutMs: 20000 }),
+  calendar: (base, year, month, etag = '') => request(base, `/api/calendar?year=${year}&month=${month}`, {
+    timeoutMs: 20000,
+    allowNotModified: true,
+    returnMetadata: true,
+    headers: etag ? { 'If-None-Match': etag } : {},
+  }),
 }

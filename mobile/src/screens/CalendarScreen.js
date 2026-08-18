@@ -4,7 +4,7 @@ import * as Calendar from 'expo-calendar'
 import { api } from '../api'
 import MonthCalendar from '../components/MonthCalendar'
 import ScreenHeader from '../components/ScreenHeader'
-import { getCalendarCacheSnapshot, loadCalendarCache, saveCalendarCache } from '../storage'
+import { getCalendarCacheEntry, loadCalendarCacheEntry, saveCalendarCache } from '../storage'
 import { colors } from '../theme'
 import { eventTone, isoToday, nextMonth, previousMonth } from '../utils'
 
@@ -22,40 +22,44 @@ export default function CalendarScreen({ apiBase, onOpenPolicy }) {
   const [year, setYear] = useState(now.getFullYear())
   const [month, setMonth] = useState(now.getMonth() + 1)
   const [selectedDate, setSelectedDate] = useState(isoToday())
-  const [data, setData] = useState(() => getCalendarCacheSnapshot(apiBase, now.getFullYear(), now.getMonth() + 1))
-  const [loading, setLoading] = useState(() => !getCalendarCacheSnapshot(apiBase, now.getFullYear(), now.getMonth() + 1))
+  const initialCache = getCalendarCacheEntry(apiBase, now.getFullYear(), now.getMonth() + 1)
+  const [data, setData] = useState(initialCache?.data || null)
+  const [loading, setLoading] = useState(!initialCache)
   const [refreshing, setRefreshing] = useState(false)
   const [error, setError] = useState('')
 
   useEffect(() => {
     let alive = true
-    let cachedData = getCalendarCacheSnapshot(apiBase, year, month)
-    setData(cachedData)
-    setLoading(!cachedData)
-    setRefreshing(!!cachedData)
+    let cacheEntry = getCalendarCacheEntry(apiBase, year, month)
+    setData(cacheEntry?.data || null)
+    setLoading(!cacheEntry)
+    setRefreshing(!!cacheEntry)
     setError('')
 
     const refresh = async () => {
       try {
-        if (!cachedData) {
-          cachedData = await loadCalendarCache(apiBase, year, month)
+        if (!cacheEntry) {
+          cacheEntry = await loadCalendarCacheEntry(apiBase, year, month)
           if (!alive) return
-          if (cachedData) {
-            setData(cachedData)
+          if (cacheEntry) {
+            setData(cacheEntry.data)
             setLoading(false)
             setRefreshing(true)
           }
         }
 
-        const result = await api.calendar(apiBase, year, month)
+        const response = await api.calendar(apiBase, year, month, cacheEntry?.etag)
         if (!alive) return
-        if (calendarDataChanged(cachedData, result)) {
+        if (response.notModified) return
+
+        const result = response.data
+        if (calendarDataChanged(cacheEntry?.data, result)) {
           setData(result)
-          saveCalendarCache(apiBase, year, month, result).catch(() => {})
         }
+        saveCalendarCache(apiBase, year, month, result, response.etag).catch(() => {})
       } catch (e) {
         if (alive) {
-          setError(cachedData
+          setError(cacheEntry
             ? `저장된 일정을 표시 중입니다. 최신 데이터 확인 실패: ${e.message}`
             : e.message)
         }

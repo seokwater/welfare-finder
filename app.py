@@ -1,12 +1,16 @@
 from __future__ import annotations
 
+import hashlib
+import json
 import os
 from contextlib import asynccontextmanager
+from datetime import date
 from pathlib import Path
 from typing import Literal, Optional
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, Field
 
@@ -20,6 +24,7 @@ from search_engine import UserProfile, YouthPolicySearchEngine
 BASE_DIR = Path(__file__).resolve().parent
 search_engine: YouthPolicySearchEngine | None = None
 search_index_error: str | None = None
+calendar_response_cache: dict[tuple[int, int, str], tuple[bytes, str]] = {}
 
 
 @asynccontextmanager
@@ -30,6 +35,7 @@ async def lifespan(_: FastAPI):
         ping_database()
         search_engine = YouthPolicySearchEngine.from_postgresql()
         search_index_error = None
+        calendar_response_cache.clear()
     except Exception as exc:  # 서버는 뜨되 health에서 상태를 확인할 수 있게 한다.
         search_engine = None
         search_index_error = f"{type(exc).__name__}: {exc}"
@@ -44,7 +50,9 @@ app.add_middleware(
     allow_credentials=False if "*" in origins else True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["ETag"],
 )
+app.add_middleware(GZipMiddleware, minimum_size=500)
 
 
 class ProfileModel(BaseModel):
@@ -195,11 +203,28 @@ def search(req: SearchRequest):
 
 @app.get("/api/calendar")
 def calendar_month(
+    request: Request,
     year: int = Query(..., ge=2000, le=2100),
     month: int = Query(..., ge=1, le=12),
 ):
     try:
-        return build_policy_calendar(engine_required(), year=year, month=month)
+        engine = engine_required()
+        cache_key = (year, month, date.today().isoformat())
+        cached = calendar_response_cache.get(cache_key)
+        if cached is None:
+            payload = build_policy_calendar(engine, year=year, month=month, include_adjacent=True)
+            body = json.dumps(payload, ensure_ascii=False, separators=(",", ":"), allow_nan=False).encode("utf-8")
+            etag = f'W/"{hashlib.sha256(body).hexdigest()}"'
+            cached = (body, etag)
+            calendar_response_cache[cache_key] = cached
+            while len(calendar_response_cache) > 36:
+                calendar_response_cache.pop(next(iter(calendar_response_cache)))
+
+        body, etag = cached
+        headers = {"ETag": etag, "Cache-Control": "private, no-cache"}
+        if request.headers.get("if-none-match") == etag:
+            return Response(status_code=304, headers=headers)
+        return Response(content=body, media_type="application/json", headers=headers)
     except ValueError as exc:
         raise HTTPException(422, detail=str(exc)) from exc
 
