@@ -10,7 +10,7 @@ import {
   createProfileEditRequest,
   mergeAnalyzedProfile,
   nextProfileStep,
-  profileStep,
+  normalizeDirectProfileInput,
 } from '../profileFlow'
 import { colors } from '../theme'
 
@@ -85,15 +85,21 @@ export default function AIProfileScreen({ apiBase, initialProfile, profileName =
     setLoading(true)
     try {
       const requestProfile = createProfileEditRequest(profile, question?.field)
-      const data = await api.profileTurn(apiBase, message, requestProfile)
-      const nextProfile = mergeAnalyzedProfile(profile, data.profile)
-      const nextStep = data.complete ? null : (profileStep(data.missing_field) || nextProfileStep(nextProfile))
+      const normalizedDirectInput = normalizeDirectProfileInput(question?.field, message)
+      const data = await api.profileTurn(apiBase, normalizedDirectInput || message, requestProfile)
+      const analyzedProfile = mergeAnalyzedProfile(profile, data.profile)
+      const nextProfile = normalizedDirectInput
+        ? applyProfileChoice(analyzedProfile, question.field, normalizedDirectInput)
+        : analyzedProfile
+      const nextStep = nextProfileStep(nextProfile)
       setProfile(nextProfile)
       setMessages((prev) => [...prev, {
         role: 'assistant',
         content: editingExisting && !nextStep
           ? '말씀해주신 내용으로 수정했어요. 다른 항목도 선택해서 수정할 수 있어요.'
-          : (data.reply || '내용을 반영했어요.'),
+          : normalizedDirectInput && nextStep
+            ? `${normalizedDirectInput}(으)로 반영했어요.\n\n${nextStep.text}`
+            : (data.reply || '내용을 반영했어요.'),
       }])
       setQuestion(nextStep || null)
     } catch (e) {

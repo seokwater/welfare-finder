@@ -25,6 +25,14 @@ export function applyProfileChoice(profile, field, value) {
   return { ...EMPTY_PROFILE, ...(profile || {}), [field]: value }
 }
 
+export function normalizeDirectProfileInput(field, value) {
+  if (field !== 'age') return ''
+  const match = String(value || '').trim().match(/^(?:만\s*)?(\d{1,2})\s*(?:살|세)?$/)
+  if (!match) return ''
+  const age = Number(match[1])
+  return age >= 1 && age <= 99 ? `만 ${age}세` : ''
+}
+
 export function createProfileEditRequest(profile, field) {
   if (!profileStep(field)) return { ...EMPTY_PROFILE, ...(profile || {}) }
   return { ...EMPTY_PROFILE, ...(profile || {}), [field]: '' }

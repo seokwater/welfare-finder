@@ -7,6 +7,7 @@ import {
   createProfileEditRequest,
   mergeAnalyzedProfile,
   nextProfileStep,
+  normalizeDirectProfileInput,
 } from '../src/profileFlow.js'
 
 const completeProfile = {
@@ -46,4 +47,12 @@ test('분석 결과가 비어 있으면 저장된 값을 잃지 않는다', () =
   const unchanged = mergeAnalyzedProfile(completeProfile, { employment: '' })
 
   assert.deepEqual(unchanged, completeProfile)
+})
+
+test('나이 단계의 숫자 단독 입력을 만 나이로 정규화한다', () => {
+  assert.equal(normalizeDirectProfileInput('age', '22'), '만 22세')
+  assert.equal(normalizeDirectProfileInput('age', ' 만 25살 '), '만 25세')
+  assert.equal(normalizeDirectProfileInput('age', '0'), '')
+  assert.equal(normalizeDirectProfileInput('age', '100'), '')
+  assert.equal(normalizeDirectProfileInput('location', '22'), '')
 })
