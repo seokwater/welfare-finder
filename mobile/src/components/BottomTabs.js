@@ -1,12 +1,13 @@
 import React from 'react'
+import Ionicons from '@expo/vector-icons/Ionicons'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { colors, shadow } from '../theme'
 
 const TABS = [
-  { key: 'home', label: '홈', icon: '⌂' },
-  { key: 'calendar', label: '캘린더', icon: '▣' },
-  { key: 'search', label: '검색', icon: '⌕' },
-  { key: 'my', label: '마이', icon: '●' },
+  { key: 'home', label: '홈', icon: 'home-outline', activeIcon: 'home' },
+  { key: 'calendar', label: '캘린더', icon: 'calendar-outline', activeIcon: 'calendar' },
+  { key: 'search', label: '검색', icon: 'search-outline', activeIcon: 'search' },
+  { key: 'my', label: 'My', icon: 'person-outline', activeIcon: 'person' },
 ]
 
 export default function BottomTabs({ active, onChange }) {
@@ -21,7 +22,7 @@ export default function BottomTabs({ active, onChange }) {
             activeOpacity={0.75}
             onPress={() => onChange(tab.key)}
           >
-            <Text style={[styles.icon, selected && styles.active]}>{tab.icon}</Text>
+            <Ionicons name={selected ? tab.activeIcon : tab.icon} size={24} color={selected ? colors.green : '#8D99A8'} />
             <Text style={[styles.label, selected && styles.active]}>{tab.label}</Text>
           </TouchableOpacity>
         )
@@ -43,7 +44,6 @@ const styles = StyleSheet.create({
     ...shadow,
   },
   item: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 3 },
-  icon: { fontSize: 24, color: '#9AA29D', fontWeight: '800' },
   label: { fontSize: 11, color: '#8A928D', fontWeight: '700' },
   active: { color: colors.green },
 })

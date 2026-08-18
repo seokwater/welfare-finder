@@ -81,3 +81,17 @@ export function deleteProfile(profiles, profileId, activeProfileId) {
       : resolveActiveProfileId(remaining, activeProfileId),
   }
 }
+
+export function normalizeProfileName(value) {
+  return String(value || '').replace(/\s+/g, ' ').trim().slice(0, 20)
+}
+
+export function renameProfile(profiles, profileId, name, now = Date.now()) {
+  const nextName = normalizeProfileName(name)
+  if (!nextName) return profiles
+  const duplicate = profiles.some((entry) => entry.id !== profileId && entry.name === nextName)
+  if (duplicate) return profiles
+  return profiles.map((entry) => entry.id === profileId
+    ? { ...entry, name: nextName, updatedAt: Number(now) || Date.now() }
+    : entry)
+}

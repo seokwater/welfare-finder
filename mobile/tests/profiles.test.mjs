@@ -6,6 +6,7 @@ import {
   deleteProfile,
   nextProfileName,
   normalizeProfiles,
+  renameProfile,
   upsertProfile,
 } from '../src/profiles.js'
 
@@ -56,4 +57,28 @@ test('중복 ID나 비어 있는 프로필은 복원 대상에서 제외한다',
 
   assert.equal(profiles.length, 1)
   assert.equal(profiles[0].data.location, '서울')
+})
+
+test('프로필 이름을 수정하면 다른 데이터와 활성 ID는 영향을 받지 않는다', () => {
+  const profiles = normalizeProfiles([
+    { id: 'first', name: '프로필 1', data: profileData },
+    { id: 'second', name: '프로필 2', data: { ...profileData, location: '부산' } },
+  ], 1_000)
+
+  const renamed = renameProfile(profiles, 'first', '  취업 준비  ', 2_000)
+
+  assert.equal(renamed[0].name, '취업 준비')
+  assert.deepEqual(renamed[0].data, profileData)
+  assert.equal(renamed[1].name, '프로필 2')
+  assert.equal(renamed[0].updatedAt, 2_000)
+})
+
+test('빈 이름이나 이미 사용 중인 이름은 저장하지 않는다', () => {
+  const profiles = normalizeProfiles([
+    { id: 'first', name: '나', data: profileData },
+    { id: 'second', name: '가족', data: { ...profileData, location: '부산' } },
+  ], 1_000)
+
+  assert.strictEqual(renameProfile(profiles, 'first', '   '), profiles)
+  assert.strictEqual(renameProfile(profiles, 'first', '가족'), profiles)
 })

@@ -26,7 +26,7 @@ export default function AIProfileScreen({ apiBase, initialProfile, profileName =
       role: 'assistant',
       content: initialProfile
         ? (initialStep ? `프로필을 수정해볼게요.\n\n${initialStep.text}` : '수정할 항목을 아래 프로필에서 선택해주세요.')
-        : `안녕하세요! 복지 Finder Alan AI예요. ${initialStep.text}`,
+        : `안녕하세요! 정check Alan AI예요. ${initialStep.text}`,
     },
   ])
   const [question, setQuestion] = useState(initialStep)
@@ -110,7 +110,7 @@ export default function AIProfileScreen({ apiBase, initialProfile, profileName =
         <View style={styles.header}>
           <TouchableOpacity onPress={onCancel} style={styles.back}><Text style={styles.backText}>‹</Text></TouchableOpacity>
           <View style={styles.bot}><Text style={styles.botText}>AI</Text></View>
-          <View style={{ flex: 1 }}><Text style={styles.title}>복지 Finder Alan AI</Text><Text style={styles.sub}>{profileName} {editingExisting ? '수정' : '생성'} · {filled}/5</Text></View>
+          <View style={{ flex: 1 }}><Text style={styles.title}>정check Alan AI</Text><Text style={styles.sub}>{profileName} {editingExisting ? '수정' : '생성'} · {filled}/5</Text></View>
         </View>
 
         <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">

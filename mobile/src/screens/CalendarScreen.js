@@ -103,7 +103,7 @@ export default function CalendarScreen({ apiBase, onOpenPolicy }) {
       const endDate = new Date(`${event.date}T10:00:00`)
       const url = event.policy_result?.policy?.detail_url || event.policy_result?.policy?.['신청URL'] || ''
       await Calendar.createEventInCalendarAsync({
-        title: `[복지 Finder] ${event.title} · ${event.label}`,
+        title: `[정check] ${event.title} · ${event.label}`,
         startDate,
         endDate,
         allDay: false,

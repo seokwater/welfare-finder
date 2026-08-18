@@ -7,7 +7,7 @@ export default function OnboardingScreen({ onStart, onSkip }) {
     <SafeAreaView style={styles.safe}>
       <View style={styles.brandRow}>
         <View style={styles.logo}><Text style={styles.logoText}>Q</Text></View>
-        <Text style={styles.brand}>복지 Finder</Text>
+        <Text style={styles.brand}>정check</Text>
       </View>
       <View style={styles.center}>
         <Text style={styles.eyebrow}>청년 혜택 비서</Text>

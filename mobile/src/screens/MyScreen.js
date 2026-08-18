@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from 'react'
-import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import Ionicons from '@expo/vector-icons/Ionicons'
+import { Alert, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { api } from '../api'
 import ScreenHeader from '../components/ScreenHeader'
 import { colors } from '../theme'
 
-export default function MyScreen({ apiBase, profile, profiles = [], activeProfileId, onSelectProfile, onAddProfile, onEditProfile, onDeleteProfile, onSaveApiBase, onReset }) {
+export default function MyScreen({ apiBase, profile, profiles = [], activeProfileId, onSelectProfile, onAddProfile, onEditProfile, onRenameProfile, onDeleteProfile, onSaveApiBase, onReset }) {
   const [serverInput, setServerInput] = useState(apiBase)
   const [health, setHealth] = useState(null)
   const [checking, setChecking] = useState(false)
   const [error, setError] = useState('')
+  const [renamingProfile, setRenamingProfile] = useState(null)
+  const [profileNameInput, setProfileNameInput] = useState('')
+  const [profileNameError, setProfileNameError] = useState('')
   const activeProfile = profiles.find((entry) => entry.id === activeProfileId) || null
 
   useEffect(() => setServerInput(apiBase), [apiBase])
@@ -55,9 +59,36 @@ export default function MyScreen({ apiBase, profile, profiles = [], activeProfil
     ])
   }
 
+  const openRename = (entry) => {
+    setRenamingProfile(entry)
+    setProfileNameInput(entry.name)
+    setProfileNameError('')
+  }
+
+  const closeRename = () => {
+    setRenamingProfile(null)
+    setProfileNameInput('')
+    setProfileNameError('')
+  }
+
+  const saveProfileName = async () => {
+    const nextName = profileNameInput.replace(/\s+/g, ' ').trim()
+    if (!nextName) {
+      setProfileNameError('프로필 이름을 입력해주세요.')
+      return
+    }
+    if (profiles.some((entry) => entry.id !== renamingProfile?.id && entry.name === nextName)) {
+      setProfileNameError('이미 사용 중인 프로필 이름입니다.')
+      return
+    }
+    await onRenameProfile(renamingProfile.id, nextName)
+    closeRename()
+  }
+
   return (
-    <ScrollView style={styles.screen} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-      <ScreenHeader title="마이" subtitle="프로필과 서버 설정" />
+    <>
+      <ScrollView style={styles.screen} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+      <ScreenHeader title="My" subtitle="프로필과 서버 설정" />
 
       <View style={styles.section}>
         <View style={styles.sectionHead}>
@@ -89,7 +120,10 @@ export default function MyScreen({ apiBase, profile, profiles = [], activeProfil
                   <Text numberOfLines={1} style={styles.profileSummary}>{summary || '정보 입력 중'}</Text>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => onEditProfile(entry.id)}><Text style={styles.profileAction}>수정</Text></TouchableOpacity>
+              <TouchableOpacity accessibilityLabel={`${entry.name} 이름 수정`} style={styles.iconAction} onPress={() => openRename(entry)}>
+                <Ionicons name="pencil-outline" size={16} color={colors.greenDark} />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => onEditProfile(entry.id)}><Text style={styles.profileAction}>정보</Text></TouchableOpacity>
               <TouchableOpacity onPress={() => confirmDelete(entry)}><Text style={[styles.profileAction, styles.deleteAction]}>삭제</Text></TouchableOpacity>
             </View>
           )
@@ -143,8 +177,38 @@ export default function MyScreen({ apiBase, profile, profiles = [], activeProfil
       </View>
 
       <TouchableOpacity style={styles.reset} onPress={confirmReset}><Text style={styles.resetText}>모든 프로필 및 앱 데이터 초기화</Text></TouchableOpacity>
-      <Text style={styles.version}>복지 Finder Mobile v2.0</Text>
-    </ScrollView>
+      <Text style={styles.version}>정check Mobile v2.0</Text>
+      </ScrollView>
+
+      <Modal visible={Boolean(renamingProfile)} transparent animationType="fade" onRequestClose={closeRename}>
+        <KeyboardAvoidingView style={styles.modalKeyboard} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+          <Pressable style={styles.modalOverlay} onPress={closeRename}>
+            <Pressable style={styles.renameCard} onPress={(event) => event.stopPropagation()}>
+              <View style={styles.renameIcon}><Ionicons name="person-outline" size={22} color={colors.greenDark} /></View>
+              <Text style={styles.renameTitle}>프로필 이름 수정</Text>
+              <Text style={styles.renameHelp}>홈 인사말과 프로필 목록에 표시할 이름입니다.</Text>
+              <TextInput
+                autoFocus
+                value={profileNameInput}
+                onChangeText={(value) => { setProfileNameInput(value); setProfileNameError('') }}
+                onSubmitEditing={saveProfileName}
+                maxLength={20}
+                selectTextOnFocus
+                returnKeyType="done"
+                placeholder="예: 나, 취업 준비, 가족"
+                placeholderTextColor="#A0A8A3"
+                style={[styles.renameInput, profileNameError && styles.renameInputError]}
+              />
+              {!!profileNameError && <Text style={styles.renameError}>{profileNameError}</Text>}
+              <View style={styles.renameActions}>
+                <TouchableOpacity style={styles.renameCancel} onPress={closeRename}><Text style={styles.renameCancelText}>취소</Text></TouchableOpacity>
+                <TouchableOpacity style={styles.renameSave} onPress={saveProfileName}><Text style={styles.renameSaveText}>저장</Text></TouchableOpacity>
+              </View>
+            </Pressable>
+          </Pressable>
+        </KeyboardAvoidingView>
+      </Modal>
+    </>
   )
 }
 
@@ -182,6 +246,7 @@ const styles = StyleSheet.create({
   activeBadge: { color: colors.greenDark, backgroundColor: colors.greenSoft, borderRadius: 7, paddingHorizontal: 6, paddingVertical: 2, fontSize: 8, fontWeight: '900' },
   profileSummary: { color: colors.muted, fontSize: 9, marginTop: 4 },
   profileAction: { color: colors.greenDark, fontSize: 10, fontWeight: '900', padding: 7 },
+  iconAction: { width: 30, height: 34, alignItems: 'center', justifyContent: 'center' },
   deleteAction: { color: colors.danger },
   activeInfoHead: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   updatedAt: { color: colors.muted, fontSize: 9, marginBottom: 9 },
@@ -204,4 +269,18 @@ const styles = StyleSheet.create({
   reset: { margin: 14, marginTop: 18, height: 48, borderRadius: 14, borderWidth: 1, borderColor: '#F0CACA', alignItems: 'center', justifyContent: 'center', backgroundColor: colors.dangerSoft },
   resetText: { color: colors.danger, fontSize: 12, fontWeight: '900' },
   version: { textAlign: 'center', color: '#A7AEA9', fontSize: 9 },
+  modalKeyboard: { flex: 1 },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(16, 27, 21, 0.42)', alignItems: 'center', justifyContent: 'center', padding: 24 },
+  renameCard: { width: '100%', maxWidth: 380, borderRadius: 22, backgroundColor: colors.white, padding: 20 },
+  renameIcon: { width: 44, height: 44, borderRadius: 15, backgroundColor: colors.greenSoft, alignItems: 'center', justifyContent: 'center' },
+  renameTitle: { color: colors.ink, fontSize: 18, fontWeight: '900', marginTop: 14 },
+  renameHelp: { color: colors.muted, fontSize: 11, lineHeight: 17, marginTop: 5 },
+  renameInput: { height: 48, borderWidth: 1, borderColor: colors.line, borderRadius: 13, paddingHorizontal: 13, marginTop: 16, color: colors.ink, fontSize: 14, fontWeight: '700', backgroundColor: '#FAFCFB' },
+  renameInputError: { borderColor: colors.danger },
+  renameError: { color: colors.danger, fontSize: 10, marginTop: 6 },
+  renameActions: { flexDirection: 'row', gap: 8, marginTop: 18 },
+  renameCancel: { flex: 1, height: 44, borderRadius: 12, borderWidth: 1, borderColor: colors.line, alignItems: 'center', justifyContent: 'center' },
+  renameCancelText: { color: colors.text, fontSize: 12, fontWeight: '900' },
+  renameSave: { flex: 1, height: 44, borderRadius: 12, backgroundColor: colors.green, alignItems: 'center', justifyContent: 'center' },
+  renameSaveText: { color: colors.white, fontSize: 12, fontWeight: '900' },
 })

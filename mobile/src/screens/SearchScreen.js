@@ -125,7 +125,7 @@ export default function SearchScreen({ apiBase, profile, onOpenPolicy, searchSta
     <>
       <KeyboardAvoidingView style={styles.screen} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScreenHeader
-          title="복지 Finder Alan AI"
+          title="정check Alan AI"
           subtitle="Alan AI + 정책 DB 검색"
           rightLabel="대화 목록"
           onRight={() => setHistoryVisible(true)}

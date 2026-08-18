@@ -9,7 +9,7 @@ import HomeScreen from './src/screens/HomeScreen'
 import MyScreen from './src/screens/MyScreen'
 import OnboardingScreen from './src/screens/OnboardingScreen'
 import SearchScreen from './src/screens/SearchScreen'
-import { deleteProfile, nextProfileName, upsertProfile } from './src/profiles'
+import { deleteProfile, nextProfileName, renameProfile, upsertProfile } from './src/profiles'
 import { createInitialSearchState } from './src/searchHistory'
 import {
   loadAppState,
@@ -128,7 +128,9 @@ export default function App() {
         {activeTab === 'home' && (
           <HomeScreen
             {...common}
+            profileName={activeProfileEntry?.name || '프로필'}
             onNavigate={setActiveTab}
+            onEditProfile={() => setProfileEditor({ profileId: activeProfileId || null })}
           />
         )}
         {activeTab === 'calendar' && <CalendarScreen {...common} />}
@@ -157,6 +159,12 @@ export default function App() {
             }}
             onAddProfile={() => setProfileEditor({ profileId: null })}
             onEditProfile={(profileId) => setProfileEditor({ profileId })}
+            onRenameProfile={async (profileId, name) => {
+              const nextProfiles = renameProfile(profiles, profileId, name)
+              const saved = await saveProfiles(nextProfiles, activeProfileId)
+              setProfiles(saved.profiles)
+              setActiveProfileId(saved.activeProfileId)
+            }}
             onDeleteProfile={async (profileId) => {
               const result = deleteProfile(profiles, profileId, activeProfileId)
               const saved = await saveProfiles(result.profiles, result.activeProfileId)

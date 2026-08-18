@@ -5,7 +5,19 @@ import PolicyCard from '../components/PolicyCard'
 import { colors } from '../theme'
 import { isoToday } from '../utils'
 
-export default function HomeScreen({ apiBase, profile, onOpenPolicy, onNavigate }) {
+function ageLabel(value) {
+  const age = String(value || '').trim()
+  if (!age) return '만 나이'
+  if (age.startsWith('만 ')) return age.replace(/살/g, '세')
+  if (/^\d/.test(age)) return `만 ${age.replace(/살/g, '세')}`
+  return age
+}
+
+function profileMeta(profile) {
+  return [profile?.location || '지역', ageLabel(profile?.age), profile?.employment || '직업 형태'].join(' · ')
+}
+
+export default function HomeScreen({ apiBase, profile, profileName = '프로필', onOpenPolicy, onNavigate, onEditProfile }) {
   const [recommendation, setRecommendation] = useState(null)
   const [calendar, setCalendar] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -13,7 +25,8 @@ export default function HomeScreen({ apiBase, profile, onOpenPolicy, onNavigate 
   const [error, setError] = useState('')
   const [benefitsExpanded, setBenefitsExpanded] = useState(false)
 
-  const displayName = profile?.location ? `${profile.location} 청년` : '청년'
+  const normalizedProfileName = String(profileName || '프로필').trim() || '프로필'
+  const greetingName = normalizedProfileName.endsWith('님') ? normalizedProfileName : `${normalizedProfileName}님`
 
   const load = useCallback(async () => {
     setError('')
@@ -58,8 +71,18 @@ export default function HomeScreen({ apiBase, profile, onOpenPolicy, onNavigate 
       contentContainerStyle={styles.content}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); load() }} tintColor={colors.green} />}
     >
+      <View style={styles.homeHeader}>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.brand}>정check</Text>
+          <Text numberOfLines={1} style={styles.profileMeta}>{profileMeta(profile)}</Text>
+        </View>
+        <TouchableOpacity onPress={onEditProfile} style={styles.editProfileButton}>
+          <Text style={styles.editProfileText}>프로필 수정</Text>
+        </TouchableOpacity>
+      </View>
+
       <View style={styles.hero}>
-        <Text style={styles.hello}>👋 안녕하세요, {displayName}!</Text>
+        <Text style={styles.hello}>👋 안녕하세요, {greetingName}!</Text>
         <Text style={styles.heroSub}>{profile ? '조건에 맞는 혜택을 찾아봤어요.' : '프로필을 만들면 받을 수 있는 혜택을 찾아드려요.'}</Text>
         <TouchableOpacity
           style={styles.estimateCard}
@@ -102,7 +125,7 @@ export default function HomeScreen({ apiBase, profile, onOpenPolicy, onNavigate 
             {!loading && !error && (recommendation?.results || []).length === 0 && (
               <TouchableOpacity style={styles.emptyBenefits} onPress={load}>
                 <Text style={styles.emptyBenefitsTitle}>{profile ? '현재 표시할 추천 혜택이 없어요.' : '아직 선택된 프로필이 없어요.'}</Text>
-                <Text style={styles.emptyBenefitsText}>{profile ? '새로고침하거나 AI 검색에서 조건을 넓혀보세요.' : '마이 화면에서 프로필을 추가해 맞춤 추천을 시작하세요.'}</Text>
+                <Text style={styles.emptyBenefitsText}>{profile ? '새로고침하거나 AI 검색에서 조건을 넓혀보세요.' : 'My 화면에서 프로필을 추가해 맞춤 추천을 시작하세요.'}</Text>
               </TouchableOpacity>
             )}
           </View>
@@ -142,6 +165,11 @@ export default function HomeScreen({ apiBase, profile, onOpenPolicy, onNavigate 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.bg },
   content: { paddingBottom: 26 },
+  homeHeader: { minHeight: 91, flexDirection: 'row', alignItems: 'flex-end', paddingHorizontal: 20, paddingTop: 20, paddingBottom: 15, gap: 12 },
+  brand: { color: colors.ink, fontSize: 25, fontWeight: '900', letterSpacing: -0.9 },
+  profileMeta: { color: colors.muted, fontSize: 12, marginTop: 5 },
+  editProfileButton: { paddingHorizontal: 7, paddingVertical: 9 },
+  editProfileText: { color: colors.greenDark, fontSize: 12, fontWeight: '900' },
   hero: { backgroundColor: colors.green, marginHorizontal: 6, marginTop: 5, borderRadius: 30, paddingHorizontal: 25, paddingTop: 26, paddingBottom: 25 },
   hello: { color: colors.white, fontSize: 21, fontWeight: '900', letterSpacing: -0.6 },
   heroSub: { color: '#E4F8ED', fontSize: 13, fontWeight: '700', marginTop: 8 },
