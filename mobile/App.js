@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { ActivityIndicator, SafeAreaView, StatusBar, StyleSheet, View } from 'react-native'
+import { ActivityIndicator, Alert, SafeAreaView, StatusBar, StyleSheet, View } from 'react-native'
 import { defaultApiBase } from './src/api'
 import BottomTabs from './src/components/BottomTabs'
 import PolicyDetailModal from './src/components/PolicyDetailModal'
@@ -225,7 +225,10 @@ export default function App() {
         item={selectedPolicy}
         favorite={isFavoritePolicy(favoritePolicies, selectedPolicy)}
         onToggleFavorite={(item) => {
-          if (!activeProfileId) return
+          if (!activeProfileId) {
+            Alert.alert('찜하기 안내', '프로필 생성 후 사용 가능합니다.')
+            return
+          }
           setFavoritePoliciesByProfile((current) => toggleFavoritePolicy(current, activeProfileId, item))
         }}
         onClose={() => setSelectedPolicy(null)}
