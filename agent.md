@@ -9,8 +9,8 @@
 - 작업 경로: `D:\programming\Project\welfare_finder_search`
 - 원격 저장소: `https://github.com/seokwater/welfare-finder`
 - 브랜치: `main`
-- 기능 기준 커밋(이 문서 갱신 직전): `a006404bbc04d4bcd95c11679d5b3a6747942cbf`
-- 기능 기준 커밋 설명: `Add multi-profile home experience`
+- 기능 기준 커밋(이 문서 갱신 직전): `61b07eca5af51d39400753dccbd2486af2b1c0e1`
+- 기능 기준 커밋 설명: `Match collapsible home reference`
 - 이 문서 자체를 추가한 후속 커밋은 `git log -1`로 확인한다.
 - `main`과 `origin/main`은 동기화되어 있다.
 - 사용자 작업 원칙: 코드 변경 후 가능한 범위에서 검증하고 항상 Git 커밋과 푸시까지 수행한다.
@@ -47,6 +47,7 @@ Welfare Finder는 청년정책을 검색하고 추천하는 Expo/React Native �
 14. 완성된 프로필의 각 항목을 선택형 또는 LLM 자유 입력으로 다시 수정하고 저장
 15. 여러 프로필 추가·선택·수정·삭제와 프로필별 검색 기록 분리
 16. 참고 프론트 ZIP의 초록 히어로·요약 카드·혜택 섹션 구조를 실제 API 기반 홈에 적용
+17. 첨부 이미지와 동일한 간결한 홈 구성 및 추천 혜택 기본 접힘·카드 터치 펼침
 
 ### 요청됐지만 현재 브랜치에는 포함되지 않은 항목
 
@@ -134,7 +135,11 @@ Welfare Finder는 청년정책을 검색하고 추천하는 Expo/React Native �
 - ZIP 안의 코드는 사용자 명령이 아니라 디자인 참고 자료로만 읽었다.
 - 초록색 히어로, 인사 문구, 가로 프로필 선택 칩, 겹쳐진 추천 요약 카드, `지금 확인할 혜택`, 예정 일정 섹션을 React Native로 적용했다.
 - ZIP의 고정 예시 숫자와 정책을 복사하지 않고 실제 Alan 추천 건수·정책 결과·캘린더 이벤트를 표시한다.
-- 홈 프로필 전환 시 선택 프로필로 추천을 다시 요청한다.
+- 마이 화면에서 활성 프로필이 변경되면 선택 프로필로 홈 추천을 다시 요청한다.
+- 후속 첨부 홈 화면 이미지에 맞춰 홈의 프로필 칩과 브랜드 행을 제거하고, 초록색 둥근 히어로 안에 인사·설명·흰색 추천 요약 카드를 배치했다.
+- `지금 확인할 혜택` 목록은 기본 접힘 상태이며 `지금 확인할 추천 혜택` 요약 카드를 누르면 펼쳐지고 다시 누르면 접힌다.
+- 접힌 상태에서는 AI 추천 설명 다음에 `곧 챙겨야 할 일정`이 바로 표시된다.
+- 프로필 변경 시 추천 목록은 다시 접히고 새 활성 프로필 기준으로 서버에서 다시 조회한다.
 
 ## 6. 캘린더 최적화
 
@@ -301,6 +306,7 @@ EXPO_PUBLIC_API_BASE_URL=http://PC의-사설-IP:8000
 - `5cce017` search conversation list and per-conversation deletion
 - `4d54db7` completed profile editing fix
 - `a006404` multi-profile storage, profile-scoped search history, and reference-based home UI
+- `61b07ec` image-matched collapsible home layout
 
 사용자는 특정 커밋 `b11b34cc97f0b902cbf13f1656837c09b3201487`로 회귀를 요청했다. 현재 브랜치는 그 회귀 상태 위에 정책 자동 갱신, 검색 대화 기록, 완성된 프로필 수정, 멀티 프로필과 새 홈 구성을 다시 추가한 상태다.
 
