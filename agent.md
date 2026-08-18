@@ -516,3 +516,10 @@ npx expo export --platform android
 - 검색 기록 삭제는 사용자 확인을 거치며, 다른 대화를 함께 삭제하지 않는다.
 - 기존 사용자 변경사항이 있는지 `git status`로 확인한 뒤 수정한다.
 - 작업 완료 시 테스트 결과와 커밋 해시를 보고하고 `origin/main`까지 푸시한다.
+
+## 24. Expo Go 프로필 입력 키보드 회피
+
+- Expo Go에서는 Android 네이티브 `softwareKeyboardLayoutMode` 설정이 즉시 적용되지 않을 수 있어 프로필 입력창이 키보드에 가려질 수 있다.
+- 프로필 생성·정보 수정 화면의 `KeyboardAvoidingView`를 Android에서도 활성화하고 `padding` 방식을 사용한다.
+- 이전에 화면 높이가 완전히 복원되지 않았던 `height` 방식은 사용하지 않는다.
+- 모바일 단위 테스트 17개와 Android Expo export를 통과했다.
