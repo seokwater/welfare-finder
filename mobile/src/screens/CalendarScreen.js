@@ -4,26 +4,70 @@ import * as Calendar from 'expo-calendar'
 import { api } from '../api'
 import MonthCalendar from '../components/MonthCalendar'
 import ScreenHeader from '../components/ScreenHeader'
+import { getCalendarCacheSnapshot, loadCalendarCache, saveCalendarCache } from '../storage'
 import { colors } from '../theme'
 import { eventTone, isoToday, nextMonth, previousMonth } from '../utils'
+
+function calendarDataChanged(previous, next) {
+  if (!previous) return true
+  try {
+    return JSON.stringify(previous) !== JSON.stringify(next)
+  } catch {
+    return true
+  }
+}
 
 export default function CalendarScreen({ apiBase, onOpenPolicy }) {
   const now = new Date()
   const [year, setYear] = useState(now.getFullYear())
   const [month, setMonth] = useState(now.getMonth() + 1)
   const [selectedDate, setSelectedDate] = useState(isoToday())
-  const [data, setData] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [data, setData] = useState(() => getCalendarCacheSnapshot(apiBase, now.getFullYear(), now.getMonth() + 1))
+  const [loading, setLoading] = useState(() => !getCalendarCacheSnapshot(apiBase, now.getFullYear(), now.getMonth() + 1))
+  const [refreshing, setRefreshing] = useState(false)
   const [error, setError] = useState('')
 
   useEffect(() => {
     let alive = true
-    setLoading(true)
+    let cachedData = getCalendarCacheSnapshot(apiBase, year, month)
+    setData(cachedData)
+    setLoading(!cachedData)
+    setRefreshing(!!cachedData)
     setError('')
-    api.calendar(apiBase, year, month)
-      .then((result) => { if (alive) setData(result) })
-      .catch((e) => { if (alive) setError(e.message) })
-      .finally(() => { if (alive) setLoading(false) })
+
+    const refresh = async () => {
+      try {
+        if (!cachedData) {
+          cachedData = await loadCalendarCache(apiBase, year, month)
+          if (!alive) return
+          if (cachedData) {
+            setData(cachedData)
+            setLoading(false)
+            setRefreshing(true)
+          }
+        }
+
+        const result = await api.calendar(apiBase, year, month)
+        if (!alive) return
+        if (calendarDataChanged(cachedData, result)) {
+          setData(result)
+          saveCalendarCache(apiBase, year, month, result).catch(() => {})
+        }
+      } catch (e) {
+        if (alive) {
+          setError(cachedData
+            ? `저장된 일정을 표시 중입니다. 최신 데이터 확인 실패: ${e.message}`
+            : e.message)
+        }
+      } finally {
+        if (alive) {
+          setLoading(false)
+          setRefreshing(false)
+        }
+      }
+    }
+
+    refresh()
     return () => { alive = false }
   }, [apiBase, year, month])
 
@@ -75,7 +119,10 @@ export default function CalendarScreen({ apiBase, onOpenPolicy }) {
       <View style={styles.calendarCard}>
         <View style={styles.monthHead}>
           <TouchableOpacity style={styles.arrowButton} onPress={() => moveMonth(-1)}><Text style={styles.arrow}>‹</Text></TouchableOpacity>
-          <Text style={styles.monthTitle}>{year}년 {month}월</Text>
+          <View style={styles.monthTitleWrap}>
+            <Text style={styles.monthTitle}>{year}년 {month}월</Text>
+            {refreshing && <Text style={styles.refreshingText}>최신 일정 확인 중…</Text>}
+          </View>
           <TouchableOpacity style={styles.arrowButton} onPress={() => moveMonth(1)}><Text style={styles.arrow}>›</Text></TouchableOpacity>
         </View>
         {loading ? <ActivityIndicator color={colors.green} style={{ marginVertical: 50 }} /> : (
@@ -150,7 +197,9 @@ const styles = StyleSheet.create({
   content: { paddingBottom: 28 },
   calendarCard: { backgroundColor: colors.white, marginHorizontal: 14, borderRadius: 20, padding: 14, borderWidth: 1, borderColor: colors.line },
   monthHead: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 },
+  monthTitleWrap: { alignItems: 'center' },
   monthTitle: { color: colors.ink, fontSize: 19, fontWeight: '900' },
+  refreshingText: { color: colors.muted, fontSize: 9, marginTop: 2 },
   arrowButton: { width: 40, height: 40, borderRadius: 13, alignItems: 'center', justifyContent: 'center', backgroundColor: '#F7F9F8' },
   arrow: { color: colors.ink, fontSize: 30, lineHeight: 32 },
   legend: { flexDirection: 'row', justifyContent: 'center', gap: 16, paddingTop: 8, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: colors.line },
