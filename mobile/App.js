@@ -146,9 +146,11 @@ function AppRoot() {
 
   const common = { apiBase, profile, onOpenPolicy: setSelectedPolicy }
 
+  const greenHeader = ['home', 'my'].includes(activeTab)
+
   return (
-    <SafeAreaView style={styles.safe}>
-      <StatusBar barStyle={['home', 'my'].includes(activeTab) ? 'light-content' : 'dark-content'} backgroundColor={['home', 'my'].includes(activeTab) ? colors.green : colors.bg} />
+    <SafeAreaView style={[styles.safe, greenHeader && styles.greenSafe]} edges={['top']}>
+      <StatusBar barStyle={greenHeader ? 'light-content' : 'dark-content'} backgroundColor={greenHeader ? colors.green : colors.bg} />
       <View style={styles.body}>
         {activeTab === 'home' && (
           <HomeScreen
@@ -236,7 +238,9 @@ function AppRoot() {
           />
         )}
       </View>
-      <BottomTabs active={activeTab} onChange={setActiveTab} />
+      <SafeAreaView style={styles.tabSafe} edges={['bottom']}>
+        <BottomTabs active={activeTab} onChange={setActiveTab} />
+      </SafeAreaView>
       <PolicyDetailModal
         item={selectedPolicy}
         favorite={isFavoritePolicy(favoritePolicies, selectedPolicy)}
@@ -255,6 +259,8 @@ function AppRoot() {
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.bg },
-  body: { flex: 1 },
+  greenSafe: { backgroundColor: colors.green },
+  body: { flex: 1, backgroundColor: colors.bg },
+  tabSafe: { backgroundColor: colors.white },
   loading: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.white },
 })

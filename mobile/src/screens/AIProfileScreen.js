@@ -19,23 +19,44 @@ const COMPLETE_MESSAGE = '프로필을 완성했어요. 이제 조건에 맞는 
 
 function useAndroidKeyboardInset() {
   const [inset, setInset] = useState(0)
+  const restingWindowHeight = useRef(Dimensions.get('window').height)
+  const keyboardHeight = useRef(0)
 
   useEffect(() => {
     if (Platform.OS !== 'android') return undefined
     let frame = null
-    const shown = Keyboard.addListener('keyboardDidShow', (event) => {
+
+    const updateInset = () => {
       if (frame) cancelAnimationFrame(frame)
       frame = requestAnimationFrame(() => {
-        const windowHeight = Dimensions.get('window').height
-        const keyboardTop = Number(event.endCoordinates?.screenY) || windowHeight
-        setInset(Math.max(0, Math.round(windowHeight - keyboardTop)))
+        const currentWindowHeight = Dimensions.get('window').height
+        const resizedBy = Math.max(0, restingWindowHeight.current - currentWindowHeight)
+        const overlap = Math.max(0, keyboardHeight.current - resizedBy)
+        setInset(overlap > 0 ? Math.ceil(overlap) + 8 : 0)
       })
+    }
+
+    const shown = Keyboard.addListener('keyboardDidShow', (event) => {
+      keyboardHeight.current = Math.max(0, Number(event.endCoordinates?.height) || 0)
+      updateInset()
     })
-    const hidden = Keyboard.addListener('keyboardDidHide', () => setInset(0))
+    const hidden = Keyboard.addListener('keyboardDidHide', () => {
+      keyboardHeight.current = 0
+      setInset(0)
+    })
+    const dimensionsChanged = Dimensions.addEventListener('change', ({ window }) => {
+      if (keyboardHeight.current > 0) {
+        updateInset()
+        return
+      }
+      restingWindowHeight.current = Math.max(restingWindowHeight.current, window.height)
+    })
+
     return () => {
       if (frame) cancelAnimationFrame(frame)
       shown.remove()
       hidden.remove()
+      dimensionsChanged.remove()
     }
   }, [])
 
