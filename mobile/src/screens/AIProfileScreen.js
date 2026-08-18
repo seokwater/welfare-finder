@@ -16,6 +16,7 @@ import {
 import { colors } from '../theme'
 
 const COMPLETE_MESSAGE = '프로필을 완성했어요. 이제 조건에 맞는 청년 혜택을 찾아볼 수 있어요.'
+const KEYBOARD_CLEARANCE_DP = 8
 
 function useAndroidKeyboardInset() {
   const [inset, setInset] = useState(0)
@@ -32,7 +33,7 @@ function useAndroidKeyboardInset() {
         const currentWindowHeight = Dimensions.get('window').height
         const resizedBy = Math.max(0, restingWindowHeight.current - currentWindowHeight)
         const overlap = Math.max(0, keyboardHeight.current - resizedBy)
-        setInset(overlap > 0 ? Math.ceil(overlap) + 8 : 0)
+        setInset(overlap > 0 ? Math.ceil(overlap) + KEYBOARD_CLEARANCE_DP : 0)
       })
     }
 
