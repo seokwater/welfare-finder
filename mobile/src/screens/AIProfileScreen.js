@@ -1,36 +1,84 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useRef, useState } from 'react'
 import { ActivityIndicator, KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { api } from '../api'
 import ChatBubble from '../components/ChatBubble'
 import { colors } from '../theme'
 
 const EMPTY = { location: '', age: '', housing: '', employment: '', income: '' }
+const PROFILE_STEPS = [
+  { field: 'location', text: '현재 살고 있는 지역을 알려주세요.', choices: ['서울', '경기', '전주', '부산', '직접 입력'] },
+  { field: 'age', text: '나이도 알려주실 수 있나요?', choices: ['19~24살', '25~29살', '30~34살', '직접 입력'] },
+  { field: 'housing', text: '현재 어떤 형태로 거주하고 있나요?', choices: ['자취/원룸', '부모님과 거주', '기숙사', '전월세', '직접 입력'] },
+  { field: 'employment', text: '현재 취업 상태도 알려주세요.', choices: ['취업준비생', '대학생', '재직 중', '프리랜서', '무직'] },
+  { field: 'income', text: '마지막으로 월 소득도 알려주실 수 있나요?', choices: ['소득 없음', '100만원 이하', '100~200만원', '200만원 이상', '직접 입력'] },
+]
+const COMPLETE_MESSAGE = '프로필을 완성했어요. 이제 조건에 맞는 청년 혜택을 찾아볼 수 있어요.'
+
+function nextProfileStep(profile) {
+  return PROFILE_STEPS.find(({ field }) => !profile[field]) || null
+}
+
+function profileStep(field) {
+  return PROFILE_STEPS.find((step) => step.field === field) || null
+}
 
 export default function AIProfileScreen({ apiBase, initialProfile, onComplete, onCancel }) {
-  const [profile, setProfile] = useState({ ...EMPTY, ...(initialProfile || {}) })
+  const initial = { ...EMPTY, ...(initialProfile || {}) }
+  const initialStep = nextProfileStep(initial)
+  const [profile, setProfile] = useState(initial)
   const [messages, setMessages] = useState([
-    { role: 'assistant', content: initialProfile ? '프로필을 수정해볼게요. 바꾸고 싶은 정보를 자연스럽게 말해주세요.' : '안녕하세요! 복지 Finder Alan AI예요. 현재 살고 있는 지역을 알려주세요.' },
+    {
+      role: 'assistant',
+      content: initialProfile
+        ? (initialStep ? `프로필을 수정해볼게요.\n\n${initialStep.text}` : '저장된 프로필을 확인해주세요.')
+        : `안녕하세요! 복지 Finder Alan AI예요. ${initialStep.text}`,
+    },
   ])
-  const [question, setQuestion] = useState(initialProfile ? null : { choices: ['서울', '경기', '전주', '부산', '직접 입력'] })
+  const [question, setQuestion] = useState(initialStep)
   const [text, setText] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const inputRef = useRef(null)
 
   const filled = useMemo(() => Object.values(profile).filter(Boolean).length, [profile])
+  const complete = filled === PROFILE_STEPS.length
+
+  const selectChoice = (choice) => {
+    if (loading || complete) return
+    if (choice === '직접 입력') {
+      inputRef.current?.focus()
+      return
+    }
+
+    const currentStep = question?.field ? question : nextProfileStep(profile)
+    if (!currentStep) return
+
+    const nextProfile = { ...profile, [currentStep.field]: choice }
+    const nextStep = nextProfileStep(nextProfile)
+    setError('')
+    setProfile(nextProfile)
+    setQuestion(nextStep)
+    setMessages((prev) => [
+      ...prev,
+      { role: 'user', content: choice },
+      { role: 'assistant', content: nextStep?.text || COMPLETE_MESSAGE },
+    ])
+  }
 
   const send = async (raw) => {
     const message = String(raw ?? text).trim()
-    if (!message || loading || message === '직접 입력') return
+    if (!message || loading || complete) return
     setText('')
     setError('')
     setMessages((prev) => [...prev, { role: 'user', content: message }])
     setLoading(true)
     try {
       const data = await api.profileTurn(apiBase, message, profile)
-      setProfile(data.profile || profile)
+      const nextProfile = data.profile || profile
+      const nextStep = data.complete ? null : (profileStep(data.missing_field) || nextProfileStep(nextProfile))
+      setProfile(nextProfile)
       setMessages((prev) => [...prev, { role: 'assistant', content: data.reply || '내용을 반영했어요.' }])
-      setQuestion(data.question || null)
-      if (data.complete) setQuestion(null)
+      setQuestion(nextStep)
     } catch (e) {
       setError(e.message)
       setMessages((prev) => [...prev, { role: 'assistant', content: '서버 연결을 확인해주세요. 입력한 내용은 아직 저장하지 않았어요.' }])
@@ -64,7 +112,7 @@ export default function AIProfileScreen({ apiBase, initialProfile, onComplete, o
           {!!question?.choices?.length && (
             <View style={styles.choices}>
               {question.choices.map((choice) => (
-                <TouchableOpacity key={choice} style={styles.choice} onPress={() => choice === '직접 입력' ? null : send(choice)}>
+                <TouchableOpacity key={choice} style={styles.choice} onPress={() => selectChoice(choice)}>
                   <Text style={styles.choiceText}>{choice}</Text>
                 </TouchableOpacity>
               ))}
@@ -73,23 +121,34 @@ export default function AIProfileScreen({ apiBase, initialProfile, onComplete, o
           {!!error && <Text style={styles.error}>{error}</Text>}
         </ScrollView>
 
-        <View style={styles.composer}>
-          <TextInput
-            value={text}
-            onChangeText={setText}
-            onSubmitEditing={() => send()}
-            placeholder="메시지를 입력하세요…"
-            placeholderTextColor="#A0A8A3"
-            style={styles.input}
-            returnKeyType="send"
-          />
-          <TouchableOpacity style={styles.send} onPress={() => send()}><Text style={styles.sendText}>↑</Text></TouchableOpacity>
-        </View>
-        <View style={styles.saveBar}>
-          <TouchableOpacity style={[styles.save, filled < 2 && styles.saveDisabled]} disabled={filled < 2} onPress={() => onComplete(profile)}>
-            <Text style={styles.saveText}>{filled === 5 ? '프로필 저장하고 혜택 보기' : '현재 정보로 저장하기'}</Text>
-          </TouchableOpacity>
-        </View>
+        {complete ? (
+          <View style={styles.completeBar}>
+            <TouchableOpacity style={styles.save} onPress={() => onComplete(profile)}>
+              <Text style={styles.saveText}>혜택 보러가기</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <>
+            <View style={styles.composer}>
+              <TextInput
+                ref={inputRef}
+                value={text}
+                onChangeText={setText}
+                onSubmitEditing={() => send()}
+                placeholder="직접 말로 입력하세요…"
+                placeholderTextColor="#A0A8A3"
+                style={styles.input}
+                returnKeyType="send"
+              />
+              <TouchableOpacity style={styles.send} onPress={() => send()}><Text style={styles.sendText}>↑</Text></TouchableOpacity>
+            </View>
+            <View style={styles.saveBar}>
+              <TouchableOpacity style={[styles.save, filled < 2 && styles.saveDisabled]} disabled={filled < 2} onPress={() => onComplete(profile)}>
+                <Text style={styles.saveText}>현재 정보로 저장하기</Text>
+              </TouchableOpacity>
+            </View>
+          </>
+        )}
       </KeyboardAvoidingView>
     </SafeAreaView>
   )
@@ -132,6 +191,7 @@ const styles = StyleSheet.create({
   send: { width: 46, height: 46, borderRadius: 14, backgroundColor: colors.green, alignItems: 'center', justifyContent: 'center' },
   sendText: { color: colors.white, fontSize: 23, fontWeight: '900' },
   saveBar: { paddingHorizontal: 12, paddingBottom: 12, backgroundColor: colors.white },
+  completeBar: { padding: 12, borderTopWidth: 1, borderTopColor: colors.line, backgroundColor: colors.white },
   save: { height: 48, borderRadius: 14, backgroundColor: colors.green, alignItems: 'center', justifyContent: 'center' },
   saveDisabled: { opacity: 0.4 },
   saveText: { color: colors.white, fontSize: 13, fontWeight: '900' },
