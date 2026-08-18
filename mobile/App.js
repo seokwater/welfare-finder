@@ -41,6 +41,7 @@ export default function App() {
   const [profileSearchStates, setProfileSearchStates] = useState({})
   const [favoritePoliciesByProfile, setFavoritePoliciesByProfile] = useState({})
   const [notificationSettings, setNotificationSettings] = useState({ newMatchingPolicies: true, deadlineReminders: true })
+  const [homeBenefitsExpandedByProfile, setHomeBenefitsExpandedByProfile] = useState({})
 
   const activeProfileEntry = profiles.find((entry) => entry.id === activeProfileId) || null
   const profile = activeProfileEntry?.data || null
@@ -147,6 +148,10 @@ export default function App() {
         {activeTab === 'home' && (
           <HomeScreen
             {...common}
+            benefitsExpanded={Boolean(homeBenefitsExpandedByProfile[searchProfileId])}
+            onBenefitsExpandedChange={(expanded) => {
+              setHomeBenefitsExpandedByProfile((current) => ({ ...current, [searchProfileId]: expanded }))
+            }}
             profileCacheKey={`${activeProfileId || 'guest'}:${activeProfileEntry?.updatedAt || 0}`}
             profileName={activeProfileEntry?.name || '프로필'}
             onNavigate={setActiveTab}
@@ -205,6 +210,11 @@ export default function App() {
                 return next
               })
               setFavoritePoliciesByProfile((current) => removeProfileFavorites(current, profileId))
+              setHomeBenefitsExpandedByProfile((current) => {
+                const next = { ...current }
+                delete next[profileId]
+                return next
+              })
             }}
             onReset={async () => {
               await resetAppState()
@@ -213,6 +223,7 @@ export default function App() {
               setProfileSearchStates({})
               setFavoritePoliciesByProfile({})
               setNotificationSettings({ newMatchingPolicies: true, deadlineReminders: true })
+              setHomeBenefitsExpandedByProfile({})
               setOnboarded(false)
               setProfileEditor(null)
               setActiveTab('home')

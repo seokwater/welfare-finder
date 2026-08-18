@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { ActivityIndicator, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Modal, RefreshControl, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { api } from '../api'
 import PolicyCard from '../components/PolicyCard'
 import { getHomeCacheEntry, isHomeCacheFresh, loadHomeCacheEntry, saveHomeCache } from '../storage'
@@ -29,14 +29,14 @@ function sameData(current, next) {
   }
 }
 
-export default function HomeScreen({ apiBase, profile, profileCacheKey = 'guest', profileName = '프로필', onOpenPolicy, onNavigate, onEditProfile }) {
+export default function HomeScreen({ apiBase, profile, profileCacheKey = 'guest', profileName = '프로필', benefitsExpanded = false, onBenefitsExpandedChange, onOpenPolicy, onNavigate, onEditProfile }) {
   const initialCache = getHomeCacheEntry(apiBase, profileCacheKey)
   const [recommendation, setRecommendation] = useState(profile ? (initialCache?.recommendation || null) : EMPTY_RECOMMENDATION)
   const [calendar, setCalendar] = useState(initialCache?.calendar || null)
   const [loading, setLoading] = useState(Boolean(profile && !initialCache))
   const [refreshing, setRefreshing] = useState(false)
   const [error, setError] = useState('')
-  const [benefitsExpanded, setBenefitsExpanded] = useState(false)
+  const [fullListVisible, setFullListVisible] = useState(false)
 
   const normalizedProfileName = String(profileName || '프로필').trim() || '프로필'
   const greetingName = normalizedProfileName.endsWith('님') ? normalizedProfileName : `${normalizedProfileName}님`
@@ -68,7 +68,6 @@ export default function HomeScreen({ apiBase, profile, profileCacheKey = 'guest'
 
   useEffect(() => {
     let cancelled = false
-    setBenefitsExpanded(false)
     const hydrate = async () => {
       const cached = getHomeCacheEntry(apiBase, profileCacheKey) || await loadHomeCacheEntry(apiBase, profileCacheKey)
       if (cancelled) return
@@ -94,6 +93,7 @@ export default function HomeScreen({ apiBase, profile, profileCacheKey = 'guest'
   }, [calendar])
 
   return (
+    <>
     <ScrollView
       style={styles.screen}
       contentContainerStyle={styles.content}
@@ -118,7 +118,7 @@ export default function HomeScreen({ apiBase, profile, profileCacheKey = 'guest'
           accessibilityRole="button"
           accessibilityState={{ expanded: benefitsExpanded }}
           accessibilityLabel="지금 확인할 추천 혜택"
-          onPress={() => setBenefitsExpanded((current) => !current)}
+          onPress={() => onBenefitsExpandedChange?.(!benefitsExpanded)}
         >
           <View style={{ flex: 1 }}>
             <Text style={styles.estimateLabel}>지금 확인할 추천 혜택</Text>
@@ -142,7 +142,7 @@ export default function HomeScreen({ apiBase, profile, profileCacheKey = 'guest'
         <View style={styles.benefitsSection}>
           <View style={styles.sectionHead}>
             <Text style={styles.sectionTitle}>지금 확인할 혜택 <Text style={styles.sectionCount}>({recommendation?.count ?? 0})</Text></Text>
-            <TouchableOpacity onPress={() => onNavigate('search')}><Text style={styles.more}>전체보기 ›</Text></TouchableOpacity>
+            <TouchableOpacity onPress={() => setFullListVisible(true)}><Text style={styles.more}>전체보기 ›</Text></TouchableOpacity>
           </View>
 
           <View style={styles.policyList}>
@@ -187,6 +187,40 @@ export default function HomeScreen({ apiBase, profile, profileCacheKey = 'guest'
         <Text style={styles.safetyText}>추천 결과는 정책 DB와 자격 조건을 바탕으로 제공하며, 최종 신청 가능 여부는 각 기관의 심사를 따릅니다.</Text>
       </View>
     </ScrollView>
+
+    <Modal visible={fullListVisible} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => setFullListVisible(false)}>
+      <SafeAreaView style={styles.listModalSafe}>
+        <View style={styles.listModalHeader}>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.listModalTitle}>추천 혜택 목록</Text>
+            <Text style={styles.listModalCount}>현재 프로필 기준 {recommendation?.count ?? 0}개</Text>
+          </View>
+          <TouchableOpacity accessibilityLabel="추천 혜택 목록 닫기" style={styles.listModalClose} onPress={() => setFullListVisible(false)}>
+            <Text style={styles.listModalCloseText}>닫기</Text>
+          </TouchableOpacity>
+        </View>
+        <ScrollView contentContainerStyle={styles.listModalContent}>
+          {(recommendation?.results || []).map((item, index) => (
+            <PolicyCard
+              key={item.policy?.['정책번호'] || `${item.policy?.['정책명']}-${index}`}
+              item={item}
+              onPress={(policy) => {
+                setFullListVisible(false)
+                setTimeout(() => onOpenPolicy(policy), 180)
+              }}
+            />
+          ))}
+          {!loading && !(recommendation?.results || []).length && (
+            <View style={styles.listModalEmpty}>
+              <Text style={styles.listModalEmptyTitle}>{profile ? '현재 표시할 추천 혜택이 없어요.' : '프로필을 먼저 만들어주세요.'}</Text>
+              <Text style={styles.listModalEmptyText}>{profile ? '당겨서 새로고침하거나 잠시 후 다시 확인해 주세요.' : '프로필을 만들면 조건에 맞는 혜택을 추천해드려요.'}</Text>
+            </View>
+          )}
+          {loading && <ActivityIndicator color={colors.green} style={{ marginTop: 40 }} />}
+        </ScrollView>
+      </SafeAreaView>
+    </Modal>
+    </>
   )
 }
 
@@ -237,4 +271,14 @@ const styles = StyleSheet.create({
   safety: { margin: 14, marginTop: 20, borderRadius: 18, padding: 16, backgroundColor: colors.white, borderWidth: 1, borderColor: colors.line },
   safetyTitle: { color: colors.ink, fontSize: 14, fontWeight: '900' },
   safetyText: { color: colors.muted, fontSize: 11, lineHeight: 18, marginTop: 6 },
+  listModalSafe: { flex: 1, backgroundColor: colors.bg },
+  listModalHeader: { minHeight: 72, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 18, paddingVertical: 12, backgroundColor: colors.white, borderBottomWidth: 1, borderBottomColor: colors.line },
+  listModalTitle: { color: colors.ink, fontSize: 20, fontWeight: '900' },
+  listModalCount: { color: colors.muted, fontSize: 10, marginTop: 4 },
+  listModalClose: { paddingHorizontal: 10, paddingVertical: 8 },
+  listModalCloseText: { color: colors.greenDark, fontSize: 12, fontWeight: '900' },
+  listModalContent: { padding: 14, paddingBottom: 30 },
+  listModalEmpty: { minHeight: 250, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 25 },
+  listModalEmptyTitle: { color: colors.ink, fontSize: 15, fontWeight: '900', textAlign: 'center' },
+  listModalEmptyText: { color: colors.muted, fontSize: 11, lineHeight: 18, textAlign: 'center', marginTop: 7 },
 })
