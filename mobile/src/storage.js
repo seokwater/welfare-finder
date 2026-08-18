@@ -1,12 +1,19 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { legacySessionToSearchState, normalizeSearchState } from './searchHistory'
+import { createProfileEntry, normalizeProfiles, resolveActiveProfileId } from './profiles'
 
 const KEYS = {
   onboarded: 'wf:onboarded',
   profile: 'wf:profile',
+  profiles: 'wf:profiles:v3',
+  activeProfileId: 'wf:activeProfileId:v3',
+  legacyProfiles: 'wf:profiles:v2',
+  legacyActiveProfileId: 'wf:activeProfileId:v2',
   apiBase: 'wf:apiBase',
+  profileSearchStates: 'wf:profileSearchConversations:v2',
   searchState: 'wf:searchConversations:v1',
   legacySearchSession: 'wf:searchSession',
+  legacyProfileSearchSessions: 'wf:searchSessions:v2',
   calendarCacheIndex: 'wf:calendarCacheIndex:v1',
 }
 
@@ -30,16 +37,50 @@ function parseCalendarCache(raw) {
 }
 
 export async function loadAppState() {
-  const pairs = await AsyncStorage.multiGet([KEYS.onboarded, KEYS.profile, KEYS.apiBase])
+  const pairs = await AsyncStorage.multiGet([
+    KEYS.onboarded,
+    KEYS.profile,
+    KEYS.profiles,
+    KEYS.activeProfileId,
+    KEYS.legacyProfiles,
+    KEYS.legacyActiveProfileId,
+    KEYS.apiBase,
+  ])
   const map = Object.fromEntries(pairs)
-  let profile = null
+  let profiles = []
+  let activeProfileId = map[KEYS.activeProfileId] || ''
   try {
-    profile = map[KEYS.profile] ? JSON.parse(map[KEYS.profile]) : null
-  } catch {
-    profile = null
+    profiles = normalizeProfiles(parseJson(map[KEYS.profiles]))
+  } catch {}
+
+  let migrated = false
+  if (!profiles.length) {
+    try {
+      profiles = normalizeProfiles(parseJson(map[KEYS.legacyProfiles]))
+      activeProfileId = map[KEYS.legacyActiveProfileId] || ''
+      migrated = profiles.length > 0
+    } catch {}
   }
+  if (!profiles.length) {
+    const legacyProfile = parseJson(map[KEYS.profile])
+    const entry = createProfileEntry([], legacyProfile, {
+      id: 'profile-migrated',
+      name: '프로필 1',
+    })
+    if (entry) {
+      profiles = [entry]
+      activeProfileId = entry.id
+      migrated = true
+    }
+  }
+
+  activeProfileId = resolveActiveProfileId(profiles, activeProfileId)
+  if (migrated) await saveProfiles(profiles, activeProfileId)
+  const profile = profiles.find((entry) => entry.id === activeProfileId)?.data || null
   return {
     onboarded: map[KEYS.onboarded] === '1',
+    profiles,
+    activeProfileId,
     profile,
     apiBase: map[KEYS.apiBase] || '',
   }
@@ -49,12 +90,22 @@ export async function saveOnboarded(value = true) {
   await AsyncStorage.setItem(KEYS.onboarded, value ? '1' : '0')
 }
 
-export async function saveProfile(profile) {
-  if (!profile) {
-    await AsyncStorage.removeItem(KEYS.profile)
-    return
-  }
-  await AsyncStorage.setItem(KEYS.profile, JSON.stringify(profile))
+export async function saveProfiles(profiles, activeProfileId) {
+  const normalized = normalizeProfiles(profiles)
+  const activeId = resolveActiveProfileId(normalized, activeProfileId)
+  await AsyncStorage.multiSet([
+    [KEYS.profiles, JSON.stringify(normalized)],
+    [KEYS.activeProfileId, activeId],
+  ])
+  await AsyncStorage.multiRemove([KEYS.profile, KEYS.legacyProfiles, KEYS.legacyActiveProfileId])
+  return { profiles: normalized, activeProfileId: activeId }
+}
+
+export async function saveActiveProfileId(profileId) {
+  const value = String(profileId || '')
+  if (value) await AsyncStorage.setItem(KEYS.activeProfileId, value)
+  else await AsyncStorage.removeItem(KEYS.activeProfileId)
+  return value
 }
 
 export async function saveApiBase(apiBase) {
@@ -72,24 +123,50 @@ function parseJson(raw) {
   }
 }
 
-export async function loadSearchState() {
-  const saved = parseJson(await AsyncStorage.getItem(KEYS.searchState))
-  if (saved?.conversations?.length) return normalizeSearchState(saved)
-
-  const legacyRaw = await AsyncStorage.getItem(KEYS.legacySearchSession)
-  const migrated = legacySessionToSearchState(parseJson(legacyRaw))
-  if (!migrated) {
-    if (legacyRaw) await AsyncStorage.removeItem(KEYS.legacySearchSession)
-    return null
-  }
-
-  await AsyncStorage.setItem(KEYS.searchState, JSON.stringify(migrated))
-  await AsyncStorage.removeItem(KEYS.legacySearchSession)
-  return migrated
+function normalizeProfileSearchStates(value) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return {}
+  return Object.fromEntries(Object.entries(value).flatMap(([profileId, state]) => (
+    profileId && state?.conversations?.length ? [[profileId, normalizeSearchState(state)]] : []
+  )))
 }
 
-export async function saveSearchState(state) {
-  await AsyncStorage.setItem(KEYS.searchState, JSON.stringify(normalizeSearchState(state)))
+export async function loadProfileSearchStates() {
+  const pairs = await AsyncStorage.multiGet([
+    KEYS.profileSearchStates,
+    KEYS.searchState,
+    KEYS.legacySearchSession,
+    KEYS.legacyProfileSearchSessions,
+  ])
+  const map = Object.fromEntries(pairs)
+  const saved = normalizeProfileSearchStates(parseJson(map[KEYS.profileSearchStates]))
+  if (Object.keys(saved).length) return saved
+
+  let migrated = {}
+  const previousMulti = parseJson(map[KEYS.legacyProfileSearchSessions])
+  if (previousMulti && typeof previousMulti === 'object' && !Array.isArray(previousMulti)) {
+    migrated = Object.fromEntries(Object.entries(previousMulti).flatMap(([profileId, session]) => {
+      const state = legacySessionToSearchState(session)
+      return state ? [[profileId, state]] : []
+    }))
+  }
+
+  const globalState = parseJson(map[KEYS.searchState])
+  if (globalState?.conversations?.length) {
+    return { ...migrated, __legacy__: normalizeSearchState(globalState) }
+  }
+
+  const legacySession = legacySessionToSearchState(parseJson(map[KEYS.legacySearchSession]))
+  return legacySession ? { ...migrated, __legacy__: legacySession } : migrated
+}
+
+export async function saveProfileSearchStates(states) {
+  const normalized = normalizeProfileSearchStates(states)
+  await AsyncStorage.setItem(KEYS.profileSearchStates, JSON.stringify(normalized))
+  await AsyncStorage.multiRemove([
+    KEYS.searchState,
+    KEYS.legacySearchSession,
+    KEYS.legacyProfileSearchSessions,
+  ])
 }
 
 export function getCalendarCacheEntry(apiBase, year, month) {
@@ -134,5 +211,16 @@ export async function saveCalendarCache(apiBase, year, month, data, etag = '') {
 }
 
 export async function resetAppState() {
-  await AsyncStorage.multiRemove([KEYS.onboarded, KEYS.profile, KEYS.searchState, KEYS.legacySearchSession])
+  await AsyncStorage.multiRemove([
+    KEYS.onboarded,
+    KEYS.profile,
+    KEYS.profiles,
+    KEYS.activeProfileId,
+    KEYS.legacyProfiles,
+    KEYS.legacyActiveProfileId,
+    KEYS.profileSearchStates,
+    KEYS.searchState,
+    KEYS.legacySearchSession,
+    KEYS.legacyProfileSearchSessions,
+  ])
 }

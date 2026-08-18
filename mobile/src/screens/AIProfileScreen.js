@@ -16,10 +16,10 @@ import { colors } from '../theme'
 
 const COMPLETE_MESSAGE = '프로필을 완성했어요. 이제 조건에 맞는 청년 혜택을 찾아볼 수 있어요.'
 
-export default function AIProfileScreen({ apiBase, initialProfile, onComplete, onCancel }) {
+export default function AIProfileScreen({ apiBase, initialProfile, profileName = '프로필', isEditing = false, onComplete, onCancel }) {
   const initial = { ...EMPTY_PROFILE, ...(initialProfile || {}) }
   const initialStep = nextProfileStep(initial)
-  const editingExisting = Boolean(initialProfile)
+  const editingExisting = isEditing || Boolean(initialProfile)
   const [profile, setProfile] = useState(initial)
   const [messages, setMessages] = useState([
     {
@@ -110,7 +110,7 @@ export default function AIProfileScreen({ apiBase, initialProfile, onComplete, o
         <View style={styles.header}>
           <TouchableOpacity onPress={onCancel} style={styles.back}><Text style={styles.backText}>‹</Text></TouchableOpacity>
           <View style={styles.bot}><Text style={styles.botText}>AI</Text></View>
-          <View style={{ flex: 1 }}><Text style={styles.title}>복지 Finder Alan AI</Text><Text style={styles.sub}>프로필 {editingExisting ? '수정' : '생성'} · {filled}/5</Text></View>
+          <View style={{ flex: 1 }}><Text style={styles.title}>복지 Finder Alan AI</Text><Text style={styles.sub}>{profileName} {editingExisting ? '수정' : '생성'} · {filled}/5</Text></View>
         </View>
 
         <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
