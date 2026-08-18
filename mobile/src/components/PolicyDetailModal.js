@@ -1,5 +1,6 @@
 import React from 'react'
 import { Linking, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import Ionicons from '@expo/vector-icons/Ionicons'
 import { colors } from '../theme'
 
 function Criterion({ item }) {
@@ -15,7 +16,7 @@ function Criterion({ item }) {
   )
 }
 
-export default function PolicyDetailModal({ item, onClose }) {
+export default function PolicyDetailModal({ item, onClose, favorite = false, onToggleFavorite }) {
   const policy = item?.policy || {}
   const eligibility = item?.eligibility || {}
   const application = item?.application || {}
@@ -28,7 +29,14 @@ export default function PolicyDetailModal({ item, onClose }) {
         <View style={styles.header}>
           <TouchableOpacity onPress={onClose} style={styles.headerButton}><Text style={styles.headerIcon}>‹</Text></TouchableOpacity>
           <Text numberOfLines={1} style={styles.headerTitle}>{policy['정책명'] || '정책 상세'}</Text>
-          <View style={styles.headerButton} />
+          <TouchableOpacity
+            accessibilityRole="button"
+            accessibilityLabel={favorite ? '찜 해제' : '찜하기'}
+            onPress={() => onToggleFavorite?.(item)}
+            style={styles.headerButton}
+          >
+            <Ionicons name={favorite ? 'bookmark' : 'bookmark-outline'} size={24} color={favorite ? colors.green : colors.ink} />
+          </TouchableOpacity>
         </View>
         <ScrollView contentContainerStyle={styles.content}>
           <View style={[styles.resultBox, likely ? styles.resultGood : styles.resultCheck]}>

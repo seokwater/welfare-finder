@@ -21,6 +21,7 @@ export function normalizeProfiles(value, now = Date.now()) {
       id,
       name: String(entry.name || `프로필 ${index + 1}`).trim() || `프로필 ${index + 1}`,
       data,
+      avatarUri: String(entry.avatarUri || '').trim(),
       createdAt: Number(entry.createdAt) || now,
       updatedAt: Number(entry.updatedAt) || now,
     }]
@@ -93,5 +94,12 @@ export function renameProfile(profiles, profileId, name, now = Date.now()) {
   if (duplicate) return profiles
   return profiles.map((entry) => entry.id === profileId
     ? { ...entry, name: nextName, updatedAt: Number(now) || Date.now() }
+    : entry)
+}
+
+export function updateProfileAvatar(profiles, profileId, avatarUri, now = Date.now()) {
+  const nextAvatarUri = String(avatarUri || '').trim()
+  return profiles.map((entry) => entry.id === profileId
+    ? { ...entry, avatarUri: nextAvatarUri, updatedAt: Number(now) || Date.now() }
     : entry)
 }

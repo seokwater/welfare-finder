@@ -7,6 +7,7 @@ import {
   nextProfileName,
   normalizeProfiles,
   renameProfile,
+  updateProfileAvatar,
   upsertProfile,
 } from '../src/profiles.js'
 
@@ -81,4 +82,17 @@ test('빈 이름이나 이미 사용 중인 이름은 저장하지 않는다', (
 
   assert.strictEqual(renameProfile(profiles, 'first', '   '), profiles)
   assert.strictEqual(renameProfile(profiles, 'first', '가족'), profiles)
+})
+
+test('프로필 이미지를 변경해도 프로필 정보는 유지된다', () => {
+  const profiles = normalizeProfiles([
+    { id: 'first', name: '나', data: profileData },
+  ], 1_000)
+
+  const updated = updateProfileAvatar(profiles, 'first', 'file:///profile.jpg', 2_000)
+
+  assert.equal(updated[0].avatarUri, 'file:///profile.jpg')
+  assert.deepEqual(updated[0].data, profileData)
+  assert.equal(updated[0].updatedAt, 2_000)
+  assert.equal(normalizeProfiles(updated, 3_000)[0].avatarUri, 'file:///profile.jpg')
 })

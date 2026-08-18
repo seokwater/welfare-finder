@@ -1,65 +1,88 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import Ionicons from '@expo/vector-icons/Ionicons'
-import { Alert, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import { api } from '../api'
-import ScreenHeader from '../components/ScreenHeader'
-import { colors } from '../theme'
+import * as ImagePicker from 'expo-image-picker'
+import {
+  Alert,
+  Image,
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Switch,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native'
+import { colors, shadow } from '../theme'
 
-export default function MyScreen({ apiBase, profile, profiles = [], activeProfileId, onSelectProfile, onAddProfile, onEditProfile, onRenameProfile, onDeleteProfile, onSaveApiBase, onReset }) {
-  const [serverInput, setServerInput] = useState(apiBase)
-  const [health, setHealth] = useState(null)
-  const [checking, setChecking] = useState(false)
-  const [error, setError] = useState('')
+function ageLabel(value) {
+  const age = String(value || '').trim()
+  if (!age) return '나이 미입력'
+  if (age.startsWith('만 ')) return age.replace(/살/g, '세')
+  if (/^\d/.test(age)) return `만 ${age.replace(/살/g, '세')}`
+  return age
+}
+
+function updateDate(value) {
+  if (!value) return '업데이트 기록 없음'
+  return new Date(value).toLocaleDateString('ko-KR')
+}
+
+function favoriteMeta(item) {
+  const policy = item?.policy || {}
+  const criteria = item?.eligibility?.criteria || []
+  const passed = criteria.filter((criterion) => criterion.status === 'pass').length
+  const status = item?.eligibility?.status
+  return {
+    title: policy['정책명'] || '정책명 없음',
+    support: policy['지원내용'] || policy['정책설명'] || '정책 상세에서 지원 내용을 확인해 주세요.',
+    category: policy['정책대분류'] || policy['정책중분류'] || '맞춤 정책',
+    badge: criteria.length ? `조건 ${passed}/${criteria.length} 충족` : status === 'likely' ? '조건 충족 가능성 높음' : '조건 확인 필요',
+    good: status === 'likely' || (criteria.length > 0 && passed === criteria.length),
+  }
+}
+
+export default function MyScreen({
+  profile,
+  profiles = [],
+  activeProfileId,
+  favoritePolicies = [],
+  notificationSettings = { newMatchingPolicies: true, deadlineReminders: true },
+  onSelectProfile,
+  onAddProfile,
+  onEditProfile,
+  onRenameProfile,
+  onChangeProfileImage,
+  onDeleteProfile,
+  onNotificationSettingsChange,
+  onOpenPolicy,
+  onReset,
+}) {
+  const [profileChooserVisible, setProfileChooserVisible] = useState(false)
   const [renamingProfile, setRenamingProfile] = useState(null)
   const [profileNameInput, setProfileNameInput] = useState('')
   const [profileNameError, setProfileNameError] = useState('')
   const activeProfile = profiles.find((entry) => entry.id === activeProfileId) || null
 
-  useEffect(() => setServerInput(apiBase), [apiBase])
-
-  const check = async (base = serverInput) => {
-    setChecking(true)
-    setError('')
-    try {
-      const data = await api.health(base)
-      setHealth(data)
-      return data
-    } catch (e) {
-      setHealth(null)
-      setError(e.message)
-      return null
-    } finally {
-      setChecking(false)
-    }
-  }
-
-  useEffect(() => { check(apiBase) }, [apiBase])
-
-  const saveServer = async () => {
-    const normalized = String(serverInput || '').trim().replace(/\/$/, '')
-    if (!/^https?:\/\//i.test(normalized)) {
-      Alert.alert('주소 확인', 'http:// 또는 https://로 시작하는 API 주소를 입력해주세요.')
-      return
-    }
-    await onSaveApiBase(normalized)
-    await check(normalized)
-  }
-
   const confirmReset = () => {
-    Alert.alert('앱 초기화', '저장한 모든 프로필과 검색 기록, 온보딩 상태를 삭제할까요?', [
+    Alert.alert('앱 초기화', '저장한 프로필, 찜한 정책, 알림 설정과 검색 기록을 모두 삭제할까요?', [
       { text: '취소', style: 'cancel' },
       { text: '초기화', style: 'destructive', onPress: onReset },
     ])
   }
 
   const confirmDelete = (entry) => {
-    Alert.alert('프로필 삭제', `“${entry.name}” 프로필을 삭제할까요? 이 프로필의 검색 기록도 함께 삭제됩니다.`, [
+    Alert.alert('프로필 삭제', `“${entry.name}” 프로필과 이 프로필의 찜·검색 기록을 삭제할까요?`, [
       { text: '취소', style: 'cancel' },
       { text: '삭제', style: 'destructive', onPress: () => onDeleteProfile(entry.id) },
     ])
   }
 
   const openRename = (entry) => {
+    setProfileChooserVisible(false)
     setRenamingProfile(entry)
     setProfileNameInput(entry.name)
     setProfileNameError('')
@@ -85,100 +108,170 @@ export default function MyScreen({ apiBase, profile, profiles = [], activeProfil
     closeRename()
   }
 
+  const changeProfileImage = async () => {
+    if (!activeProfile) {
+      onAddProfile()
+      return
+    }
+    try {
+      const permission = await ImagePicker.requestMediaLibraryPermissionsAsync()
+      if (!permission.granted) {
+        Alert.alert('사진 접근 권한 필요', '프로필 이미지를 변경하려면 사진 접근을 허용해 주세요.')
+        return
+      }
+      const result = await ImagePicker.launchImageLibraryAsync({ allowsEditing: true, aspect: [1, 1], quality: 0.8 })
+      const uri = result.assets?.[0]?.uri
+      if (!result.canceled && uri) await onChangeProfileImage(activeProfile.id, uri)
+    } catch {
+      Alert.alert('이미지 선택 실패', '프로필 이미지를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.')
+    }
+  }
+
+  const setNotification = (key, value) => {
+    onNotificationSettingsChange({ ...notificationSettings, [key]: value })
+  }
+
   return (
     <>
-      <ScrollView style={styles.screen} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-      <ScreenHeader title="My" subtitle="프로필과 서버 설정" />
-
-      <View style={styles.section}>
-        <View style={styles.sectionHead}>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.sectionTitle}>내 프로필</Text>
-            <Text style={styles.profileSub}>선택한 프로필이 홈 추천과 AI 검색에 적용됩니다.</Text>
-          </View>
-          <TouchableOpacity style={styles.addProfile} onPress={onAddProfile}><Text style={styles.addProfileText}>＋ 추가</Text></TouchableOpacity>
-        </View>
-
-        {profiles.length === 0 ? (
-          <TouchableOpacity style={styles.emptyProfile} onPress={onAddProfile}>
-            <Text style={styles.emptyProfileIcon}>＋</Text>
-            <Text style={styles.emptyProfileTitle}>프로필을 만들어보세요</Text>
-            <Text style={styles.emptyProfileText}>상황별 프로필로 맞춤 혜택을 비교할 수 있어요.</Text>
+      <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
+        <View style={styles.heroHeader}>
+          <Text style={styles.pageTitle}>My</Text>
+          <TouchableOpacity accessibilityLabel="앱 데이터 초기화" style={styles.settingsButton} onPress={confirmReset}>
+            <Ionicons name="settings-outline" size={26} color={colors.white} />
           </TouchableOpacity>
-        ) : profiles.map((entry, index) => {
-          const active = entry.id === activeProfileId
-          const summary = [entry.data.location, entry.data.age, entry.data.employment].filter(Boolean).join(' · ')
-          return (
-            <View key={entry.id} style={[styles.profileItem, active && styles.activeProfileItem]}>
-              <TouchableOpacity style={styles.profileSelect} onPress={() => onSelectProfile(entry.id)}>
-                <View style={[styles.smallAvatar, active && styles.activeAvatar]}><Text style={styles.smallAvatarText}>{['🙂', '😊', '😎', '🧑'][index % 4]}</Text></View>
-                <View style={{ flex: 1 }}>
-                  <View style={styles.profileNameRow}>
-                    <Text style={styles.profileTitle}>{entry.name}</Text>
-                    {active && <Text style={styles.activeBadge}>사용 중</Text>}
+        </View>
+
+        <View style={styles.profileCard}>
+          {activeProfile ? (
+            <>
+              <View style={styles.profileTop}>
+                <TouchableOpacity accessibilityLabel="프로필 이미지 변경" activeOpacity={0.8} onPress={changeProfileImage} style={styles.avatarButton}>
+                  {activeProfile.avatarUri ? (
+                    <Image source={{ uri: activeProfile.avatarUri }} style={styles.avatarImage} />
+                  ) : (
+                    <View style={styles.avatarFallback}><Ionicons name="person" size={44} color={colors.greenDark} /></View>
+                  )}
+                  <View style={styles.cameraBadge}><Ionicons name="camera" size={13} color={colors.white} /></View>
+                </TouchableOpacity>
+
+                <View style={styles.profileIdentity}>
+                  <View style={styles.nameRow}>
+                    <Text numberOfLines={1} style={styles.profileName}>{activeProfile.name}</Text>
+                    <TouchableOpacity accessibilityLabel="프로필 이름 수정" onPress={() => openRename(activeProfile)} style={styles.nameEdit}>
+                      <Ionicons name="pencil" size={14} color={colors.greenDark} />
+                    </TouchableOpacity>
                   </View>
-                  <Text numberOfLines={1} style={styles.profileSummary}>{summary || '정보 입력 중'}</Text>
+                  <View style={styles.youthBadge}><Ionicons name="person" size={11} color={colors.greenDark} /><Text style={styles.youthText}>청년</Text></View>
                 </View>
-              </TouchableOpacity>
-              <TouchableOpacity accessibilityLabel={`${entry.name} 이름 수정`} style={styles.iconAction} onPress={() => openRename(entry)}>
-                <Ionicons name="pencil-outline" size={16} color={colors.greenDark} />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => onEditProfile(entry.id)}><Text style={styles.profileAction}>정보</Text></TouchableOpacity>
-              <TouchableOpacity onPress={() => confirmDelete(entry)}><Text style={[styles.profileAction, styles.deleteAction]}>삭제</Text></TouchableOpacity>
+
+                <View style={styles.profileActions}>
+                  <TouchableOpacity style={styles.editButton} onPress={() => onEditProfile(activeProfile.id)}>
+                    <Ionicons name="create-outline" size={14} color={colors.greenDark} />
+                    <Text style={styles.editButtonText}>정보 수정</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.switchProfileButton} onPress={() => setProfileChooserVisible(true)}>
+                    <Ionicons name="people-outline" size={14} color={colors.text} />
+                    <Text style={styles.switchProfileText}>프로필 변경하기</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              <View style={styles.profileFacts}>
+                <ProfileFact icon="location" value={profile?.location || '지역 미입력'} />
+                <ProfileFact icon="calendar" value={ageLabel(profile?.age)} />
+                <ProfileFact icon="briefcase" value={profile?.employment || '직업 미입력'} />
+              </View>
+              <View style={styles.updateRow}>
+                <Ionicons name="time-outline" size={15} color={colors.muted} />
+                <Text style={styles.updateText}>내 정보가 마지막으로 업데이트 된 날짜  {updateDate(activeProfile.updatedAt)}</Text>
+              </View>
+            </>
+          ) : (
+            <TouchableOpacity style={styles.emptyProfile} onPress={onAddProfile}>
+              <View style={styles.emptyProfileIcon}><Ionicons name="person-add" size={25} color={colors.greenDark} /></View>
+              <Text style={styles.emptyProfileTitle}>프로필을 만들어보세요</Text>
+              <Text style={styles.emptyProfileText}>프로필을 만들면 맞춤 정책과 찜 목록을 관리할 수 있어요.</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>찜한 정책</Text>
+          <Text style={styles.sectionCount}>{favoritePolicies.length}개</Text>
+        </View>
+        <View style={styles.listCard}>
+          {favoritePolicies.length ? favoritePolicies.map((entry, index) => (
+            <FavoritePolicyRow key={entry.id || index} item={entry.item} onPress={() => onOpenPolicy(entry.item)} last={index === favoritePolicies.length - 1} />
+          )) : (
+            <View style={styles.emptyFavorites}>
+              <View style={styles.emptyFavoriteIcon}><Ionicons name="bookmark-outline" size={25} color={colors.greenDark} /></View>
+              <Text style={styles.emptyFavoriteTitle}>아직 찜한 정책이 없어요</Text>
+              <Text style={styles.emptyFavoriteText}>정책 상세 화면의 북마크를 눌러 관심 정책을 모아보세요.</Text>
             </View>
-          )
-        })}
-      </View>
-
-      <View style={styles.section}>
-        <View style={styles.activeInfoHead}>
-          <Text style={styles.sectionTitle}>{activeProfile ? `${activeProfile.name} 정보` : '선택된 프로필 정보'}</Text>
-          {!!activeProfile?.updatedAt && <Text style={styles.updatedAt}>{new Date(activeProfile.updatedAt).toLocaleDateString('ko-KR')} 수정</Text>}
+          )}
         </View>
-        <Info icon="📍" label="거주지" value={profile?.location} />
-        <Info icon="🎂" label="나이" value={profile?.age} />
-        <Info icon="🏠" label="주거 형태" value={profile?.housing} />
-        <Info icon="💼" label="취업 상태" value={profile?.employment} />
-        <Info icon="💰" label="소득" value={profile?.income} />
-      </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>백엔드 연결</Text>
-        <Text style={styles.help}>실제 스마트폰에서는 PC의 127.0.0.1이 아니라 같은 Wi-Fi의 PC IPv4 주소를 입력해야 합니다.</Text>
-        <TextInput
-          value={serverInput}
-          onChangeText={setServerInput}
-          autoCapitalize="none"
-          autoCorrect={false}
-          keyboardType="url"
-          placeholder="http://192.168.0.15:8000"
-          style={styles.input}
-        />
-        <View style={styles.serverActions}>
-          <TouchableOpacity style={styles.secondary} onPress={() => check()}><Text style={styles.secondaryText}>{checking ? '확인 중…' : '연결 테스트'}</Text></TouchableOpacity>
-          <TouchableOpacity style={styles.primary} onPress={saveServer}><Text style={styles.primaryText}>주소 저장</Text></TouchableOpacity>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>정책 알림 설정</Text>
         </View>
-        <View style={[styles.status, { backgroundColor: health?.ok ? colors.greenSoft : '#F5F5F5' }]}>
-          <View style={[styles.statusDot, { backgroundColor: health?.ok ? colors.green : '#B4BBB6' }]} />
-          <View style={{ flex: 1 }}>
-            <Text style={styles.statusTitle}>{health?.ok ? '서버 연결 정상' : '연결 상태 확인 필요'}</Text>
-            {health && <Text style={styles.statusSub}>PostgreSQL {health.database_connected ? '연결됨' : '연결 안 됨'} · 정책 {health.policies || 0}개 · Alan {health.alan_enabled ? '연결됨' : 'fallback 모드'}</Text>}
-            {!!error && <Text style={styles.error}>{error}</Text>}
-          </View>
+        <View style={styles.listCard}>
+          <NotificationRow
+            icon="notifications"
+            color={colors.greenDark}
+            background={colors.greenSoft}
+            title="새로운 맞춤 정책 알림"
+            description="내 프로필에 맞는 새 정책이 등록되면 알려드려요."
+            value={notificationSettings.newMatchingPolicies}
+            onValueChange={(value) => setNotification('newMatchingPolicies', value)}
+          />
+          <NotificationRow
+            icon="time"
+            color={colors.purple}
+            background="#F1EEFF"
+            title="신청 마감 임박 알림"
+            description="찜한 정책의 신청 마감일을 놓치지 않게 알려드려요."
+            value={notificationSettings.deadlineReminders}
+            onValueChange={(value) => setNotification('deadlineReminders', value)}
+            last
+          />
         </View>
-      </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>서비스 구성</Text>
-        <Info icon="🤖" label="AI 검색" value="ESTsoft Alan API + fallback 분석" />
-        <Info icon="🗄️" label="정책 DB" value="PostgreSQL" />
-        <Info icon="🔎" label="검색 랭킹" value="TF-IDF + 자격 조건" />
-        <Info icon="🗓️" label="캘린더" value="정책 신청기간 + 기기 캘린더" />
-      </View>
-
-      <TouchableOpacity style={styles.reset} onPress={confirmReset}><Text style={styles.resetText}>모든 프로필 및 앱 데이터 초기화</Text></TouchableOpacity>
-      <Text style={styles.version}>정check Mobile v2.0</Text>
+        <TouchableOpacity style={styles.resetLink} onPress={confirmReset}>
+          <Ionicons name="refresh-outline" size={14} color={colors.muted} />
+          <Text style={styles.resetLinkText}>모든 프로필 및 앱 데이터 초기화</Text>
+        </TouchableOpacity>
+        <Text style={styles.version}>정check Mobile v2.0</Text>
       </ScrollView>
+
+      <Modal visible={profileChooserVisible} transparent animationType="fade" onRequestClose={() => setProfileChooserVisible(false)}>
+        <Pressable style={styles.modalOverlay} onPress={() => setProfileChooserVisible(false)}>
+          <Pressable style={styles.chooserCard} onPress={(event) => event.stopPropagation()}>
+            <View style={styles.modalTitleRow}>
+              <View><Text style={styles.modalTitle}>프로필 변경하기</Text><Text style={styles.modalHelp}>선택한 프로필로 추천과 찜 목록이 바뀝니다.</Text></View>
+              <TouchableOpacity onPress={() => setProfileChooserVisible(false)}><Ionicons name="close" size={25} color={colors.ink} /></TouchableOpacity>
+            </View>
+            <ScrollView style={styles.profileList}>
+              {profiles.map((entry) => {
+                const active = entry.id === activeProfileId
+                return (
+                  <View key={entry.id} style={[styles.profileOption, active && styles.profileOptionActive]}>
+                    <TouchableOpacity style={styles.profileOptionMain} onPress={async () => { await onSelectProfile(entry.id); setProfileChooserVisible(false) }}>
+                      {entry.avatarUri ? <Image source={{ uri: entry.avatarUri }} style={styles.optionAvatarImage} /> : <View style={styles.optionAvatar}><Ionicons name="person" size={20} color={colors.greenDark} /></View>}
+                      <View style={{ flex: 1 }}><Text style={styles.optionName}>{entry.name}</Text><Text numberOfLines={1} style={styles.optionMeta}>{[entry.data.location, ageLabel(entry.data.age), entry.data.employment].filter(Boolean).join(' · ')}</Text></View>
+                      {active && <Ionicons name="checkmark-circle" size={22} color={colors.green} />}
+                    </TouchableOpacity>
+                    <TouchableOpacity accessibilityLabel={`${entry.name} 이름 수정`} style={styles.optionAction} onPress={() => openRename(entry)}><Ionicons name="pencil-outline" size={18} color={colors.greenDark} /></TouchableOpacity>
+                    <TouchableOpacity accessibilityLabel={`${entry.name} 삭제`} style={styles.optionAction} onPress={() => confirmDelete(entry)}><Ionicons name="trash-outline" size={18} color={colors.danger} /></TouchableOpacity>
+                  </View>
+                )
+              })}
+            </ScrollView>
+            <TouchableOpacity style={styles.addProfileButton} onPress={() => { setProfileChooserVisible(false); onAddProfile() }}>
+              <Ionicons name="add" size={20} color={colors.white} /><Text style={styles.addProfileText}>새 프로필 추가</Text>
+            </TouchableOpacity>
+          </Pressable>
+        </Pressable>
+      </Modal>
 
       <Modal visible={Boolean(renamingProfile)} transparent animationType="fade" onRequestClose={closeRename}>
         <KeyboardAvoidingView style={styles.modalKeyboard} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
@@ -212,65 +305,110 @@ export default function MyScreen({ apiBase, profile, profiles = [], activeProfil
   )
 }
 
-function Info({ icon, label, value }) {
+function ProfileFact({ icon, value }) {
+  return <View style={styles.fact}><Ionicons name={icon} size={15} color={colors.muted} /><Text numberOfLines={1} style={styles.factText}>{value}</Text></View>
+}
+
+function FavoritePolicyRow({ item, onPress, last }) {
+  const meta = favoriteMeta(item)
+  const icon = meta.category.includes('주거') ? 'home' : meta.category.includes('취업') ? 'briefcase' : 'gift'
   return (
-    <View style={styles.infoRow}>
-      <Text style={styles.infoIcon}>{icon}</Text>
-      <Text style={styles.infoLabel}>{label}</Text>
-      <Text numberOfLines={2} style={[styles.infoValue, !value && { color: '#B5BCB7' }]}>{value || '미입력'}</Text>
+    <TouchableOpacity style={[styles.favoriteRow, last && styles.lastRow]} onPress={onPress}>
+      <Ionicons name="bookmark" size={25} color={colors.green} />
+      <View style={styles.policyIcon}><Ionicons name={icon} size={22} color={colors.greenDark} /></View>
+      <View style={{ flex: 1 }}>
+        <Text numberOfLines={1} style={styles.favoriteTitle}>{meta.title}</Text>
+        <Text numberOfLines={1} style={styles.favoriteSupport}>{meta.support}</Text>
+        <View style={[styles.conditionBadge, !meta.good && styles.conditionBadgeCheck]}><Text style={[styles.conditionText, !meta.good && styles.conditionTextCheck]}>{meta.badge}</Text></View>
+      </View>
+      <Ionicons name="chevron-forward" size={20} color="#9BA59F" />
+    </TouchableOpacity>
+  )
+}
+
+function NotificationRow({ icon, color, background, title, description, value, onValueChange, last }) {
+  return (
+    <View style={[styles.notificationRow, last && styles.lastRow]}>
+      <View style={[styles.notificationIcon, { backgroundColor: background }]}><Ionicons name={icon} size={23} color={color} /></View>
+      <View style={{ flex: 1 }}><Text style={styles.notificationTitle}>{title}</Text><Text style={styles.notificationDescription}>{description}</Text></View>
+      <Switch value={value} onValueChange={onValueChange} trackColor={{ false: '#D4DAD6', true: '#74D7A8' }} thumbColor={value ? colors.green : '#F6F7F6'} ios_backgroundColor="#D4DAD6" />
     </View>
   )
 }
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.bg },
-  content: { paddingBottom: 30 },
-  profileTitle: { color: colors.ink, fontSize: 15, fontWeight: '900' },
-  profileSub: { color: colors.muted, fontSize: 10, marginTop: 4 },
-  section: { marginHorizontal: 14, marginTop: 12, backgroundColor: colors.white, borderWidth: 1, borderColor: colors.line, borderRadius: 19, padding: 15 },
-  sectionTitle: { color: colors.ink, fontSize: 14, fontWeight: '900', marginBottom: 9 },
-  sectionHead: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 11 },
-  addProfile: { borderRadius: 11, backgroundColor: colors.greenSoft, paddingHorizontal: 12, paddingVertical: 9 },
-  addProfileText: { color: colors.greenDark, fontSize: 11, fontWeight: '900' },
-  emptyProfile: { borderWidth: 1, borderStyle: 'dashed', borderColor: '#BFDCCB', borderRadius: 15, padding: 20, alignItems: 'center', backgroundColor: colors.greenPale },
-  emptyProfileIcon: { color: colors.green, fontSize: 24, fontWeight: '500' },
-  emptyProfileTitle: { color: colors.ink, fontSize: 13, fontWeight: '900', marginTop: 4 },
-  emptyProfileText: { color: colors.muted, fontSize: 10, marginTop: 5 },
-  profileItem: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: colors.line, borderRadius: 15, padding: 9, marginTop: 7, gap: 1 },
-  activeProfileItem: { borderColor: colors.green, backgroundColor: colors.greenPale },
-  profileSelect: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 9 },
-  smallAvatar: { width: 39, height: 39, borderRadius: 14, backgroundColor: '#F1F3F2', alignItems: 'center', justifyContent: 'center' },
-  activeAvatar: { backgroundColor: colors.greenSoft },
-  smallAvatarText: { fontSize: 19 },
-  profileNameRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  activeBadge: { color: colors.greenDark, backgroundColor: colors.greenSoft, borderRadius: 7, paddingHorizontal: 6, paddingVertical: 2, fontSize: 8, fontWeight: '900' },
-  profileSummary: { color: colors.muted, fontSize: 9, marginTop: 4 },
-  profileAction: { color: colors.greenDark, fontSize: 10, fontWeight: '900', padding: 7 },
-  iconAction: { width: 30, height: 34, alignItems: 'center', justifyContent: 'center' },
-  deleteAction: { color: colors.danger },
-  activeInfoHead: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  updatedAt: { color: colors.muted, fontSize: 9, marginBottom: 9 },
-  infoRow: { flexDirection: 'row', alignItems: 'center', minHeight: 39, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.line },
-  infoIcon: { width: 28, fontSize: 13 },
-  infoLabel: { width: 72, color: colors.muted, fontSize: 11, fontWeight: '700' },
-  infoValue: { flex: 1, color: colors.text, fontSize: 11, textAlign: 'right', fontWeight: '700' },
-  help: { color: colors.muted, fontSize: 10, lineHeight: 16, marginBottom: 10 },
-  input: { height: 46, borderRadius: 13, borderWidth: 1, borderColor: colors.line, paddingHorizontal: 12, color: colors.ink, backgroundColor: '#FAFCFB', fontSize: 12 },
-  serverActions: { flexDirection: 'row', gap: 8, marginTop: 9 },
-  secondary: { flex: 1, height: 41, borderRadius: 12, borderWidth: 1, borderColor: colors.line, alignItems: 'center', justifyContent: 'center' },
-  secondaryText: { color: colors.text, fontSize: 11, fontWeight: '900' },
-  primary: { flex: 1, height: 41, borderRadius: 12, backgroundColor: colors.green, alignItems: 'center', justifyContent: 'center' },
-  primaryText: { color: colors.white, fontSize: 11, fontWeight: '900' },
-  status: { flexDirection: 'row', gap: 8, borderRadius: 13, padding: 10, marginTop: 10 },
-  statusDot: { width: 8, height: 8, borderRadius: 4, marginTop: 4 },
-  statusTitle: { color: colors.ink, fontSize: 11, fontWeight: '900' },
-  statusSub: { color: colors.muted, fontSize: 9, lineHeight: 14, marginTop: 2 },
-  error: { color: colors.danger, fontSize: 9, marginTop: 3 },
-  reset: { margin: 14, marginTop: 18, height: 48, borderRadius: 14, borderWidth: 1, borderColor: '#F0CACA', alignItems: 'center', justifyContent: 'center', backgroundColor: colors.dangerSoft },
-  resetText: { color: colors.danger, fontSize: 12, fontWeight: '900' },
+  content: { paddingBottom: 34 },
+  heroHeader: { height: 150, backgroundColor: colors.green, paddingHorizontal: 22, paddingTop: 35, flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' },
+  pageTitle: { color: colors.white, fontSize: 28, fontWeight: '900' },
+  settingsButton: { width: 42, height: 42, borderRadius: 15, backgroundColor: 'rgba(255,255,255,0.14)', alignItems: 'center', justifyContent: 'center' },
+  profileCard: { marginHorizontal: 14, marginTop: -58, minHeight: 190, padding: 17, borderRadius: 22, backgroundColor: colors.white, borderWidth: 1, borderColor: colors.line, ...shadow },
+  profileTop: { flexDirection: 'row', alignItems: 'center', gap: 11 },
+  avatarButton: { width: 76, height: 76 },
+  avatarImage: { width: 76, height: 76, borderRadius: 38, backgroundColor: colors.greenSoft },
+  avatarFallback: { width: 76, height: 76, borderRadius: 38, backgroundColor: colors.greenSoft, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
+  cameraBadge: { position: 'absolute', right: -1, bottom: 1, width: 24, height: 24, borderRadius: 12, backgroundColor: colors.green, borderWidth: 2, borderColor: colors.white, alignItems: 'center', justifyContent: 'center' },
+  profileIdentity: { flex: 1, minWidth: 52 },
+  nameRow: { flexDirection: 'row', alignItems: 'center' },
+  profileName: { flexShrink: 1, color: colors.ink, fontSize: 20, fontWeight: '900' },
+  nameEdit: { padding: 7 },
+  youthBadge: { alignSelf: 'flex-start', flexDirection: 'row', gap: 4, backgroundColor: colors.greenSoft, borderRadius: 99, paddingHorizontal: 9, paddingVertical: 5, marginTop: 7 },
+  youthText: { color: colors.greenDark, fontSize: 10, fontWeight: '900' },
+  profileActions: { width: 106, gap: 7 },
+  editButton: { height: 34, borderRadius: 10, borderWidth: 1, borderColor: '#B9E2CB', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 4 },
+  editButtonText: { color: colors.greenDark, fontSize: 10, fontWeight: '900' },
+  switchProfileButton: { minHeight: 34, borderRadius: 10, backgroundColor: '#F3F6F4', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 4, paddingHorizontal: 4 },
+  switchProfileText: { color: colors.text, fontSize: 9, fontWeight: '900' },
+  profileFacts: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginTop: 17, paddingTop: 14, borderTopWidth: 1, borderTopColor: colors.line },
+  fact: { flexDirection: 'row', alignItems: 'center', gap: 5 },
+  factText: { color: colors.text, fontSize: 11, fontWeight: '700' },
+  updateRow: { flexDirection: 'row', alignItems: 'center', gap: 7, marginTop: 13 },
+  updateText: { color: colors.muted, fontSize: 9, lineHeight: 14 },
+  emptyProfile: { flex: 1, minHeight: 154, alignItems: 'center', justifyContent: 'center' },
+  emptyProfileIcon: { width: 52, height: 52, borderRadius: 18, backgroundColor: colors.greenSoft, alignItems: 'center', justifyContent: 'center' },
+  emptyProfileTitle: { color: colors.ink, fontSize: 15, fontWeight: '900', marginTop: 11 },
+  emptyProfileText: { color: colors.muted, fontSize: 10, marginTop: 5, textAlign: 'center' },
+  sectionHeader: { marginHorizontal: 20, marginTop: 28, marginBottom: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  sectionTitle: { color: colors.ink, fontSize: 17, fontWeight: '900' },
+  sectionCount: { color: colors.greenDark, fontSize: 11, fontWeight: '800' },
+  listCard: { marginHorizontal: 14, borderRadius: 20, paddingHorizontal: 14, backgroundColor: colors.white, borderWidth: 1, borderColor: colors.line, overflow: 'hidden', ...shadow },
+  favoriteRow: { minHeight: 100, flexDirection: 'row', alignItems: 'center', gap: 10, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.line },
+  lastRow: { borderBottomWidth: 0 },
+  policyIcon: { width: 44, height: 44, borderRadius: 22, backgroundColor: colors.greenSoft, alignItems: 'center', justifyContent: 'center' },
+  favoriteTitle: { color: colors.ink, fontSize: 13, fontWeight: '900' },
+  favoriteSupport: { color: colors.muted, fontSize: 9, marginTop: 5 },
+  conditionBadge: { alignSelf: 'flex-start', borderRadius: 99, borderWidth: 1, borderColor: '#B9E2CB', backgroundColor: colors.greenPale, paddingHorizontal: 8, paddingVertical: 4, marginTop: 7 },
+  conditionBadgeCheck: { borderColor: '#F2C48D', backgroundColor: colors.warningSoft },
+  conditionText: { color: colors.greenDark, fontSize: 8, fontWeight: '900' },
+  conditionTextCheck: { color: '#C46B15' },
+  emptyFavorites: { minHeight: 145, alignItems: 'center', justifyContent: 'center', padding: 18 },
+  emptyFavoriteIcon: { width: 48, height: 48, borderRadius: 17, backgroundColor: colors.greenSoft, alignItems: 'center', justifyContent: 'center' },
+  emptyFavoriteTitle: { color: colors.ink, fontSize: 13, fontWeight: '900', marginTop: 10 },
+  emptyFavoriteText: { color: colors.muted, fontSize: 10, lineHeight: 16, textAlign: 'center', marginTop: 5 },
+  notificationRow: { minHeight: 91, flexDirection: 'row', alignItems: 'center', gap: 11, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.line },
+  notificationIcon: { width: 46, height: 46, borderRadius: 23, alignItems: 'center', justifyContent: 'center' },
+  notificationTitle: { color: colors.ink, fontSize: 13, fontWeight: '900' },
+  notificationDescription: { color: colors.muted, fontSize: 9, lineHeight: 14, marginTop: 5 },
+  resetLink: { flexDirection: 'row', alignItems: 'center', alignSelf: 'center', gap: 5, marginTop: 25, padding: 8 },
+  resetLinkText: { color: colors.muted, fontSize: 10, fontWeight: '700' },
   version: { textAlign: 'center', color: '#A7AEA9', fontSize: 9 },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(16, 27, 21, 0.45)', alignItems: 'center', justifyContent: 'center', padding: 20 },
+  chooserCard: { width: '100%', maxWidth: 400, maxHeight: '75%', borderRadius: 23, backgroundColor: colors.white, padding: 18 },
+  modalTitleRow: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' },
+  modalTitle: { color: colors.ink, fontSize: 19, fontWeight: '900' },
+  modalHelp: { color: colors.muted, fontSize: 10, marginTop: 5 },
+  profileList: { marginTop: 14 },
+  profileOption: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: colors.line, borderRadius: 15, marginBottom: 8, padding: 8 },
+  profileOptionActive: { borderColor: colors.green, backgroundColor: colors.greenPale },
+  profileOptionMain: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 9 },
+  optionAvatar: { width: 40, height: 40, borderRadius: 20, backgroundColor: colors.greenSoft, alignItems: 'center', justifyContent: 'center' },
+  optionAvatarImage: { width: 40, height: 40, borderRadius: 20, backgroundColor: colors.greenSoft },
+  optionName: { color: colors.ink, fontSize: 13, fontWeight: '900' },
+  optionMeta: { color: colors.muted, fontSize: 8, marginTop: 4 },
+  optionAction: { width: 34, height: 40, alignItems: 'center', justifyContent: 'center' },
+  addProfileButton: { height: 46, borderRadius: 13, backgroundColor: colors.green, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 8 },
+  addProfileText: { color: colors.white, fontSize: 12, fontWeight: '900' },
   modalKeyboard: { flex: 1 },
-  modalOverlay: { flex: 1, backgroundColor: 'rgba(16, 27, 21, 0.42)', alignItems: 'center', justifyContent: 'center', padding: 24 },
   renameCard: { width: '100%', maxWidth: 380, borderRadius: 22, backgroundColor: colors.white, padding: 20 },
   renameIcon: { width: 44, height: 44, borderRadius: 15, backgroundColor: colors.greenSoft, alignItems: 'center', justifyContent: 'center' },
   renameTitle: { color: colors.ink, fontSize: 18, fontWeight: '900', marginTop: 14 },

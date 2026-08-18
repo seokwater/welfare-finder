@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { legacySessionToSearchState, normalizeSearchState } from './searchHistory'
 import { createProfileEntry, normalizeProfiles, resolveActiveProfileId } from './profiles'
+import { normalizeFavoritePolicies } from './favorites'
 
 const KEYS = {
   onboarded: 'wf:onboarded',
@@ -15,6 +16,13 @@ const KEYS = {
   legacySearchSession: 'wf:searchSession',
   legacyProfileSearchSessions: 'wf:searchSessions:v2',
   calendarCacheIndex: 'wf:calendarCacheIndex:v1',
+  favoritePolicies: 'wf:favoritePolicies:v1',
+  notificationSettings: 'wf:notificationSettings:v1',
+}
+
+export const DEFAULT_NOTIFICATION_SETTINGS = {
+  newMatchingPolicies: true,
+  deadlineReminders: true,
 }
 
 const CALENDAR_CACHE_PREFIX = 'wf:calendarCache:v1:'
@@ -169,6 +177,33 @@ export async function saveProfileSearchStates(states) {
   ])
 }
 
+export async function loadFavoritePolicies() {
+  return normalizeFavoritePolicies(parseJson(await AsyncStorage.getItem(KEYS.favoritePolicies)))
+}
+
+export async function saveFavoritePolicies(value) {
+  const normalized = normalizeFavoritePolicies(value)
+  await AsyncStorage.setItem(KEYS.favoritePolicies, JSON.stringify(normalized))
+  return normalized
+}
+
+export async function loadNotificationSettings() {
+  const saved = parseJson(await AsyncStorage.getItem(KEYS.notificationSettings))
+  return {
+    newMatchingPolicies: saved?.newMatchingPolicies !== false,
+    deadlineReminders: saved?.deadlineReminders !== false,
+  }
+}
+
+export async function saveNotificationSettings(value) {
+  const normalized = {
+    newMatchingPolicies: value?.newMatchingPolicies !== false,
+    deadlineReminders: value?.deadlineReminders !== false,
+  }
+  await AsyncStorage.setItem(KEYS.notificationSettings, JSON.stringify(normalized))
+  return normalized
+}
+
 export function getCalendarCacheEntry(apiBase, year, month) {
   return calendarMemoryCache.get(calendarCacheKey(apiBase, year, month)) || null
 }
@@ -222,5 +257,7 @@ export async function resetAppState() {
     KEYS.searchState,
     KEYS.legacySearchSession,
     KEYS.legacyProfileSearchSessions,
+    KEYS.favoritePolicies,
+    KEYS.notificationSettings,
   ])
 }

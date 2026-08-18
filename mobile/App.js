@@ -9,14 +9,18 @@ import HomeScreen from './src/screens/HomeScreen'
 import MyScreen from './src/screens/MyScreen'
 import OnboardingScreen from './src/screens/OnboardingScreen'
 import SearchScreen from './src/screens/SearchScreen'
-import { deleteProfile, nextProfileName, renameProfile, upsertProfile } from './src/profiles'
+import { deleteProfile, nextProfileName, renameProfile, updateProfileAvatar, upsertProfile } from './src/profiles'
+import { isFavoritePolicy, removeProfileFavorites, toggleFavoritePolicy } from './src/favorites'
 import { createInitialSearchState } from './src/searchHistory'
 import {
   loadAppState,
+  loadFavoritePolicies,
+  loadNotificationSettings,
   loadProfileSearchStates,
   resetAppState,
   saveActiveProfileId,
-  saveApiBase,
+  saveFavoritePolicies,
+  saveNotificationSettings,
   saveOnboarded,
   saveProfileSearchStates,
   saveProfiles,
@@ -35,15 +39,18 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('home')
   const [selectedPolicy, setSelectedPolicy] = useState(null)
   const [profileSearchStates, setProfileSearchStates] = useState({})
+  const [favoritePoliciesByProfile, setFavoritePoliciesByProfile] = useState({})
+  const [notificationSettings, setNotificationSettings] = useState({ newMatchingPolicies: true, deadlineReminders: true })
 
   const activeProfileEntry = profiles.find((entry) => entry.id === activeProfileId) || null
   const profile = activeProfileEntry?.data || null
   const searchProfileId = activeProfileId || 'guest'
   const searchState = profileSearchStates[searchProfileId] || EMPTY_SEARCH_STATE
+  const favoritePolicies = favoritePoliciesByProfile[searchProfileId] || []
 
   useEffect(() => {
-    Promise.all([loadAppState(), loadProfileSearchStates()])
-      .then(([state, savedSearchStates]) => {
+    Promise.all([loadAppState(), loadProfileSearchStates(), loadFavoritePolicies(), loadNotificationSettings()])
+      .then(([state, savedSearchStates, savedFavorites, savedNotificationSettings]) => {
         setOnboarded(state.onboarded)
         setProfiles(state.profiles)
         setActiveProfileId(state.activeProfileId)
@@ -54,6 +61,8 @@ export default function App() {
         } else {
           setProfileSearchStates(savedSearchStates)
         }
+        setFavoritePoliciesByProfile(savedFavorites)
+        setNotificationSettings(savedNotificationSettings)
       })
       .catch(() => {})
       .finally(() => setBooting(false))
@@ -63,6 +72,16 @@ export default function App() {
     if (booting || !onboarded) return
     saveProfileSearchStates(profileSearchStates).catch(() => {})
   }, [booting, onboarded, profileSearchStates])
+
+  useEffect(() => {
+    if (booting || !onboarded) return
+    saveFavoritePolicies(favoritePoliciesByProfile).catch(() => {})
+  }, [booting, onboarded, favoritePoliciesByProfile])
+
+  useEffect(() => {
+    if (booting || !onboarded) return
+    saveNotificationSettings(notificationSettings).catch(() => {})
+  }, [booting, onboarded, notificationSettings])
 
   if (booting) {
     return (
@@ -123,7 +142,7 @@ export default function App() {
 
   return (
     <SafeAreaView style={styles.safe}>
-      <StatusBar barStyle={activeTab === 'home' ? 'light-content' : 'dark-content'} backgroundColor={activeTab === 'home' ? colors.green : colors.bg} />
+      <StatusBar barStyle={['home', 'my'].includes(activeTab) ? 'light-content' : 'dark-content'} backgroundColor={['home', 'my'].includes(activeTab) ? colors.green : colors.bg} />
       <View style={styles.body}>
         {activeTab === 'home' && (
           <HomeScreen
@@ -152,6 +171,8 @@ export default function App() {
             {...common}
             profiles={profiles}
             activeProfileId={activeProfileId}
+            favoritePolicies={favoritePolicies}
+            notificationSettings={notificationSettings}
             onSelectProfile={async (profileId) => {
               if (!profiles.some((entry) => entry.id === profileId)) return
               await saveActiveProfileId(profileId)
@@ -165,6 +186,13 @@ export default function App() {
               setProfiles(saved.profiles)
               setActiveProfileId(saved.activeProfileId)
             }}
+            onChangeProfileImage={async (profileId, avatarUri) => {
+              const nextProfiles = updateProfileAvatar(profiles, profileId, avatarUri)
+              const saved = await saveProfiles(nextProfiles, activeProfileId)
+              setProfiles(saved.profiles)
+              setActiveProfileId(saved.activeProfileId)
+            }}
+            onNotificationSettingsChange={setNotificationSettings}
             onDeleteProfile={async (profileId) => {
               const result = deleteProfile(profiles, profileId, activeProfileId)
               const saved = await saveProfiles(result.profiles, result.activeProfileId)
@@ -175,16 +203,15 @@ export default function App() {
                 delete next[profileId]
                 return next
               })
-            }}
-            onSaveApiBase={async (next) => {
-              const saved = await saveApiBase(next)
-              setApiBase(saved || defaultApiBase())
+              setFavoritePoliciesByProfile((current) => removeProfileFavorites(current, profileId))
             }}
             onReset={async () => {
               await resetAppState()
               setProfiles([])
               setActiveProfileId('')
               setProfileSearchStates({})
+              setFavoritePoliciesByProfile({})
+              setNotificationSettings({ newMatchingPolicies: true, deadlineReminders: true })
               setOnboarded(false)
               setProfileEditor(null)
               setActiveTab('home')
@@ -193,7 +220,15 @@ export default function App() {
         )}
       </View>
       <BottomTabs active={activeTab} onChange={setActiveTab} />
-      <PolicyDetailModal item={selectedPolicy} onClose={() => setSelectedPolicy(null)} />
+      <PolicyDetailModal
+        item={selectedPolicy}
+        favorite={isFavoritePolicy(favoritePolicies, selectedPolicy)}
+        onToggleFavorite={(item) => {
+          if (!activeProfileId) return
+          setFavoritePoliciesByProfile((current) => toggleFavoritePolicy(current, activeProfileId, item))
+        }}
+        onClose={() => setSelectedPolicy(null)}
+      />
     </SafeAreaView>
   )
 }

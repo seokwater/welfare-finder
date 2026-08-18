@@ -13,6 +13,7 @@
     "doctor": "expo-doctor",
     "test:profile-flow": "node --test tests/profileFlow.test.mjs",
     "test:profiles": "node --test tests/profiles.test.mjs",
+    "test:favorites": "node --test tests/favorites.test.mjs",
     "test:search-history": "node --test tests/searchHistory.test.mjs"
   },
   "dependencies": {
@@ -20,6 +21,7 @@
     "@react-native-async-storage/async-storage": "2.2.0",
     "expo": "~54.0.37",
     "expo-calendar": "~15.0.8",
+    "expo-image-picker": "~17.0.11",
     "react": "19.1.0",
     "react-native": "0.81.5"
   }

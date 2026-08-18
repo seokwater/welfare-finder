@@ -356,16 +356,17 @@ EXPO_PUBLIC_API_BASE_URL=http://PC의-사설-IP:8000
 
 - `mobile/App.js`: 앱 전역 상태, 화면 전환, 검색 대화 상태
 - `mobile/src/api.js`: FastAPI 호출
-- `mobile/src/storage.js`: 프로필, 검색 대화, 캘린더 캐시 저장
+- `mobile/src/storage.js`: 프로필, 검색 대화, 찜한 정책, 알림 설정, 캘린더 캐시 저장
 - `mobile/src/profileFlow.js`: 프로필 단계, 선택형 수정, LLM 요청 문맥과 분석 결과 병합
-- `mobile/src/profiles.js`: 멀티 프로필 정규화, 생성, 이름, 수정, 삭제, 활성 프로필 결정
+- `mobile/src/profiles.js`: 멀티 프로필 정규화, 생성, 이름·이미지 수정, 삭제, 활성 프로필 결정
+- `mobile/src/favorites.js`: 프로필별 찜한 정책 정규화, 식별, 추가·해제
 - `mobile/src/searchHistory.js`: 다중 검색 대화 상태 로직
 - `mobile/src/screens/SearchScreen.js`: Alan 검색, 대화 목록, 선택, 삭제
 - `mobile/src/screens/AIProfileScreen.js`: 선택형/자연어 프로필 생성
 - `mobile/src/screens/CalendarScreen.js`: 캐시 우선 월간 캘린더
 - `mobile/src/screens/HomeScreen.js`: 프로필 기반 추천
-- `mobile/src/screens/MyScreen.js`: 프로필/API 서버/초기화
-- `mobile/src/components/PolicyDetailModal.js`: 정책 상세
+- `mobile/src/screens/MyScreen.js`: 이미지형 프로필 카드, 프로필 전환, 찜 정책, 알림 설정, 초기화
+- `mobile/src/components/PolicyDetailModal.js`: 정책 상세와 찜 추가·해제
 - `mobile/src/components/BottomTabs.js`: Ionicons 기반 홈·캘린더·검색·My 탭
 - `mobile/scripts/start-expo-go.mjs`: LAN Expo Go 시작
 
@@ -378,6 +379,7 @@ EXPO_PUBLIC_API_BASE_URL=http://PC의-사설-IP:8000
 - `mobile/tests/searchHistory.test.mjs`: 검색 대화 상태 테스트
 - `mobile/tests/profileFlow.test.mjs`: 완성된 프로필 수정 회귀 테스트
 - `mobile/tests/profiles.test.mjs`: 멀티 프로필 생성·수정·삭제 회귀 테스트
+- `mobile/tests/favorites.test.mjs`: 프로필별 정책 찜 추가·해제·삭제 테스트
 
 ## 13. 재현 및 검증 명령
 
@@ -409,6 +411,7 @@ python policy_refresh.py --source-korean-csv "C:\Users\bulkk\Documents\카카오
 ```powershell
 cd mobile
 npm run test:profiles
+npm run test:favorites
 npm run test:profile-flow
 npm run test:search-history
 npx expo export --platform android
@@ -428,7 +431,21 @@ npx expo export --platform android
 6. 실제 Expo Go 기기에서 프로필별 대화 목록 분리, 전환, 삭제, 앱 재실행 후 복원 확인
 7. 실제 기기 검증 후 EAS preview APK 생성
 
-## 15. 보안 및 작업 주의사항
+## 15. My 화면 개편과 로컬 사용자 설정
+
+- 첨부 이미지는 레이아웃 참고 자료로만 사용했다.
+- My 화면 상단을 녹색 헤더와 카드형 프로필 정보로 개편했다.
+- 프로필 카드에는 프로필명, 청년 배지, 지역, 만 나이, 직업 형태, 마지막 수정일을 표시한다.
+- `정보 수정` 아래에 `프로필 변경하기` 버튼을 배치했고, 프로필 선택·추가·이름 수정·삭제 모달을 연결했다.
+- 프로필 사진은 `expo-image-picker`로 기기 사진을 선택하고 각 프로필의 `avatarUri`에 따로 저장한다.
+- 정책 상세 상단의 북마크 버튼으로 찜을 추가·해제하며, 찜 목록은 활성 프로필별로 분리해 AsyncStorage에 보존한다.
+- My 화면의 찜한 정책을 누르면 기존 정책 상세 화면을 다시 연다.
+- 정책 알림 설정은 `새로운 맞춤 정책 알림`, `신청 마감 임박 알림` 두 항목만 제공하고 기기에 보존한다.
+- 요청에서 제외한 `정책 조건 변경 알림`은 만들지 않았다.
+- My 화면의 `백엔드 연결`과 `서비스 구성` 영역 및 화면 진입 시 서버 상태 확인 요청을 삭제했다.
+- 프로필 사진 변경과 찜 동작에 대한 단위 테스트를 추가했고 Android Expo export를 통과했다.
+
+## 16. 보안 및 작업 주의사항
 
 - API 키, DB 비밀번호, Alan 인증값을 코드, 문서, 커밋 메시지에 넣지 않는다.
 - 사용자 외부 파일의 평문 키를 복사하지 않는다.
