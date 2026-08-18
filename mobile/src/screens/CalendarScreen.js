@@ -8,7 +8,52 @@ import { getCalendarCacheEntry, loadCalendarCacheEntry, saveCalendarCache } from
 import { colors } from '../theme'
 import { eventTone, isoToday, nextMonth, previousMonth } from '../utils'
 
+const CALENDAR_PREFETCH_FRESH_MS = 2 * 60 * 1000
+const calendarMonthRequests = new Map()
+
+function calendarRequestKey(apiBase, year, month) {
+  return `${String(apiBase || '').trim().replace(/\/$/, '')}:${year}-${String(month).padStart(2, '0')}`
+}
+
+function isFreshCalendarEntry(entry, now = Date.now()) {
+  return Boolean(entry && Number(now) - Number(entry.savedAt) < CALENDAR_PREFETCH_FRESH_MS)
+}
+
+async function refreshCalendarMonth(apiBase, year, month, knownEntry = null) {
+  const key = calendarRequestKey(apiBase, year, month)
+  if (calendarMonthRequests.has(key)) return calendarMonthRequests.get(key)
+
+  const request = (async () => {
+    const cached = knownEntry
+      || getCalendarCacheEntry(apiBase, year, month)
+      || await loadCalendarCacheEntry(apiBase, year, month)
+    if (isFreshCalendarEntry(cached)) return cached
+
+    const response = await api.calendar(apiBase, year, month, cached?.etag)
+    if (response.notModified && cached) {
+      return saveCalendarCache(apiBase, year, month, cached.data, response.etag || cached.etag)
+    }
+    if (!response.data) return cached
+    return saveCalendarCache(apiBase, year, month, response.data, response.etag)
+  })()
+
+  calendarMonthRequests.set(key, request)
+  try {
+    return await request
+  } finally {
+    if (calendarMonthRequests.get(key) === request) calendarMonthRequests.delete(key)
+  }
+}
+
+function prefetchAdjacentMonths(apiBase, year, month) {
+  const targets = [previousMonth(year, month), nextMonth(year, month)]
+  return Promise.allSettled(targets.map((target) => (
+    refreshCalendarMonth(apiBase, target.year, target.month)
+  )))
+}
+
 function calendarDataChanged(previous, next) {
+  if (!next) return false
   if (!previous) return true
   try {
     return JSON.stringify(previous) !== JSON.stringify(next)
@@ -48,15 +93,13 @@ export default function CalendarScreen({ apiBase, onOpenPolicy }) {
           }
         }
 
-        const response = await api.calendar(apiBase, year, month, cacheEntry?.etag)
+        const refreshedEntry = await refreshCalendarMonth(apiBase, year, month, cacheEntry)
         if (!alive) return
-        if (response.notModified) return
-
-        const result = response.data
+        const result = refreshedEntry?.data
         if (calendarDataChanged(cacheEntry?.data, result)) {
           setData(result)
         }
-        saveCalendarCache(apiBase, year, month, result, response.etag).catch(() => {})
+        prefetchAdjacentMonths(apiBase, year, month).catch(() => {})
       } catch (e) {
         if (alive) {
           setError(cacheEntry

@@ -28,11 +28,12 @@ export const DEFAULT_NOTIFICATION_SETTINGS = {
 
 const CALENDAR_CACHE_PREFIX = 'wf:calendarCache:v1:'
 const HOME_CACHE_PREFIX = 'wf:homeCache:v1:'
-const MAX_CALENDAR_CACHE_ENTRIES = 6
+const MAX_CALENDAR_CACHE_ENTRIES = 8
 const MAX_HOME_CACHE_ENTRIES = 8
 export const HOME_CACHE_FRESH_MS = 5 * 60 * 1000
 const calendarMemoryCache = new Map()
 const homeMemoryCache = new Map()
+let calendarCacheIndexWrite = Promise.resolve()
 
 function calendarCacheKey(apiBase, year, month) {
   const base = String(apiBase || '').trim().replace(/\/$/, '')
@@ -284,24 +285,28 @@ export async function saveCalendarCache(apiBase, year, month, data, etag = '') {
   calendarMemoryCache.set(key, entry)
   await AsyncStorage.setItem(key, JSON.stringify(entry))
 
-  let index = []
-  try {
-    const rawIndex = await AsyncStorage.getItem(KEYS.calendarCacheIndex)
-    const parsed = rawIndex ? JSON.parse(rawIndex) : []
-    if (Array.isArray(parsed)) index = parsed
-  } catch {}
+  calendarCacheIndexWrite = calendarCacheIndexWrite.catch(() => {}).then(async () => {
+    let index = []
+    try {
+      const rawIndex = await AsyncStorage.getItem(KEYS.calendarCacheIndex)
+      const parsed = rawIndex ? JSON.parse(rawIndex) : []
+      if (Array.isArray(parsed)) index = parsed
+    } catch {}
 
-  const nextIndex = [
-    { key, savedAt: entry.savedAt },
-    ...index.filter((item) => item?.key && item.key !== key),
-  ]
-  const evicted = nextIndex.slice(MAX_CALENDAR_CACHE_ENTRIES)
-  const retained = nextIndex.slice(0, MAX_CALENDAR_CACHE_ENTRIES)
-  if (evicted.length) {
-    evicted.forEach((item) => calendarMemoryCache.delete(item.key))
-    await AsyncStorage.multiRemove(evicted.map((item) => item.key))
-  }
-  await AsyncStorage.setItem(KEYS.calendarCacheIndex, JSON.stringify(retained))
+    const nextIndex = [
+      { key, savedAt: entry.savedAt },
+      ...index.filter((item) => item?.key && item.key !== key),
+    ]
+    const evicted = nextIndex.slice(MAX_CALENDAR_CACHE_ENTRIES)
+    const retained = nextIndex.slice(0, MAX_CALENDAR_CACHE_ENTRIES)
+    if (evicted.length) {
+      evicted.forEach((item) => calendarMemoryCache.delete(item.key))
+      await AsyncStorage.multiRemove(evicted.map((item) => item.key))
+    }
+    await AsyncStorage.setItem(KEYS.calendarCacheIndex, JSON.stringify(retained))
+  })
+  await calendarCacheIndexWrite
+  return entry
 }
 
 export async function resetAppState() {

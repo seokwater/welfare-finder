@@ -4,6 +4,7 @@ import { api } from '../api'
 import ChatBubble from '../components/ChatBubble'
 import PolicyCard from '../components/PolicyCard'
 import ScreenHeader from '../components/ScreenHeader'
+import useAndroidKeyboardInset from '../hooks/useAndroidKeyboardInset'
 import { deleteSearchConversation, hasUserMessage, normalizeSearchState, selectSearchConversation, startNewSearch, updateSearchConversation } from '../searchHistory'
 import { colors } from '../theme'
 
@@ -20,6 +21,7 @@ export default function SearchScreen({ apiBase, profile, onOpenPolicy, searchSta
   const [conversationErrors, setConversationErrors] = useState({})
   const [historyVisible, setHistoryVisible] = useState(false)
   const scrollRef = useRef(null)
+  const keyboardInset = useAndroidKeyboardInset()
   const normalizedState = normalizeSearchState(searchState)
   const activeConversation = normalizedState.conversations.find(
     (conversation) => conversation.id === normalizedState.activeConversationId,
@@ -36,6 +38,12 @@ export default function SearchScreen({ apiBase, profile, onOpenPolicy, searchSta
     const timeout = setTimeout(() => scrollRef.current?.scrollToEnd({ animated: false }), 80)
     return () => clearTimeout(timeout)
   }, [activeConversation.id, messages.length])
+
+  useEffect(() => {
+    if (!keyboardInset) return undefined
+    const timeout = setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 80)
+    return () => clearTimeout(timeout)
+  }, [keyboardInset])
 
   const updateConversation = (conversationId, update) => {
     onSearchStateChange((current) => updateSearchConversation(current, conversationId, update))
@@ -123,10 +131,13 @@ export default function SearchScreen({ apiBase, profile, onOpenPolicy, searchSta
 
   return (
     <>
-      <KeyboardAvoidingView style={styles.screen} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      <KeyboardAvoidingView
+        style={[styles.screen, keyboardInset > 0 && { paddingBottom: keyboardInset }]}
+        behavior="padding"
+        enabled={Platform.OS === 'ios'}
+      >
         <ScreenHeader
           title="정check Alan AI"
-          subtitle="Alan AI + 정책 DB 검색"
           rightLabel="대화 목록"
           onRight={() => setHistoryVisible(true)}
         />

@@ -146,10 +146,11 @@ function AppRoot() {
 
   const common = { apiBase, profile, onOpenPolicy: setSelectedPolicy }
 
-  const greenHeader = ['home', 'my'].includes(activeTab)
+  const greenHeader = activeTab === 'my'
+  const topSafeEdges = activeTab === 'my' ? [] : ['top']
 
   return (
-    <SafeAreaView style={[styles.safe, greenHeader && styles.greenSafe]} edges={['top']}>
+    <SafeAreaView style={[styles.safe, greenHeader && styles.greenSafe]} edges={topSafeEdges}>
       <StatusBar barStyle={greenHeader ? 'light-content' : 'dark-content'} backgroundColor={greenHeader ? colors.green : colors.bg} />
       <View style={styles.body}>
         {activeTab === 'home' && (
