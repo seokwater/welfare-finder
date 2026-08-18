@@ -128,15 +128,7 @@ export default function App() {
         {activeTab === 'home' && (
           <HomeScreen
             {...common}
-            profiles={profiles}
-            activeProfileId={activeProfileId}
             onNavigate={setActiveTab}
-            onSelectProfile={async (profileId) => {
-              if (!profiles.some((entry) => entry.id === profileId)) return
-              await saveActiveProfileId(profileId)
-              setActiveProfileId(profileId)
-            }}
-            onAddProfile={() => setProfileEditor({ profileId: null })}
           />
         )}
         {activeTab === 'calendar' && <CalendarScreen {...common} />}
