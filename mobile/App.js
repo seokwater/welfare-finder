@@ -147,6 +147,7 @@ export default function App() {
         {activeTab === 'home' && (
           <HomeScreen
             {...common}
+            profileCacheKey={`${activeProfileId || 'guest'}:${activeProfileEntry?.updatedAt || 0}`}
             profileName={activeProfileEntry?.name || '프로필'}
             onNavigate={setActiveTab}
             onEditProfile={() => setProfileEditor({ profileId: activeProfileId || null })}

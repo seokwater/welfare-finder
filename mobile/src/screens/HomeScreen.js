@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { ActivityIndicator, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { api } from '../api'
 import PolicyCard from '../components/PolicyCard'
+import { getHomeCacheEntry, isHomeCacheFresh, loadHomeCacheEntry, saveHomeCache } from '../storage'
 import { colors } from '../theme'
 import { isoToday } from '../utils'
 
@@ -17,10 +18,20 @@ function profileMeta(profile) {
   return [profile?.location || '지역', ageLabel(profile?.age), profile?.employment || '직업 형태'].join(' · ')
 }
 
-export default function HomeScreen({ apiBase, profile, profileName = '프로필', onOpenPolicy, onNavigate, onEditProfile }) {
-  const [recommendation, setRecommendation] = useState(null)
-  const [calendar, setCalendar] = useState(null)
-  const [loading, setLoading] = useState(true)
+function sameData(current, next) {
+  if (current === next) return true
+  try {
+    return JSON.stringify(current) === JSON.stringify(next)
+  } catch {
+    return false
+  }
+}
+
+export default function HomeScreen({ apiBase, profile, profileCacheKey = 'guest', profileName = '프로필', onOpenPolicy, onNavigate, onEditProfile }) {
+  const initialCache = getHomeCacheEntry(apiBase, profileCacheKey)
+  const [recommendation, setRecommendation] = useState(initialCache?.recommendation || null)
+  const [calendar, setCalendar] = useState(initialCache?.calendar || null)
+  const [loading, setLoading] = useState(!initialCache)
   const [refreshing, setRefreshing] = useState(false)
   const [error, setError] = useState('')
   const [benefitsExpanded, setBenefitsExpanded] = useState(false)
@@ -28,10 +39,9 @@ export default function HomeScreen({ apiBase, profile, profileName = '프로필'
   const normalizedProfileName = String(profileName || '프로필').trim() || '프로필'
   const greetingName = normalizedProfileName.endsWith('님') ? normalizedProfileName : `${normalizedProfileName}님`
 
-  const load = useCallback(async () => {
-    setError('')
-    setLoading(true)
-    setRecommendation(null)
+  const load = useCallback(async ({ showLoading = false, silent = false } = {}) => {
+    if (!silent) setError('')
+    if (showLoading) setLoading(true)
     try {
       const now = new Date()
       const [rec, calendarResponse] = await Promise.all([
@@ -43,20 +53,36 @@ export default function HomeScreen({ apiBase, profile, profileName = '프로필'
         }),
         api.calendar(apiBase, now.getFullYear(), now.getMonth() + 1),
       ])
-      setRecommendation(rec)
-      setCalendar(calendarResponse.data)
+      setRecommendation((current) => sameData(current, rec) ? current : rec)
+      setCalendar((current) => sameData(current, calendarResponse.data) ? current : calendarResponse.data)
+      await saveHomeCache(apiBase, profileCacheKey, rec, calendarResponse.data)
     } catch (e) {
-      setError(e.message)
+      if (!silent) setError(e.message)
     } finally {
       setLoading(false)
       setRefreshing(false)
     }
-  }, [apiBase, profile])
+  }, [apiBase, profile, profileCacheKey])
 
   useEffect(() => {
+    let cancelled = false
     setBenefitsExpanded(false)
-    load()
-  }, [load])
+    const hydrate = async () => {
+      const cached = getHomeCacheEntry(apiBase, profileCacheKey) || await loadHomeCacheEntry(apiBase, profileCacheKey)
+      if (cancelled) return
+      if (cached) {
+        setRecommendation(cached.recommendation)
+        setCalendar(cached.calendar)
+        setLoading(false)
+        setError('')
+      }
+      if (!isHomeCacheFresh(cached)) {
+        await load({ showLoading: !cached, silent: Boolean(cached) })
+      }
+    }
+    hydrate()
+    return () => { cancelled = true }
+  }, [apiBase, load, profileCacheKey])
 
   const upcoming = useMemo(() => {
     const today = isoToday()
@@ -69,7 +95,7 @@ export default function HomeScreen({ apiBase, profile, profileName = '프로필'
     <ScrollView
       style={styles.screen}
       contentContainerStyle={styles.content}
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); load() }} tintColor={colors.green} />}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); load({ silent: false }) }} tintColor={colors.green} />}
     >
       <View style={styles.homeHeader}>
         <View style={{ flex: 1 }}>
@@ -108,7 +134,7 @@ export default function HomeScreen({ apiBase, profile, profileName = '프로필'
         </View>
       )}
 
-      {!!error && <View style={styles.errorBox}><Text style={styles.errorText}>{error}</Text><TouchableOpacity onPress={load}><Text style={styles.retry}>다시 불러오기</Text></TouchableOpacity></View>}
+      {!!error && <View style={styles.errorBox}><Text style={styles.errorText}>{error}</Text><TouchableOpacity onPress={() => load({ showLoading: !recommendation })}><Text style={styles.retry}>다시 불러오기</Text></TouchableOpacity></View>}
 
       {benefitsExpanded && (
         <View style={styles.benefitsSection}>
@@ -123,7 +149,7 @@ export default function HomeScreen({ apiBase, profile, profileName = '프로필'
               <PolicyCard key={item.policy?.['정책번호'] || `${item.policy?.['정책명']}-${index}`} item={item} compact onPress={onOpenPolicy} />
             ))}
             {!loading && !error && (recommendation?.results || []).length === 0 && (
-              <TouchableOpacity style={styles.emptyBenefits} onPress={load}>
+              <TouchableOpacity style={styles.emptyBenefits} onPress={() => load({ showLoading: true })}>
                 <Text style={styles.emptyBenefitsTitle}>{profile ? '현재 표시할 추천 혜택이 없어요.' : '아직 선택된 프로필이 없어요.'}</Text>
                 <Text style={styles.emptyBenefitsText}>{profile ? '새로고침하거나 AI 검색에서 조건을 넓혀보세요.' : 'My 화면에서 프로필을 추가해 맞춤 추천을 시작하세요.'}</Text>
               </TouchableOpacity>

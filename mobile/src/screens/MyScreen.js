@@ -136,9 +136,6 @@ export default function MyScreen({
       <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
         <View style={styles.heroHeader}>
           <Text style={styles.pageTitle}>My</Text>
-          <TouchableOpacity accessibilityLabel="앱 데이터 초기화" style={styles.settingsButton} onPress={confirmReset}>
-            <Ionicons name="settings-outline" size={26} color={colors.white} />
-          </TouchableOpacity>
         </View>
 
         <View style={styles.profileCard}>
@@ -164,21 +161,11 @@ export default function MyScreen({
                   <View style={styles.youthBadge}><Ionicons name="person" size={11} color={colors.greenDark} /><Text style={styles.youthText}>청년</Text></View>
                 </View>
 
-                <View style={styles.profileActions}>
-                  <TouchableOpacity style={styles.editButton} onPress={() => onEditProfile(activeProfile.id)}>
-                    <Ionicons name="create-outline" size={14} color={colors.greenDark} />
-                    <Text style={styles.editButtonText}>정보 수정</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.switchProfileButton} onPress={() => setProfileChooserVisible(true)}>
-                    <Ionicons name="people-outline" size={14} color={colors.text} />
-                    <Text style={styles.switchProfileText}>프로필 변경하기</Text>
-                  </TouchableOpacity>
-                </View>
               </View>
 
               <View style={styles.profileFacts}>
                 <ProfileFact icon="location" value={profile?.location || '지역 미입력'} />
-                <ProfileFact icon="calendar" value={ageLabel(profile?.age)} />
+                <ProfileFact emoji="🎂" value={ageLabel(profile?.age)} />
                 <ProfileFact icon="briefcase" value={profile?.employment || '직업 미입력'} />
               </View>
               <View style={styles.updateRow}>
@@ -194,6 +181,19 @@ export default function MyScreen({
             </TouchableOpacity>
           )}
         </View>
+
+        {!!activeProfile && (
+          <View style={styles.profileToolbar}>
+            <TouchableOpacity style={styles.editButton} onPress={() => onEditProfile(activeProfile.id)}>
+              <Ionicons name="create-outline" size={17} color={colors.greenDark} />
+              <Text style={styles.editButtonText}>정보 수정</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.switchProfileButton} onPress={() => setProfileChooserVisible(true)}>
+              <Ionicons name="people-outline" size={17} color={colors.text} />
+              <Text style={styles.switchProfileText}>프로필 변경하기</Text>
+            </TouchableOpacity>
+          </View>
+        )}
 
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>찜한 정책</Text>
@@ -305,8 +305,8 @@ export default function MyScreen({
   )
 }
 
-function ProfileFact({ icon, value }) {
-  return <View style={styles.fact}><Ionicons name={icon} size={15} color={colors.muted} /><Text numberOfLines={1} style={styles.factText}>{value}</Text></View>
+function ProfileFact({ icon, emoji, value }) {
+  return <View style={styles.fact}>{emoji ? <Text style={styles.factEmoji}>{emoji}</Text> : <Ionicons name={icon} size={15} color={colors.muted} />}<Text numberOfLines={1} style={styles.factText}>{value}</Text></View>
 }
 
 function FavoritePolicyRow({ item, onPress, last }) {
@@ -339,9 +339,8 @@ function NotificationRow({ icon, color, background, title, description, value, o
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.bg },
   content: { paddingBottom: 34 },
-  heroHeader: { height: 150, backgroundColor: colors.green, paddingHorizontal: 22, paddingTop: 35, flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' },
+  heroHeader: { height: 150, backgroundColor: colors.green, paddingHorizontal: 22, paddingTop: 35 },
   pageTitle: { color: colors.white, fontSize: 28, fontWeight: '900' },
-  settingsButton: { width: 42, height: 42, borderRadius: 15, backgroundColor: 'rgba(255,255,255,0.14)', alignItems: 'center', justifyContent: 'center' },
   profileCard: { marginHorizontal: 14, marginTop: -58, minHeight: 190, padding: 17, borderRadius: 22, backgroundColor: colors.white, borderWidth: 1, borderColor: colors.line, ...shadow },
   profileTop: { flexDirection: 'row', alignItems: 'center', gap: 11 },
   avatarButton: { width: 76, height: 76 },
@@ -354,13 +353,14 @@ const styles = StyleSheet.create({
   nameEdit: { padding: 7 },
   youthBadge: { alignSelf: 'flex-start', flexDirection: 'row', gap: 4, backgroundColor: colors.greenSoft, borderRadius: 99, paddingHorizontal: 9, paddingVertical: 5, marginTop: 7 },
   youthText: { color: colors.greenDark, fontSize: 10, fontWeight: '900' },
-  profileActions: { width: 106, gap: 7 },
-  editButton: { height: 34, borderRadius: 10, borderWidth: 1, borderColor: '#B9E2CB', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 4 },
-  editButtonText: { color: colors.greenDark, fontSize: 10, fontWeight: '900' },
-  switchProfileButton: { minHeight: 34, borderRadius: 10, backgroundColor: '#F3F6F4', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 4, paddingHorizontal: 4 },
-  switchProfileText: { color: colors.text, fontSize: 9, fontWeight: '900' },
+  profileToolbar: { flexDirection: 'row', gap: 9, marginHorizontal: 14, marginTop: 12 },
+  editButton: { flex: 1, height: 46, borderRadius: 13, borderWidth: 1, borderColor: '#B9E2CB', backgroundColor: colors.white, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },
+  editButtonText: { color: colors.greenDark, fontSize: 12, fontWeight: '900' },
+  switchProfileButton: { flex: 1, height: 46, borderRadius: 13, borderWidth: 1, borderColor: colors.line, backgroundColor: colors.white, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },
+  switchProfileText: { color: colors.text, fontSize: 12, fontWeight: '900' },
   profileFacts: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginTop: 17, paddingTop: 14, borderTopWidth: 1, borderTopColor: colors.line },
   fact: { flexDirection: 'row', alignItems: 'center', gap: 5 },
+  factEmoji: { fontSize: 14, lineHeight: 17 },
   factText: { color: colors.text, fontSize: 11, fontWeight: '700' },
   updateRow: { flexDirection: 'row', alignItems: 'center', gap: 7, marginTop: 13 },
   updateText: { color: colors.muted, fontSize: 9, lineHeight: 14 },

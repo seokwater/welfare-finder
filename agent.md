@@ -356,7 +356,7 @@ EXPO_PUBLIC_API_BASE_URL=http://PC의-사설-IP:8000
 
 - `mobile/App.js`: 앱 전역 상태, 화면 전환, 검색 대화 상태
 - `mobile/src/api.js`: FastAPI 호출
-- `mobile/src/storage.js`: 프로필, 검색 대화, 찜한 정책, 알림 설정, 캘린더 캐시 저장
+- `mobile/src/storage.js`: 프로필, 검색 대화, 찜한 정책, 알림 설정, 홈·캘린더 캐시 저장
 - `mobile/src/profileFlow.js`: 프로필 단계, 선택형 수정, LLM 요청 문맥과 분석 결과 병합
 - `mobile/src/profiles.js`: 멀티 프로필 정규화, 생성, 이름·이미지 수정, 삭제, 활성 프로필 결정
 - `mobile/src/favorites.js`: 프로필별 찜한 정책 정규화, 식별, 추가·해제
@@ -364,7 +364,7 @@ EXPO_PUBLIC_API_BASE_URL=http://PC의-사설-IP:8000
 - `mobile/src/screens/SearchScreen.js`: Alan 검색, 대화 목록, 선택, 삭제
 - `mobile/src/screens/AIProfileScreen.js`: 선택형/자연어 프로필 생성
 - `mobile/src/screens/CalendarScreen.js`: 캐시 우선 월간 캘린더
-- `mobile/src/screens/HomeScreen.js`: 프로필 기반 추천
+- `mobile/src/screens/HomeScreen.js`: 프로필 기반 추천과 캐시 우선 백그라운드 갱신
 - `mobile/src/screens/MyScreen.js`: 이미지형 프로필 카드, 프로필 전환, 찜 정책, 알림 설정, 초기화
 - `mobile/src/components/PolicyDetailModal.js`: 정책 상세와 찜 추가·해제
 - `mobile/src/components/BottomTabs.js`: Ionicons 기반 홈·캘린더·검색·My 탭
@@ -445,7 +445,19 @@ npx expo export --platform android
 - My 화면의 `백엔드 연결`과 `서비스 구성` 영역 및 화면 진입 시 서버 상태 확인 요청을 삭제했다.
 - 프로필 사진 변경과 찜 동작에 대한 단위 테스트를 추가했고 Android Expo export를 통과했다.
 
-## 16. 보안 및 작업 주의사항
+## 16. My 버튼 정리와 홈 캐시 최적화
+
+- My 화면 상단의 톱니바퀴 버튼을 제거했다.
+- 프로필 카드의 나이 아이콘을 케이크 이모지로 변경했다.
+- `정보 수정`과 `프로필 변경하기`를 프로필 카드 아래, 찜한 정책 위에 같은 너비로 가로 배치했다.
+- 홈 추천 결과와 이번 달 일정 데이터를 API 주소·프로필 ID·프로필 수정 버전별로 메모리와 AsyncStorage에 저장한다.
+- 홈 재진입 시 저장된 추천과 일정을 즉시 표시하며, 5분 이내 캐시는 서버에 다시 요청하지 않는다.
+- 5분이 지난 캐시는 기존 내용을 유지한 채 백그라운드에서 갱신하고, 서버 응답이 실제로 달라졌을 때만 화면 상태를 교체한다.
+- 사용자가 당겨서 새로고침하면 캐시 만료와 관계없이 최신 데이터를 요청한다.
+- 홈 캐시는 최근 8개까지만 보존하며 앱 데이터 초기화 시 함께 삭제한다.
+- 모바일 단위 테스트 16개와 Android Expo export를 다시 통과했다.
+
+## 17. 보안 및 작업 주의사항
 
 - API 키, DB 비밀번호, Alan 인증값을 코드, 문서, 커밋 메시지에 넣지 않는다.
 - 사용자 외부 파일의 평문 키를 복사하지 않는다.

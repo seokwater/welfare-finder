@@ -16,6 +16,7 @@ const KEYS = {
   legacySearchSession: 'wf:searchSession',
   legacyProfileSearchSessions: 'wf:searchSessions:v2',
   calendarCacheIndex: 'wf:calendarCacheIndex:v1',
+  homeCacheIndex: 'wf:homeCacheIndex:v1',
   favoritePolicies: 'wf:favoritePolicies:v1',
   notificationSettings: 'wf:notificationSettings:v1',
 }
@@ -26,8 +27,12 @@ export const DEFAULT_NOTIFICATION_SETTINGS = {
 }
 
 const CALENDAR_CACHE_PREFIX = 'wf:calendarCache:v1:'
+const HOME_CACHE_PREFIX = 'wf:homeCache:v1:'
 const MAX_CALENDAR_CACHE_ENTRIES = 6
+const MAX_HOME_CACHE_ENTRIES = 8
+export const HOME_CACHE_FRESH_MS = 5 * 60 * 1000
 const calendarMemoryCache = new Map()
+const homeMemoryCache = new Map()
 
 function calendarCacheKey(apiBase, year, month) {
   const base = String(apiBase || '').trim().replace(/\/$/, '')
@@ -91,6 +96,20 @@ export async function loadAppState() {
     activeProfileId,
     profile,
     apiBase: map[KEYS.apiBase] || '',
+  }
+}
+
+function homeCacheKey(apiBase, profileCacheKey) {
+  const base = String(apiBase || '').trim().replace(/\/$/, '')
+  return `${HOME_CACHE_PREFIX}${encodeURIComponent(base)}:${encodeURIComponent(String(profileCacheKey || 'guest'))}`
+}
+
+function parseHomeCache(raw) {
+  try {
+    const value = raw ? JSON.parse(raw) : null
+    return value?.recommendation && value?.calendar && Number(value.savedAt) > 0 ? value : null
+  } catch {
+    return null
   }
 }
 
@@ -204,6 +223,46 @@ export async function saveNotificationSettings(value) {
   return normalized
 }
 
+export function getHomeCacheEntry(apiBase, profileCacheKey) {
+  return homeMemoryCache.get(homeCacheKey(apiBase, profileCacheKey)) || null
+}
+
+export async function loadHomeCacheEntry(apiBase, profileCacheKey) {
+  const key = homeCacheKey(apiBase, profileCacheKey)
+  const memoryValue = homeMemoryCache.get(key)
+  if (memoryValue) return memoryValue
+  const cached = parseHomeCache(await AsyncStorage.getItem(key))
+  if (!cached) return null
+  homeMemoryCache.set(key, cached)
+  return cached
+}
+
+export function isHomeCacheFresh(entry, now = Date.now()) {
+  return Boolean(entry && Number(now) - Number(entry.savedAt) < HOME_CACHE_FRESH_MS)
+}
+
+export async function saveHomeCache(apiBase, profileCacheKey, recommendation, calendar) {
+  const key = homeCacheKey(apiBase, profileCacheKey)
+  const entry = { recommendation, calendar, savedAt: Date.now() }
+  homeMemoryCache.set(key, entry)
+  await AsyncStorage.setItem(key, JSON.stringify(entry))
+
+  let index = []
+  try {
+    const parsed = parseJson(await AsyncStorage.getItem(KEYS.homeCacheIndex))
+    if (Array.isArray(parsed)) index = parsed
+  } catch {}
+  const nextIndex = [{ key, savedAt: entry.savedAt }, ...index.filter((item) => item?.key && item.key !== key)]
+  const evicted = nextIndex.slice(MAX_HOME_CACHE_ENTRIES)
+  const retained = nextIndex.slice(0, MAX_HOME_CACHE_ENTRIES)
+  if (evicted.length) {
+    evicted.forEach((item) => homeMemoryCache.delete(item.key))
+    await AsyncStorage.multiRemove(evicted.map((item) => item.key))
+  }
+  await AsyncStorage.setItem(KEYS.homeCacheIndex, JSON.stringify(retained))
+  return entry
+}
+
 export function getCalendarCacheEntry(apiBase, year, month) {
   return calendarMemoryCache.get(calendarCacheKey(apiBase, year, month)) || null
 }
@@ -246,6 +305,9 @@ export async function saveCalendarCache(apiBase, year, month, data, etag = '') {
 }
 
 export async function resetAppState() {
+  const homeIndex = parseJson(await AsyncStorage.getItem(KEYS.homeCacheIndex))
+  const homeCacheKeys = Array.isArray(homeIndex) ? homeIndex.map((item) => item?.key).filter(Boolean) : []
+  homeMemoryCache.clear()
   await AsyncStorage.multiRemove([
     KEYS.onboarded,
     KEYS.profile,
@@ -259,5 +321,7 @@ export async function resetAppState() {
     KEYS.legacyProfileSearchSessions,
     KEYS.favoritePolicies,
     KEYS.notificationSettings,
+    KEYS.homeCacheIndex,
+    ...homeCacheKeys,
   ])
 }
