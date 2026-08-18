@@ -4,11 +4,12 @@ import { api } from '../api'
 import ScreenHeader from '../components/ScreenHeader'
 import { colors } from '../theme'
 
-export default function MyScreen({ apiBase, profile, onSaveApiBase, onEditProfile, onReset }) {
+export default function MyScreen({ apiBase, profile, profiles = [], activeProfileId, onSelectProfile, onAddProfile, onEditProfile, onDeleteProfile, onSaveApiBase, onReset }) {
   const [serverInput, setServerInput] = useState(apiBase)
   const [health, setHealth] = useState(null)
   const [checking, setChecking] = useState(false)
   const [error, setError] = useState('')
+  const activeProfile = profiles.find((entry) => entry.id === activeProfileId) || null
 
   useEffect(() => setServerInput(apiBase), [apiBase])
 
@@ -41,9 +42,16 @@ export default function MyScreen({ apiBase, profile, onSaveApiBase, onEditProfil
   }
 
   const confirmReset = () => {
-    Alert.alert('앱 초기화', '저장한 프로필과 온보딩 상태를 삭제할까요?', [
+    Alert.alert('앱 초기화', '저장한 모든 프로필과 온보딩 상태를 삭제할까요?', [
       { text: '취소', style: 'cancel' },
       { text: '초기화', style: 'destructive', onPress: onReset },
+    ])
+  }
+
+  const confirmDelete = (entry) => {
+    Alert.alert('프로필 삭제', `${entry.name}을(를) 삭제할까요?`, [
+      { text: '취소', style: 'cancel' },
+      { text: '삭제', style: 'destructive', onPress: () => onDeleteProfile(entry.id) },
     ])
   }
 
@@ -51,17 +59,43 @@ export default function MyScreen({ apiBase, profile, onSaveApiBase, onEditProfil
     <ScrollView style={styles.screen} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
       <ScreenHeader title="마이" subtitle="프로필과 서버 설정" />
 
-      <View style={styles.profileCard}>
-        <View style={styles.avatar}><Text style={styles.avatarText}>🙂</Text></View>
-        <View style={{ flex: 1 }}>
-          <Text style={styles.profileTitle}>내 AI 프로필</Text>
-          <Text style={styles.profileSub}>{profile ? '추천 검색에 자동으로 반영됩니다.' : '아직 프로필이 없습니다.'}</Text>
+      <View style={styles.section}>
+        <View style={styles.sectionHead}>
+          <View>
+            <Text style={styles.sectionTitle}>내 프로필</Text>
+            <Text style={styles.profileSub}>선택한 프로필이 추천과 AI 검색에 적용됩니다.</Text>
+          </View>
+          <TouchableOpacity style={styles.addProfile} onPress={onAddProfile}><Text style={styles.addProfileText}>+ 추가</Text></TouchableOpacity>
         </View>
-        <TouchableOpacity onPress={onEditProfile}><Text style={styles.edit}>수정</Text></TouchableOpacity>
+        {profiles.length === 0 ? (
+          <TouchableOpacity style={styles.emptyProfile} onPress={onAddProfile}>
+            <Text style={styles.emptyProfileTitle}>아직 프로필이 없습니다.</Text>
+            <Text style={styles.emptyProfileText}>새 프로필을 만들어 맞춤 혜택을 확인하세요.</Text>
+          </TouchableOpacity>
+        ) : profiles.map((entry) => {
+          const active = entry.id === activeProfileId
+          const summary = [entry.data.location, entry.data.age, entry.data.employment].filter(Boolean).join(' · ')
+          return (
+            <View key={entry.id} style={[styles.profileItem, active && styles.activeProfileItem]}>
+              <TouchableOpacity style={styles.profileSelect} onPress={() => onSelectProfile(entry.id)}>
+                <View style={[styles.smallAvatar, active && styles.activeAvatar]}><Text style={styles.smallAvatarText}>🙂</Text></View>
+                <View style={{ flex: 1 }}>
+                  <View style={styles.profileNameRow}>
+                    <Text style={styles.profileTitle}>{entry.name}</Text>
+                    {active && <Text style={styles.activeBadge}>사용 중</Text>}
+                  </View>
+                  <Text numberOfLines={1} style={styles.profileSub}>{summary || '입력된 정보 없음'}</Text>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => onEditProfile(entry.id)}><Text style={styles.profileAction}>수정</Text></TouchableOpacity>
+              <TouchableOpacity onPress={() => confirmDelete(entry)}><Text style={[styles.profileAction, styles.deleteAction]}>삭제</Text></TouchableOpacity>
+            </View>
+          )
+        })}
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>프로필 정보</Text>
+        <Text style={styles.sectionTitle}>{activeProfile ? `${activeProfile.name} 정보` : '선택된 프로필 정보'}</Text>
         <Info icon="📍" label="거주지" value={profile?.location} />
         <Info icon="🎂" label="나이" value={profile?.age} />
         <Info icon="🏠" label="주거 형태" value={profile?.housing} />
@@ -103,7 +137,7 @@ export default function MyScreen({ apiBase, profile, onSaveApiBase, onEditProfil
         <Info icon="🗓️" label="캘린더" value="정책 신청기간 + 기기 캘린더" />
       </View>
 
-      <TouchableOpacity style={styles.reset} onPress={confirmReset}><Text style={styles.resetText}>프로필 및 온보딩 초기화</Text></TouchableOpacity>
+      <TouchableOpacity style={styles.reset} onPress={confirmReset}><Text style={styles.resetText}>모든 프로필 및 온보딩 초기화</Text></TouchableOpacity>
       <Text style={styles.version}>복지 Finder Mobile v2.0</Text>
     </ScrollView>
   )
@@ -122,14 +156,26 @@ function Info({ icon, label, value }) {
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.bg },
   content: { paddingBottom: 30 },
-  profileCard: { marginHorizontal: 14, backgroundColor: colors.white, borderWidth: 1, borderColor: colors.line, borderRadius: 19, padding: 15, flexDirection: 'row', alignItems: 'center', gap: 11 },
-  avatar: { width: 48, height: 48, borderRadius: 18, backgroundColor: colors.greenSoft, alignItems: 'center', justifyContent: 'center' },
-  avatarText: { fontSize: 24 },
   profileTitle: { color: colors.ink, fontSize: 15, fontWeight: '900' },
   profileSub: { color: colors.muted, fontSize: 10, marginTop: 4 },
-  edit: { color: colors.greenDark, fontSize: 12, fontWeight: '900', padding: 8 },
   section: { marginHorizontal: 14, marginTop: 12, backgroundColor: colors.white, borderWidth: 1, borderColor: colors.line, borderRadius: 19, padding: 15 },
   sectionTitle: { color: colors.ink, fontSize: 14, fontWeight: '900', marginBottom: 9 },
+  sectionHead: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 11 },
+  addProfile: { borderRadius: 11, backgroundColor: colors.greenSoft, paddingHorizontal: 12, paddingVertical: 8 },
+  addProfileText: { color: colors.greenDark, fontSize: 11, fontWeight: '900' },
+  emptyProfile: { borderWidth: 1, borderStyle: 'dashed', borderColor: colors.line, borderRadius: 14, padding: 18, alignItems: 'center' },
+  emptyProfileTitle: { color: colors.ink, fontSize: 12, fontWeight: '900' },
+  emptyProfileText: { color: colors.muted, fontSize: 10, marginTop: 4 },
+  profileItem: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: colors.line, borderRadius: 15, padding: 9, marginTop: 7, gap: 2 },
+  activeProfileItem: { borderColor: colors.green, backgroundColor: colors.greenPale },
+  profileSelect: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 9 },
+  smallAvatar: { width: 38, height: 38, borderRadius: 13, backgroundColor: '#F1F3F2', alignItems: 'center', justifyContent: 'center' },
+  activeAvatar: { backgroundColor: colors.greenSoft },
+  smallAvatarText: { fontSize: 18 },
+  profileNameRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  activeBadge: { color: colors.greenDark, backgroundColor: colors.greenSoft, borderRadius: 7, paddingHorizontal: 6, paddingVertical: 2, fontSize: 8, fontWeight: '900' },
+  profileAction: { color: colors.greenDark, fontSize: 10, fontWeight: '900', padding: 7 },
+  deleteAction: { color: colors.danger },
   infoRow: { flexDirection: 'row', alignItems: 'center', minHeight: 39, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.line },
   infoIcon: { width: 28, fontSize: 13 },
   infoLabel: { width: 72, color: colors.muted, fontSize: 11, fontWeight: '700' },

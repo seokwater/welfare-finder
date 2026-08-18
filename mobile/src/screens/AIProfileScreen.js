@@ -22,7 +22,7 @@ function profileStep(field) {
   return PROFILE_STEPS.find((step) => step.field === field) || null
 }
 
-export default function AIProfileScreen({ apiBase, initialProfile, onComplete, onCancel }) {
+export default function AIProfileScreen({ apiBase, initialProfile, profileName, isEditing = false, onComplete, onCancel }) {
   const initial = { ...EMPTY, ...(initialProfile || {}) }
   const initialStep = nextProfileStep(initial)
   const [profile, setProfile] = useState(initial)
@@ -42,9 +42,10 @@ export default function AIProfileScreen({ apiBase, initialProfile, onComplete, o
 
   const filled = useMemo(() => Object.values(profile).filter(Boolean).length, [profile])
   const complete = filled === PROFILE_STEPS.length
+  const creationComplete = complete && !isEditing
 
   const selectChoice = (choice) => {
-    if (loading || complete) return
+    if (loading || creationComplete) return
     if (choice === '직접 입력') {
       inputRef.current?.focus()
       return
@@ -67,7 +68,7 @@ export default function AIProfileScreen({ apiBase, initialProfile, onComplete, o
 
   const send = async (raw) => {
     const message = String(raw ?? text).trim()
-    if (!message || loading || complete) return
+    if (!message || loading || creationComplete) return
     setText('')
     setError('')
     setMessages((prev) => [...prev, { role: 'user', content: message }])
@@ -93,7 +94,7 @@ export default function AIProfileScreen({ apiBase, initialProfile, onComplete, o
         <View style={styles.header}>
           <TouchableOpacity onPress={onCancel} style={styles.back}><Text style={styles.backText}>‹</Text></TouchableOpacity>
           <View style={styles.bot}><Text style={styles.botText}>AI</Text></View>
-          <View style={{ flex: 1 }}><Text style={styles.title}>복지 Finder Alan AI</Text><Text style={styles.sub}>프로필 생성 · {filled}/5</Text></View>
+          <View style={{ flex: 1 }}><Text style={styles.title}>{profileName || '복지 Finder Alan AI'}</Text><Text style={styles.sub}>{isEditing ? '프로필 수정' : '프로필 생성'} · {filled}/5</Text></View>
         </View>
 
         <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
@@ -121,7 +122,7 @@ export default function AIProfileScreen({ apiBase, initialProfile, onComplete, o
           {!!error && <Text style={styles.error}>{error}</Text>}
         </ScrollView>
 
-        {complete ? (
+        {creationComplete ? (
           <View style={styles.completeBar}>
             <TouchableOpacity style={styles.save} onPress={() => onComplete(profile)}>
               <Text style={styles.saveText}>혜택 보러가기</Text>
@@ -144,7 +145,7 @@ export default function AIProfileScreen({ apiBase, initialProfile, onComplete, o
             </View>
             <View style={styles.saveBar}>
               <TouchableOpacity style={[styles.save, filled < 2 && styles.saveDisabled]} disabled={filled < 2} onPress={() => onComplete(profile)}>
-                <Text style={styles.saveText}>현재 정보로 저장하기</Text>
+                <Text style={styles.saveText}>{isEditing ? '수정 저장하기' : '현재 정보로 저장하기'}</Text>
               </TouchableOpacity>
             </View>
           </>
